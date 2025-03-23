@@ -133,7 +133,7 @@
      <enum>QSlider::TickPosition::NoTicks</enum>
     </property>
    </widget>
-   <widget class="QFrame" name="frame">
+   <widget class="QFrame" name="currentColor">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -149,7 +149,7 @@
      <enum>QFrame::Shadow::Raised</enum>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton">
+   <widget class="QToolButton" name="addToPaletteButton">
     <property name="geometry">
      <rect>
       <x>140</x>
