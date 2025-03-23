@@ -20,3 +20,14 @@ signals:
 };
 
 #endif // MODELS_H
+
+
+// #include <QImage>
+// #include <QColor>
+
+// class Tools {
+// public:
+//     static void paintBucket(QImage& image, int x, int y, QColor newColor);
+//     static void drawRectangle(QImage& image, QRect rect, QColor color);
+//     static void rotateImage(QImage& image, int angle);
+// };

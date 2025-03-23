@@ -11,10 +11,8 @@
 #include <QGridLayout>
 
 // Includes for files
-#include "controller.h"
 #include "models.h"
 #include "displays.h"
-#include "controller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,7 +33,6 @@ private:
 
     Model* model;
     Displays* displays;
-    Controller* controller;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
     QColor userColor; // User chosen color
