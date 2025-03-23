@@ -12,11 +12,11 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     // New Controller
     controller = new Controller(model);
-    QString sliderStyle = getSliderStyleSheet();
-    ui->redSlider->setStyleSheet(sliderStyle);
-    ui->greenSlider->setStyleSheet(sliderStyle);
-    ui->blueSlider->setStyleSheet(sliderStyle);
-    ui->alphaSlider->setStyleSheet(sliderStyle);
+
+    setSliders();
+
+    setSLiderTextEdits();
+
 
     userColor = QColor(0, 0, 0, 255);
 
@@ -38,6 +38,47 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             this,
             &MainWindow::updateSlider);
 
+    connect(ui->redSliderIO,
+            &QLineEdit::textChanged,
+            this,
+            &MainWindow::sliderIOValue);
+    connect(ui->alphaSliderIO,
+            &QLineEdit::textChanged,
+            this,
+            &MainWindow::sliderIOValue);
+    connect(ui->blueSliderIO,
+            &QLineEdit::textChanged,
+            this,
+            &MainWindow::sliderIOValue);
+    connect(ui->alphaSliderIO,
+            &QLineEdit::textChanged,
+            this,
+            &MainWindow::sliderIOValue);
+
+}
+
+void MainWindow::setColorPalette() {
+
+}
+
+void MainWindow::addColorToPalette(QColor color) {
+
+}
+
+void MainWindow::removeColorFromPalette(unsigned int index) {
+
+}
+
+void MainWindow::setColor() {
+
+}
+
+void MainWindow::setSliders(){
+    QString sliderStyle = getSliderStyleSheet();
+    ui->redSlider->setStyleSheet(sliderStyle);
+    ui->greenSlider->setStyleSheet(sliderStyle);
+    ui->blueSlider->setStyleSheet(sliderStyle);
+    ui->alphaSlider->setStyleSheet(sliderStyle);
 }
 
 void MainWindow::updateSlider(int value) {
@@ -62,15 +103,19 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
     if (colorComponent == "red") {
         color = QString("rgb(%1, 0, 0)").arg(value);
         userColor.setRed(value);
+        ui->redSliderIO->setText(QString::number(value));
     } else if (colorComponent == "green") {
         color = QString("rgb(0, %1, 0)").arg(value);
         userColor.setGreen(value);
+        ui->greenSliderIO->setText(QString::number(value));
     } else if (colorComponent == "blue") {
         color = QString("rgb(0, 0, %1)").arg(value);
         userColor.setBlue(value);
+        ui->blueSliderIO->setText(QString::number(value));
     } else if (colorComponent == "all") {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
+        ui->alphaSliderIO->setText(QString::number(value));
     }
 
     QString colorStyle = QString("background-color: rgb(%1, %2, %3);")
@@ -106,6 +151,51 @@ QString MainWindow::getSliderStyleSheet(QString color) {
         "}")
         .arg(color);
 }
+
+void MainWindow::setSLiderTextEdits() {
+    updateTextEditStyle(ui->redSliderIO, "rgb(0, 0, 0)");
+    updateTextEditStyle(ui->greenSliderIO, "rgb(0, 0, 0)");
+    updateTextEditStyle(ui->blueSliderIO, "rgb(0, 0, 0)");
+    updateTextEditStyle(ui->alphaSliderIO, "rgb(0, 0, 0)");
+}
+
+void MainWindow::updateTextEditStyle(QLineEdit *textEdit, const QString &Color) {
+    QString style = QString(
+        "QLineEdit {"
+        "    background-color: %1;"
+        "    color: white;"  // Brighten text
+        "    border: 1px solid #555;"
+        "    border-radius: 4px;"
+        "    padding: 2px 4px;"
+        "}"
+        ).arg(Color);
+
+    textEdit->setStyleSheet(style);
+}
+
+void MainWindow::sliderIOValue() {
+    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());  // Identify the sender
+
+    bool ok;
+    int value = lineEdit->text().toInt(&ok);
+
+    if (!ok) {
+        value = 0;  // Set to 0 if conversion fails
+        lineEdit->setText(QString::number(value));  // Update UI to reflect the change
+    }
+    if (!ok || value < 0 || value > 255) return;  // Ensure valid range (0-255)
+
+    if (lineEdit == ui->redSliderIO) {
+        ui->redSlider->setValue(value);
+    } else if (lineEdit == ui->greenSliderIO) {
+        ui->greenSlider->setValue(value);
+    } else if (lineEdit == ui->blueSliderIO) {
+        ui->blueSlider->setValue(value);
+    } else if (lineEdit == ui->alphaSliderIO) {
+        ui->alphaSlider->setValue(value);
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
