@@ -17,6 +17,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     setSLiderTextEdits();
 
+    setColorPalette();
+
 
     userColor = QColor(0, 0, 0, 255);
 
@@ -57,14 +59,43 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             this,
             &MainWindow::sliderIOValue);
 
+    // Color Palette
+    connect(ui->addToPaletteButton,
+            &QToolButton::clicked,
+            this,
+            [this]() {addColorToPalette();});
+
 } // End of constructor
 
 void MainWindow::setColorPalette() {
+    paletteScrollArea = ui->colorPalette;  // The QScrollArea
+    paletteContainer = ui->colorPaletteScrollContents; // The inner QWidget
+
+
+    paletteLayout = new QGridLayout();
+    paletteLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    paletteLayout->setHorizontalSpacing(2);  // Reduce space between columns
+    paletteLayout->setVerticalSpacing(2);    // Reduce space between rows
+    paletteLayout->setContentsMargins(6, 10, 0, 0);  // Remove extra margins
+
+
+    paletteContainer->setLayout(paletteLayout);
+
+    paletteScrollArea->setWidget(paletteContainer);
+    paletteScrollArea->setWidgetResizable(true);
 
 }
 
-void MainWindow::addColorToPalette(QColor color) {
+void MainWindow::addColorToPalette() {
+    QPushButton *colorButton = new QPushButton();
+    colorButton->setFixedSize(25, 25);
+    colorButton->setStyleSheet(QString("background-color: %1;").arg(userColor.name()));
 
+    int row = colorButtons.size() / paletteCols;
+    int col = colorButtons.size() % paletteCols;
+    paletteLayout->addWidget(colorButton, row, col);
+
+    colorButtons.append(colorButton);
 }
 
 void MainWindow::removeColorFromPalette(unsigned int index) {
@@ -203,7 +234,14 @@ void MainWindow::sliderIOValue() {
 
 MainWindow::~MainWindow()
 {
+    // UI and other classes
     delete ui;
     delete displays;
     delete controller;
+    delete model;
+
+    // Palette objects
+    delete paletteScrollArea;
+    delete paletteContainer;
+    delete paletteLayout;
 }

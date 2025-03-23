@@ -1,9 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+// Includes for different QT Objects
 #include <QMainWindow>
 #include <QtWidgets/qlineedit.h>
+#include <QtWidgets/qpushbutton.h>
+#include <QtWidgets/qscrollarea.h>
 #include <QtWidgets/qslider.h>
+#include <QGridLayout>
+
+// Includes for files
 #include "controller.h"
 #include "models.h"
 #include "displays.h"
@@ -46,8 +53,17 @@ private:
 
     // Color palette
     void setColorPalette();
-    void addColorToPalette(QColor color);
+    void addColorToPalette();
     void removeColorFromPalette(unsigned int index);
     void setColor();
+
+    QScrollArea *paletteScrollArea;
+    QWidget *paletteContainer;
+    QGridLayout *paletteLayout;
+    QVector<QPushButton *> colorButtons;
+    int paletteCols = 6;
+
+    void addColorToPalette(const QColor &color);
+
 };
 #endif // MAINWINDOW_H
