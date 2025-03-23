@@ -176,22 +176,19 @@ void MainWindow::updateTextEditStyle(QLineEdit *textEdit, const QString &Color) 
 }
 
 void MainWindow::sliderIOValue() {
-    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());  // Identify the sender
-
+    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
     bool ok;
     int value = lineEdit->text().toInt(&ok);
 
-    if (!ok) {
-        value = 0;  // Set to 0 if conversion fails
-        lineEdit->setText(QString::number(value));
-    }
     if (!ok || value < 0) {
         value = 0;
-    }
-    if (value > 255) {
+    } else if (value > 255) {
         value = 255;
     }
 
+    lineEdit->setText(QString::number(value));
+
+    // Update the corresponding slider
     if (lineEdit == ui->redSliderIO) {
         ui->redSlider->setValue(value);
     } else if (lineEdit == ui->greenSliderIO) {
