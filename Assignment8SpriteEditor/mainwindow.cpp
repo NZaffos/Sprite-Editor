@@ -25,37 +25,39 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             &QSlider::valueChanged,
             this,
             &MainWindow::updateSlider);
-    connect(ui->greenSlider,
-            &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
-    connect(ui->blueSlider,
-            &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
-    connect(ui->alphaSlider,
-            &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
-
     connect(ui->redSliderIO,
             &QLineEdit::textChanged,
             this,
             &MainWindow::sliderIOValue);
-    connect(ui->alphaSliderIO,
+
+    connect(ui->greenSlider,
+            &QSlider::valueChanged,
+            this,
+            &MainWindow::updateSlider);
+    connect(ui->greenSliderIO,
             &QLineEdit::textChanged,
             this,
             &MainWindow::sliderIOValue);
+
+    connect(ui->blueSlider,
+            &QSlider::valueChanged,
+            this,
+            &MainWindow::updateSlider);
     connect(ui->blueSliderIO,
             &QLineEdit::textChanged,
             this,
             &MainWindow::sliderIOValue);
+
+    connect(ui->alphaSlider,
+            &QSlider::valueChanged,
+            this,
+            &MainWindow::updateSlider);
     connect(ui->alphaSliderIO,
             &QLineEdit::textChanged,
             this,
             &MainWindow::sliderIOValue);
 
-}
+} // End of constructor
 
 void MainWindow::setColorPalette() {
 
@@ -181,9 +183,14 @@ void MainWindow::sliderIOValue() {
 
     if (!ok) {
         value = 0;  // Set to 0 if conversion fails
-        lineEdit->setText(QString::number(value));  // Update UI to reflect the change
+        lineEdit->setText(QString::number(value));
     }
-    if (!ok || value < 0 || value > 255) return;  // Ensure valid range (0-255)
+    if (!ok || value < 0) {
+        value = 0;
+    }
+    if (value > 255) {
+        value = 255;
+    }
 
     if (lineEdit == ui->redSliderIO) {
         ui->redSlider->setValue(value);
