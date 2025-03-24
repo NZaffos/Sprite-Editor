@@ -10,8 +10,6 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     // New Displays
     displays = new Displays(model);
 
-    // New Controller
-    controller = new Controller(model);
 
     setSliders();
 
@@ -237,7 +235,6 @@ MainWindow::~MainWindow()
     // UI and other classes
     delete ui;
     delete displays;
-    delete controller;
     delete model;
 
     // Palette objects
