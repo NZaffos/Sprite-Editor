@@ -23,6 +23,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     int sizeY = 32;
 
     QImage image = QImage(sizeX, sizeY, QImage::Format_RGB32);
+    //image.fill(Qt::white);
+
     QGraphicsScene *graphic = new QGraphicsScene(this);
     QPixmap imgDisplay = QPixmap::fromImage(image);
     //imgDisplay.scaled(100, 100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -30,6 +32,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     graphic -> addPixmap( imgDisplay.scaled(350, 350, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     ui -> graphicsView -> setScene(graphic);
+
+    image.setPixel(16, 16, qRgb(255, 255, 255));
 
     // Connects
     connect(ui->redSlider,
@@ -246,4 +250,19 @@ MainWindow::~MainWindow()
     delete paletteScrollArea;
     delete paletteContainer;
     delete paletteLayout;
+}
+
+// void drawLineTo(const QPoint &endPoint){
+//     QPainter painter(&image);
+//     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+//     pointer.drawLine(lastPoint, endPoint);
+//     modified = true;
+//     int rad = (myPenWidth / 2) + 2;
+
+//     update(QRect(lastPoint, endPoint).normal)
+// }
+
+void drawPixel(){
+    return;
+
 }

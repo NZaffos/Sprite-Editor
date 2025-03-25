@@ -15,6 +15,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QGraphicsScene>
+#include <QRgb>
 
 // Includes for files
 #include "models.h"
