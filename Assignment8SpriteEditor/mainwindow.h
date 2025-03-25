@@ -1,14 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 // Includes for different QT Objects
 #include <QMainWindow>
+
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qpushbutton.h>
 #include <QtWidgets/qscrollarea.h>
 #include <QtWidgets/qslider.h>
 #include <QGridLayout>
+
+// For all the canvas here
+#include <QPixmap>
+#include <QPainter>
+#include <QImage>
+#include <QGraphicsScene>
 
 // Includes for files
 #include "models.h"
@@ -47,20 +53,25 @@ private:
     void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
     void sliderIOValue();
 
-
     // Color palette
     void setColorPalette();
     void addColorToPalette();
     void removeColorFromPalette(unsigned int index);
     void setColor();
 
+    // Blank Canvas
+
     QScrollArea *paletteScrollArea;
     QWidget *paletteContainer;
     QGridLayout *paletteLayout;
     QVector<QPushButton *> colorButtons;
     int paletteCols = 6;
+    QImage* qimage;
+    QPainter *qpainter;
 
     void addColorToPalette(const QColor &color);
+
+
 
 };
 #endif // MAINWINDOW_H

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+// This is the view class IMPORTANT:
+// Delete this comment before submission!!!
 MainWindow::MainWindow(Model* model, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
     , model(model)
@@ -10,15 +12,21 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     // New Displays
     displays = new Displays(model);
 
-
     setSliders();
-
     setSLiderTextEdits();
-
     setColorPalette();
 
-
     userColor = QColor(0, 0, 0, 255);
+
+    // Canvas
+    int sizeX = 32;
+    int sizeY = 32;
+
+    QImage image = QImage(sizeX, sizeY, QImage::Format_RGB32);
+    QGraphicsScene *graphic = new QGraphicsScene(this);
+    graphic -> addPixmap( QPixmap::fromImage(image));
+
+    ui -> graphicsView -> setScene(graphic);
 
     // Connects
     connect(ui->redSlider,
@@ -62,20 +70,17 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             &QToolButton::clicked,
             this,
             [this]() {addColorToPalette();});
-
 } // End of constructor
 
 void MainWindow::setColorPalette() {
     paletteScrollArea = ui->colorPalette;  // The QScrollArea
     paletteContainer = ui->colorPaletteScrollContents; // The inner QWidget
 
-
     paletteLayout = new QGridLayout();
     paletteLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     paletteLayout->setHorizontalSpacing(2);  // Reduce space between columns
     paletteLayout->setVerticalSpacing(2);    // Reduce space between rows
     paletteLayout->setContentsMargins(6, 10, 0, 0);  // Remove extra margins
-
 
     paletteContainer->setLayout(paletteLayout);
 
@@ -97,11 +102,9 @@ void MainWindow::addColorToPalette() {
 }
 
 void MainWindow::removeColorFromPalette(unsigned int index) {
-
 }
 
 void MainWindow::setColor() {
-
 }
 
 void MainWindow::setSliders(){
@@ -228,7 +231,6 @@ void MainWindow::sliderIOValue() {
         ui->alphaSlider->setValue(value);
     }
 }
-
 
 MainWindow::~MainWindow()
 {
