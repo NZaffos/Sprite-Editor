@@ -24,7 +24,10 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     QImage image = QImage(sizeX, sizeY, QImage::Format_RGB32);
     QGraphicsScene *graphic = new QGraphicsScene(this);
-    graphic -> addPixmap( QPixmap::fromImage(image));
+    QPixmap imgDisplay = QPixmap::fromImage(image);
+    //imgDisplay.scaled(100, 100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    graphic -> addPixmap( imgDisplay.scaled(350, 350, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     ui -> graphicsView -> setScene(graphic);
 
