@@ -58,7 +58,6 @@ private:
     QPainter *qpainter;
     QGraphicsScene *scene;
 
-private slots:
     // Sliders and Value Labels
     void setSliders();
     void updateSlider(int value);
@@ -75,6 +74,9 @@ private slots:
     void removeColorFromPalette(unsigned int index);
     void setColor();
     void updateView();
+
+private slots:
+
 
 protected:
      void mousePressEvent(QMouseEvent *event) override;
