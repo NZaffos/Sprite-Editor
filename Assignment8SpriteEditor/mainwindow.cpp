@@ -107,7 +107,11 @@ void MainWindow::setColorPalette() {
 void MainWindow::addColorToPalette() {
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
-    colorButton->setStyleSheet(QString("background-color: %1;").arg(userColor.name()));
+    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
+        .arg(userColor.red())
+        .arg(userColor.green())
+        .arg(userColor.blue())
+        .arg(userColor.alpha()));
 
     int row = colorButtons.size() / paletteCols;
     int col = colorButtons.size() % paletteCols;
@@ -167,10 +171,12 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
         ui->alphaSliderIO->setText(QString::number(value));
     }
 
-    QString colorStyle = QString("background-color: rgb(%1, %2, %3);")
+    QString colorStyle = QString("background-color: rgba(%1, %2, %3, %4);")
         .arg(userColor.red())
         .arg(userColor.green())
-        .arg(userColor.blue());
+        .arg(userColor.blue())
+        .arg(userColor.alpha());
+
     ui->currentColor->setStyleSheet(colorStyle);
 
     QString style = getSliderStyleSheet(color);
@@ -270,34 +276,34 @@ MainWindow::~MainWindow()
 //     update(QRect(lastPoint, endPoint).normal)
 // }
 
- void MainWindow::mousePressEvent(QMouseEvent *event){
-     // Get mouse position relative to the viewport
-     QPoint viewPos = event -> pos();
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    // Get mouse position relative to the viewport
+    QPoint viewPos = event->pos();
 
-     qDebug() << "select pixel at: " << viewPos.x() << ", " << viewPos.y();
+    qDebug() << "select pixel at: " << viewPos.x() << ", " << viewPos.y();
 
-     // Convert viewport coordinates to scene coordinates
-     // uses float point
-     QPointF scenePos = ui -> graphicsView -> mapToScene(viewPos);
+    // Convert viewport coordinates to scene coordinates
+    // uses float point
+    QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-     // Adjust for scaling (e.g., 10x zoom)
-     // safe type cast to int value with static_cast<int>
-     int x = static_cast<int>(scenePos.x() / 10);
-     int y = static_cast<int>(scenePos.y() / 10);
+    // Adjust for scaling (e.g., 10x zoom)
+    // safe type cast to int value with static_cast<int>
+    int x = static_cast<int>(scenePos.x() / 10);
+    int y = static_cast<int>(scenePos.y() / 10);
 
-     // Check if coordinates are within image bounds
-     if (x >= 0 && x < model -> getImage() -> width() &&
-         y >= 0 && y < model -> getImage() -> height()) {
+    // Check if coordinates are within image bounds
+    if (x >= 0 && x < model->getImage()->width() &&
+        y >= 0 && y < model->getImage()->height()) {
 
-         // Update the pixel in the model
-         model->setPixel(x, y, userColor.rgba());
-     }
+        // Update the pixel in the model
+        model->setPixel(x, y, userColor.rgba());
+    }
 
-     // Refresh the view
-     updateView();
- }
+    // Refresh the view
+    updateView();
+}
 
- void MainWindow::updateView(){
-     scene -> clear();
-     scene-> addPixmap(QPixmap::fromImage(*model -> getImage()));
- }
+void MainWindow::updateView(){
+    scene->clear();
+    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+}
