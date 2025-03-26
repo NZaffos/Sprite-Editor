@@ -15,6 +15,8 @@
 #include <QPainter>
 #include <QImage>
 #include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QMouseEvent>
 #include <QRgb>
 
 // Includes for files
@@ -35,6 +37,8 @@ public:
     MainWindow(Model* model, QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+
 private:
     Ui::MainWindow *ui;
 
@@ -44,6 +48,17 @@ private:
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
     QColor userColor; // User chosen color
 
+    // Blank Canvas
+    QScrollArea *paletteScrollArea;
+    QWidget *paletteContainer;
+    QGridLayout *paletteLayout;
+    QVector<QPushButton *> colorButtons;
+    int paletteCols = 6;
+    QImage* qimage;
+    QPainter *qpainter;
+    QGraphicsScene *scene;
+
+private slots:
     // Sliders and Value Labels
     void setSliders();
     void updateSlider(int value);
@@ -59,20 +74,9 @@ private:
     void addColorToPalette();
     void removeColorFromPalette(unsigned int index);
     void setColor();
+    void updateView();
 
-    // Blank Canvas
-
-    QScrollArea *paletteScrollArea;
-    QWidget *paletteContainer;
-    QGridLayout *paletteLayout;
-    QVector<QPushButton *> colorButtons;
-    int paletteCols = 6;
-    QImage* qimage;
-    QPainter *qpainter;
-
-    void addColorToPalette(const QColor &color);
-
-
-
+protected:
+     void mousePressEvent(QMouseEvent *event) override;
 };
 #endif // MAINWINDOW_H

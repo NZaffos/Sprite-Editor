@@ -4,8 +4,7 @@
 // This is the view class IMPORTANT:
 // Delete this comment before submission!!!
 MainWindow::MainWindow(Model* model, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
-    , model(model)
+    : QMainWindow(parent), ui(new Ui::MainWindow), model(model)
 {
     ui->setupUi(this);
 
@@ -18,22 +17,31 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     userColor = QColor(0, 0, 0, 255);
 
-    // Canvas
-    int sizeX = 32;
-    int sizeY = 32;
+    // // Canvas
+    // int sizeX = 32;
+    // int sizeY = 32;
 
-    QImage image = QImage(sizeX, sizeY, QImage::Format_RGB32);
-    //image.fill(Qt::white);
+    // QImage *image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
+    // image -> fill(Qt::white);
 
-    QGraphicsScene *graphic = new QGraphicsScene(this);
-    QPixmap imgDisplay = QPixmap::fromImage(image);
-    //imgDisplay.scaled(100, 100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    // image->setPixel(10, 10, qRgb(255, 0, 0));   // Red
+    // image->setPixel(15, 15, qRgb(0, 255, 0));   // Green
+    // image->setPixel(20, 20, qRgb(0, 0, 255));   // Blue
 
-    graphic -> addPixmap( imgDisplay.scaled(350, 350, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
 
-    ui -> graphicsView -> setScene(graphic);
+    // Add the pixmap to the scene
+    scene-> addPixmap(QPixmap::fromImage(*model -> getImage()));
 
-    image.setPixel(16, 16, qRgb(255, 255, 255));
+    // Ensure the scenes area matches the pixmap
+    scene -> setSceneRect(scene -> itemsBoundingRect());
+
+    // Configure the view
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
+    ui->graphicsView->scale(10,10);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Connects
     connect(ui->redSlider,
@@ -262,7 +270,34 @@ MainWindow::~MainWindow()
 //     update(QRect(lastPoint, endPoint).normal)
 // }
 
-void drawPixel(){
-    return;
+ void MainWindow::mousePressEvent(QMouseEvent *event){
+     // Get mouse position relative to the viewport
+     QPoint viewPos = event -> pos();
 
-}
+     qDebug() << "select pixel at: " << viewPos.x() << ", " << viewPos.y();
+
+     // Convert viewport coordinates to scene coordinates
+     // uses float point
+     QPointF scenePos = ui -> graphicsView -> mapToScene(viewPos);
+
+     // Adjust for scaling (e.g., 10x zoom)
+     // safe type cast to int value with static_cast<int>
+     int x = static_cast<int>(scenePos.x() / 10);
+     int y = static_cast<int>(scenePos.y() / 10);
+
+     // Check if coordinates are within image bounds
+     if (x >= 0 && x < model -> getImage() -> width() &&
+         y >= 0 && y < model -> getImage() -> height()) {
+
+         // Update the pixel in the model
+         model->setPixel(x, y, userColor.rgba());
+     }
+
+     // Refresh the view
+     updateView();
+ }
+
+ void MainWindow::updateView(){
+     scene -> clear();
+     scene-> addPixmap(QPixmap::fromImage(*model -> getImage()));
+ }

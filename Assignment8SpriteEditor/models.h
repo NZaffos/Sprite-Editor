@@ -4,19 +4,58 @@
 #include <QObject>
 #include <QImage>
 #include <vector>
+#include <QMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 
 class Model : public QObject {
     Q_OBJECT
-public:
-    QImage canvas;
-    std::vector<QImage> frames;
 
+public:
+    Model(QObject *parent = nullptr);
+    ~Model();
+
+    std::vector<QImage> frames;
     void clearCanvas();
     void addFrame();
     void removeFrame(unsigned int index);
+    QImage* getImage();
+
+    /**
+     * Sets the color at a specific pixel coordinate in the image to the selected color
+     * @brief setPixel
+     * @param x coordinate of pixel
+     * @param y coordinate of pixel
+     * @param userColor - new rgb value of the pixel
+     */
+    void setPixel(int x, int y, QColor userColor);
 
 signals:
     void canvasUpdated();
+
+private:
+    /**
+     * Determines the width of our canvas
+     * @brief sizeX
+     */
+    int sizeX = 32;
+
+    /**
+     * Determines the height of the canvas
+     * @brief sizeY
+     */
+    int sizeY = 32;
+
+    /**
+     * The main canvas displayed on the users screen
+     * The size is determined by the user input and is then scaled by 10x factor
+     * @brief image
+     */
+    QImage *image;
+
+    void mousePressEvent(QMouseEvent *event);
+
+private slots:
+
 };
 
 #endif // MODELS_H
