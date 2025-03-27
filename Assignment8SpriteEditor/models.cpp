@@ -2,7 +2,7 @@
 
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image -> fill(Qt::white);
+    image->fill(Qt::white);
 }
 
 Model::~Model(){
@@ -14,7 +14,7 @@ QImage* Model::getImage(){
 }
 
 void Model::clearCanvas() {
-    image -> fill(Qt::white);  // Clear canvas to white
+    image->fill(Qt::white);  // Clear canvas to white
 }
 
 void Model::addFrame() {
@@ -43,5 +43,5 @@ void Model::removeFrame(unsigned int index) {
 
 void Model::setPixel(int x, int y, QColor userColor){
     qDebug() << "select pixel at: " << x << ", " << y;
-    image->setPixel(x, y, userColor.rgb());
+    image->setPixel(x, y, userColor.rgba());
 }
