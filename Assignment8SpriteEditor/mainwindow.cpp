@@ -304,6 +304,7 @@ MainWindow::~MainWindow()
                  // Update pixel
                  if (event->button() == Qt::LeftButton){
                     qDebug() << "alpha color is: " << userColor.alpha();
+                     model -> getPixel(currPixel);
                     model->setPixel(x, y, userColor);
                  } else if (event->button() == Qt::RightButton){
                      // if right mouse button clicked - erease
@@ -316,7 +317,6 @@ MainWindow::~MainWindow()
  }
 
  void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    qDebug() << "select pixel at scene Position";
     if (drawing && (event -> button() == Qt::LeftButton)){
         // map global coordinates to the graphicView's local coordinates
         QPoint viewPos = ui -> graphicsView -> mapFromGlobal(event -> globalPosition().toPoint());

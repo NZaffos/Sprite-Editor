@@ -28,6 +28,7 @@ public:
      * @param userColor - new rgb value of the pixel
      */
     void setPixel(int x, int y, QColor userColor);
+    void getPixel(QPointF currPixel);
 
     int getCanvasX();
     int getCanvasY();
@@ -56,6 +57,8 @@ private:
     QImage *image;
 
     void mousePressEvent(QMouseEvent *event);
+
+    QColor selectColor;
 
 private slots:
 
