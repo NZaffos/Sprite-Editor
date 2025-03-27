@@ -47,6 +47,14 @@ void Model::setPixel(int x, int y, QColor userColor){
     qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
 }
 
+int Model::getCanvasX(){
+    return sizeX;
+}
+
+int Model::getCanvasY(){
+    return sizeY;
+}
+
 // USE FOR ADDIVTIVE COLOR
 
 // void Model::setPixel(int x, int y, QColor newColor) {
