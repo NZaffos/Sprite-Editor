@@ -27,9 +27,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     scene -> setSceneRect(scene -> itemsBoundingRect());
 
     // Get user canvas size
-    int canvasX = qFloor(725/model -> getCanvasX());
-    int canvasY = qFloor(725/model -> getCanvasY());
-
+    int canvasX = 725/model -> getCanvasX();
+    int canvasY = 725/model -> getCanvasY();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
