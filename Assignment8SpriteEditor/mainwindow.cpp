@@ -121,6 +121,7 @@ void MainWindow::removeColorFromPalette(unsigned int index) {
 }
 
 void MainWindow::setColor() {
+
 }
 
 void MainWindow::setSliders(){
@@ -142,7 +143,7 @@ void MainWindow::updateSlider(int value) {
     } else if (slider == ui->blueSlider) {
         colorComponent = "blue";
     } else if (slider == ui->alphaSlider) {
-        colorComponent = "all";
+        colorComponent = "alpha";
     }
 
     updateSliderStyle(slider, value, colorComponent);  // Update the style for the corresponding slider
@@ -162,7 +163,7 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
         color = QString("rgb(0, 0, %1)").arg(value);
         userColor.setBlue(value);
         ui->blueSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "all") {
+    } else if (colorComponent == "alpha") {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
         qDebug() << "alpha color is: " << userColor.alpha();
@@ -274,7 +275,7 @@ MainWindow::~MainWindow()
 //     update(QRect(lastPoint, endPoint).normal)
 // }
 
- void MainWindow::mousePressEvent(QMouseEvent *event){
+void MainWindow::mousePressEvent(QMouseEvent *event){
      if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton){
          // convert mouse click to global coordinates in mainwindow
          QPoint globalPos = event->globalPosition().toPoint();
@@ -304,7 +305,6 @@ MainWindow::~MainWindow()
                  // Update pixel
                  if (event->button() == Qt::LeftButton){
                     qDebug() << "alpha color is: " << userColor.alpha();
-                     model -> getPixel(currPixel);
                     model->setPixel(x, y, userColor);
                  } else if (event->button() == Qt::RightButton){
                      // if right mouse button clicked - erease
@@ -316,16 +316,17 @@ MainWindow::~MainWindow()
      }
  }
 
- void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    if (drawing && (event -> button() == Qt::LeftButton)){
+void MainWindow::mouseMoveEvent(QMouseEvent *event){
+    qDebug() << "select pixel at scene Position";
+    if (drawing && (event->button() == Qt::LeftButton)){
         // map global coordinates to the graphicView's local coordinates
-        QPoint viewPos = ui -> graphicsView -> mapFromGlobal(event -> globalPosition().toPoint());
+        QPoint viewPos = ui->graphicsView->mapFromGlobal(event->globalPosition().toPoint());
 
         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
 
-        if (ui -> graphicsView -> rect().contains(viewPos)){
+        if (ui->graphicsView->rect().contains(viewPos)) {
             // Map to scene coordinates
-            QPointF scenePos = ui -> graphicsView ->mapToScene(viewPos);
+            QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
             // Get pixel position
             int x = static_cast<int>(scenePos.x());
@@ -334,12 +335,12 @@ MainWindow::~MainWindow()
             // Check if moving from current pixel position
             if(x != currPixel.x() || y != currPixel.y()){
                 // Check if in image bounds
-                if (x >= 0 && x < model -> getImage() -> width() &&
-                    y >= 0 && y < model -> getImage() -> height()){
+                if (x >= 0 && x < model->getImage()->width() &&
+                    y >= 0 && y < model->getImage()->height()) {
 
                     // Update pixel
                     qDebug() << "alpha color is: " << userColor.alpha();
-                    model -> setPixel(x, y, userColor.rgba());
+                    model->setPixel(x, y, userColor.rgba());
 
                     // update current pixel
                     currPixel = scenePos;
@@ -348,13 +349,13 @@ MainWindow::~MainWindow()
             }
         }
     }
- }
+}
 
- void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-     if (event -> button() == Qt::LeftButton){
+void MainWindow::mouseReleaseEvent(QMouseEvent *event){
+    if (event->button() == Qt::LeftButton) {
          drawing = false;
-     }
- }
+    }
+}
 
 void MainWindow::updateView(){
     scene->clear();

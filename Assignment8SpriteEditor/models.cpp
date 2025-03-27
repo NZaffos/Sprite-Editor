@@ -2,6 +2,7 @@
 
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
+    image->fill("rgba(0,0,0,0");
 }
 
 Model::~Model(){
@@ -44,10 +45,6 @@ void Model::setPixel(int x, int y, QColor userColor){
     qDebug() << "select pixel at: " << x << ", " << y;
     image->setPixel(x, y, userColor.rgba());
     qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
-}
-
-void Model::getPixel(QPointF currPixel){
-    selectColor = image->pixelColor(currPixel.x(), currPixel.y());
 }
 
 int Model::getCanvasX(){
