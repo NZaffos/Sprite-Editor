@@ -47,6 +47,8 @@ void Model::setPixel(int x, int y, QColor userColor){
     qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
 }
 
+// USE FOR ADDIVTIVE COLOR
+
 // void Model::setPixel(int x, int y, QColor newColor) {
 //     QColor existingColor = image->pixelColor(x, y);  // Get the current pixel color
 //     QColor blendedColor = blendAdditive(existingColor, newColor);
