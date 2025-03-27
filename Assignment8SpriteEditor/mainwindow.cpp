@@ -161,6 +161,7 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
     } else if (colorComponent == "all") {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
+        qDebug() << "alpha color is: " << userColor.alpha();
         ui->alphaSliderIO->setText(QString::number(value));
     }
 
@@ -298,7 +299,8 @@ MainWindow::~MainWindow()
 
                  // Update pixel
                  if (event->button() == Qt::LeftButton){
-                    model->setPixel(x, y, userColor.rgba());
+                    qDebug() << "alpha color is: " << userColor.alpha();
+                    model->setPixel(x, y, userColor);
                  } else if (event->button() == Qt::RightButton){
                      // if right mouse button clicked - erease
                      model->setPixel(x, y, Qt::white);
@@ -332,6 +334,7 @@ MainWindow::~MainWindow()
                     y >= 0 && y < model -> getImage() -> height()){
 
                     // Update pixel
+                    qDebug() << "alpha color is: " << userColor.alpha();
                     model -> setPixel(x, y, userColor.rgba());
 
                     // update current pixel
