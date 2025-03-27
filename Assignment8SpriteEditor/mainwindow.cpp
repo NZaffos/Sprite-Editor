@@ -293,6 +293,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
              int x = static_cast<int>(scenePos.x());
              int y = static_cast<int>(scenePos.y());
 
+             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+
              //qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
 
              // Check if in image bounds
