@@ -17,22 +17,11 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     userColor = QColor(0, 0, 0, 255);
 
-    // // Canvas
-    // int sizeX = 32;
-    // int sizeY = 32;
-
-    // QImage *image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    // image -> fill(Qt::white);
-
-    // image->setPixel(10, 10, qRgb(255, 0, 0));   // Red
-    // image->setPixel(15, 15, qRgb(0, 255, 0));   // Green
-    // image->setPixel(20, 20, qRgb(0, 0, 255));   // Blue
-
     scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(scene);
+    ui -> graphicsView -> setScene(scene);
 
     // Add the pixmap to the scene
-    scene-> addPixmap(QPixmap::fromImage(*model -> getImage()));
+    scene -> addPixmap(QPixmap::fromImage(*model -> getImage()));
 
     // Ensure the scenes area matches the pixmap
     scene -> setSceneRect(scene -> itemsBoundingRect());
@@ -42,6 +31,10 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui->graphicsView->scale(10,10);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // Enable mouse tracking
+    ui -> graphicsView -> setMouseTracking(true);
+    ui -> graphicsView -> viewport() -> setMouseTracking(true);
 
     // Connects
     connect(ui->redSlider,
@@ -271,30 +264,83 @@ MainWindow::~MainWindow()
 // }
 
  void MainWindow::mousePressEvent(QMouseEvent *event){
-     // Get mouse position relative to the viewport
-     QPoint viewPos = event -> pos();
+     if (event -> button() == Qt::LeftButton || event -> button() == Qt::RightButton){
+         // convert mouse click to global coordinates in mainwindow
+         QPoint globalPos = event -> globalPosition().toPoint();
 
-     qDebug() << "select pixel at: " << viewPos.x() << ", " << viewPos.y();
+         // map global coordinates to the graphicView's local coordinates
+         QPoint viewPos = ui -> graphicsView -> mapFromGlobal(globalPos);
 
-     // Convert viewport coordinates to scene coordinates
-     // uses float point
-     QPointF scenePos = ui -> graphicsView -> mapToScene(viewPos);
+         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
 
-     // Adjust for scaling (e.g., 10x zoom)
-     // safe type cast to int value with static_cast<int>
-     int x = static_cast<int>(scenePos.x() / 10);
-     int y = static_cast<int>(scenePos.y() / 10);
+         if (ui -> graphicsView -> rect().contains(viewPos)){
+             // Map to scene coordinates
+             QPointF scenePos = ui -> graphicsView ->mapToScene(viewPos);
 
-     // Check if coordinates are within image bounds
-     if (x >= 0 && x < model -> getImage() -> width() &&
-         y >= 0 && y < model -> getImage() -> height()) {
+             // Get pixel position
+             int x = static_cast<int>(scenePos.x());
+             int y = static_cast<int>(scenePos.y());
 
-         // Update the pixel in the model
-         model->setPixel(x, y, userColor.rgba());
+             //qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
+
+             // Check if in image bounds
+             if (x >= 0 && x < model -> getImage() -> width() &&
+                 y >= 0 && y < model -> getImage() -> height()){
+
+                 drawing = true;
+                 currPixel = scenePos;
+
+                 // Update pixel
+                 if (event -> button() == Qt::LeftButton){
+                    model -> setPixel(x, y, userColor.rgba());
+                 } else if (event -> button() == Qt::RightButton){
+                     // if right mouse button clicked - erease
+                     model -> setPixel(x, y, Qt::white);
+                 }
+                 updateView();
+             }
+         }
      }
+ }
 
-     // Refresh the view
-     updateView();
+ void MainWindow::mouseMoveEvent(QMouseEvent *event){
+    qDebug() << "select pixel at scene Position";
+    if (drawing && (event -> button() == Qt::LeftButton)){
+        // map global coordinates to the graphicView's local coordinates
+        QPoint viewPos = ui -> graphicsView -> mapFromGlobal(event -> globalPosition().toPoint());
+
+        qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
+
+        if (ui -> graphicsView -> rect().contains(viewPos)){
+            // Map to scene coordinates
+            QPointF scenePos = ui -> graphicsView ->mapToScene(viewPos);
+
+            // Get pixel position
+            int x = static_cast<int>(scenePos.x());
+            int y = static_cast<int>(scenePos.y());
+
+            // Check if moving from current pixel position
+            if(x != currPixel.x() || y != currPixel.y()){
+                // Check if in image bounds
+                if (x >= 0 && x < model -> getImage() -> width() &&
+                    y >= 0 && y < model -> getImage() -> height()){
+
+                    // Update pixel
+                    model -> setPixel(x, y, userColor.rgba());
+
+                    // update current pixel
+                    currPixel = scenePos;
+                    updateView();
+                }
+            }
+        }
+    }
+ }
+
+ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
+     if (event -> button() == Qt::LeftButton){
+         drawing = false;
+     }
  }
 
  void MainWindow::updateView(){

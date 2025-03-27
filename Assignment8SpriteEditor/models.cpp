@@ -3,10 +3,6 @@
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
     image -> fill(Qt::white);
-
-    image->setPixel(10, 10, qRgb(255, 0, 0));   // Red
-    image->setPixel(15, 15, qRgb(0, 255, 0));   // Green
-    image->setPixel(20, 20, qRgb(0, 0, 255));   // Blue
 }
 
 Model::~Model(){

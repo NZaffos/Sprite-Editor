@@ -58,6 +58,9 @@ private:
     QPainter *qpainter;
     QGraphicsScene *scene;
 
+    bool drawing = false;
+    QPointF currPixel;
+
 private slots:
     // Sliders and Value Labels
     void setSliders();
@@ -77,6 +80,8 @@ private slots:
     void updateView();
 
 protected:
-     void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 };
 #endif // MAINWINDOW_H
