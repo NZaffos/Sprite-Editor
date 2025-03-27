@@ -25,8 +25,9 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
+
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -66,7 +67,7 @@ private slots:
     void setSliders();
     void updateSlider(int value);
     void updateSliderStyle(QSlider *slider, int value, const QString &colorComponent);
-    QString getSliderStyleSheet(QString color = "rgb(0, 0, 0)");
+    QString getSliderStyleSheet(QString color = "rgba(0, 0, 0, 0)");
 
     void setSLiderTextEdits();
     void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
@@ -78,6 +79,9 @@ private slots:
     void removeColorFromPalette(unsigned int index);
     void setColor();
     void updateView();
+
+private slots:
+
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

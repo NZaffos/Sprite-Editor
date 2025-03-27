@@ -100,7 +100,11 @@ void MainWindow::setColorPalette() {
 void MainWindow::addColorToPalette() {
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
-    colorButton->setStyleSheet(QString("background-color: %1;").arg(userColor.name()));
+    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
+        .arg(userColor.red())
+        .arg(userColor.green())
+        .arg(userColor.blue())
+        .arg(userColor.alpha()));
 
     int row = colorButtons.size() / paletteCols;
     int col = colorButtons.size() % paletteCols;
@@ -160,10 +164,12 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
         ui->alphaSliderIO->setText(QString::number(value));
     }
 
-    QString colorStyle = QString("background-color: rgb(%1, %2, %3);")
+    QString colorStyle = QString("background-color: rgba(%1, %2, %3, %4);")
         .arg(userColor.red())
         .arg(userColor.green())
-        .arg(userColor.blue());
+        .arg(userColor.blue())
+        .arg(userColor.alpha());
+
     ui->currentColor->setStyleSheet(colorStyle);
 
     QString style = getSliderStyleSheet(color);
@@ -343,7 +349,7 @@ MainWindow::~MainWindow()
      }
  }
 
- void MainWindow::updateView(){
-     scene -> clear();
-     scene-> addPixmap(QPixmap::fromImage(*model -> getImage()));
- }
+void MainWindow::updateView(){
+    scene->clear();
+    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+}
