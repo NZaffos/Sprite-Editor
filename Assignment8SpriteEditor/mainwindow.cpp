@@ -26,9 +26,14 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     // Ensure the scenes area matches the pixmap
     scene -> setSceneRect(scene -> itemsBoundingRect());
 
+    // Get user canvas size
+    int canvasX = qFloor(725/model -> getCanvasX());
+    int canvasY = qFloor(725/model -> getCanvasY());
+
+
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    ui->graphicsView->scale(10,10);
+    ui->graphicsView->scale(canvasX, canvasY);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

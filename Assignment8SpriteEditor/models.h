@@ -29,6 +29,9 @@ public:
      */
     void setPixel(int x, int y, QColor userColor);
 
+    int getCanvasX();
+    int getCanvasY();
+
 signals:
     void canvasUpdated();
 
