@@ -121,6 +121,7 @@ void MainWindow::removeColorFromPalette(unsigned int index) {
 }
 
 void MainWindow::setColor() {
+
 }
 
 void MainWindow::setSliders(){
@@ -142,7 +143,7 @@ void MainWindow::updateSlider(int value) {
     } else if (slider == ui->blueSlider) {
         colorComponent = "blue";
     } else if (slider == ui->alphaSlider) {
-        colorComponent = "all";
+        colorComponent = "alpha";
     }
 
     updateSliderStyle(slider, value, colorComponent);  // Update the style for the corresponding slider
@@ -162,7 +163,7 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
         color = QString("rgb(0, 0, %1)").arg(value);
         userColor.setBlue(value);
         ui->blueSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "all") {
+    } else if (colorComponent == "alpha") {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
         qDebug() << "alpha color is: " << userColor.alpha();
