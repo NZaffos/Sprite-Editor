@@ -25,7 +25,7 @@ void Model::clearCanvas() {
 
 void Model::addFrame() {
     QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
-    newFrame.fill(Qt::white); // Adjust to create new frame as default
+    newFrame.fill(QColor(0, 0, 0, 50)); // Adjust to create new frame as default
     frames.push_back(newFrame);
     selectFrame(frames.size() - 1);
 }

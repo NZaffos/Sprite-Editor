@@ -14,8 +14,10 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     setSliders();
     setSLiderTextEdits();
     setColorPalette();
+    setAnimationFpsSlider();
 
     setFrameSelector();
+
 
     userColor = QColor(0, 0, 0, 255);
 
@@ -153,7 +155,7 @@ void MainWindow::createFrameButton(){
 
 QPushButton* MainWindow::updateFrameButtonIcon(QPushButton* button) {
     int index = button->property("frameIndex").toInt();
-    button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }");
+    //button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }"); // Use to change color of frame
     QPixmap thumbnail = model->getFrameThumbnail(index, 80, 80);
     button->setIcon(QIcon(thumbnail));
     button->setIconSize(thumbnail.size());

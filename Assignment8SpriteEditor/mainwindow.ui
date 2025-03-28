@@ -483,15 +483,17 @@
    </widget>
    <widget class="QLabel" name="animationDisplayLabel">
     <property name="geometry">
-     <rect>
-      <x>1030</x>
-      <y>30</y>
-      <width>220</width>
-      <height>220</height>
-     </rect>
+        <rect>
+            <x>1030</x>
+            <y>30</y>
+            <width>220</width>
+            <height>220</height>
+        </rect>
     </property>
-    <property name="text">
-     <string>TextLabel</string>
+        <property name="text">
+            <string>TextLabel</string>
+       </property>
+   </widget>
    <widget class="QLineEdit" name="coordinate">
     <property name="geometry">
      <rect>
