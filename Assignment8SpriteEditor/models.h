@@ -14,10 +14,7 @@ public:
     Model(QObject *parent = nullptr);
     ~Model();
 
-    std::vector<QImage> frames;
     void clearCanvas();
-    void addFrame();
-    void removeFrame(unsigned int index);
     QImage* getImage();
 
     /**
@@ -35,8 +32,60 @@ public:
     int getCanvasX();
     int getCanvasY();
 
+    /**
+     * Adds a new frame to the animation
+     */
+    void addFrame();
+
+    /**
+     * Duplicates a frame to add a new frame to the animation
+     */
+    void duplicateFrame();
+
+    /**
+     * Removes a frame from the animation
+     * @param index the frame to remove
+     */
+    void removeFrame(unsigned int index);
+
+    /**
+     * Selects the specified frame and updates the main canvas
+     * @param index the frame to select
+     */
+    void selectFrame(unsigned int index);
+
+    /**
+     * Returns the current frame index
+     * @return the current frame index
+     */
+    unsigned int getCurrentFrameIndex() const;
+
+    /**
+     * Helper to return a thumbnail for a given frame
+     * @param index the frame to generate the thumbnail for
+     * @param width width of the thumbnail
+     * @param height height of the thumbnail
+     * @return A QPixmap for use as a thumbnail for a frame
+     */
+    QPixmap getFrameThumbnail(int index, int width, int height) const;
+
+    /**
+     * Returns a reference to the list of all frames in the animation
+     * @return a list containing all of the frames
+     */
+    const std::vector<QImage>& getFrames() const;
+
+    void shiftFrameUp();
+    void shiftFrameDown();
+    void swapFrame(bool swapUp);
+
 signals:
     void canvasUpdated();
+    void frameSelected(unsigned int index);
+    int updateAnimationIcon(int index);
+
+public slots:
+    void sliderValueChanged(int value);
 
 private:
     /**
@@ -58,6 +107,10 @@ private:
      */
     QImage *image;
 
+    std::vector<QImage> frames;
+    unsigned int currentFrameIndex = 0;
+    int animationFps = 1;
+
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleasedEvent(QMouseEvent *event);
@@ -67,6 +120,7 @@ private:
     QColor blendAdditive(QColor dest, QColor src);
 
 private slots:
+    void updateAnimationFrame(int index);
 
 };
 
