@@ -3,6 +3,7 @@
 
 // Includes for different QT Objects
 #include <QMainWindow>
+using std::string;
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qpushbutton.h>
@@ -61,6 +62,12 @@ private:
 
     bool drawing = false;
     QPointF currPixel;
+
+    enum class Tool{
+        BRUSH,
+        ERASER
+    };
+    Tool currTool;
 
 private slots:
     // Sliders and Value Labels

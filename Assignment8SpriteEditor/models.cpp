@@ -52,21 +52,21 @@ void Model::setPixel(int x, int y, QColor userColor){
      && selectColor.blue()  == 0
      && selectColor.alpha() == 255
     ){
-        qDebug() << "Pixel is empty";
+        //qDebug() << "Pixel is empty";
         image->setPixelColor(x, y, userColor);
     } else {
         QColor blendedColor = blendAdditive(userColor, selectColor);
         image->setPixelColor(x, y, blendedColor); // Apply blended color
     }
 
-    qDebug() << (selectColor == QColor(0, 0, 0, 255));
+    //qDebug() << (selectColor == QColor(0, 0, 0, 255));
 
     // qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
 }
 
 void Model::getPixel(int x, int y){
     selectColor = image->pixelColor(x, y);
-    qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
+    //qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 
 int Model::getCanvasX(){
@@ -90,7 +90,7 @@ QColor Model::blendAdditive(QColor src, QColor dest) {
     int greenOverride = (greenSrc * alphaSrc + greenDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
     int blueOverride = (blueSrc * alphaSrc + blueDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
 
-    qDebug() << "Blended color is: " << "red: " << redOverride << "green: " << greenOverride << "blue: " << blueOverride << "alpha: " << alphaOverride;
+    //qDebug() << "Blended color is: " << "red: " << redOverride << "green: " << greenOverride << "blue: " << blueOverride << "alpha: " << alphaOverride;
 
     return QColor(redOverride, greenOverride, blueOverride, alphaOverride);
 }

@@ -375,7 +375,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
             QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
-            if (me->buttons() & Qt::LeftButton) {
+            if (me->buttons() & (Qt::LeftButton | Qt::RightButton)) {
                 // Check if moving from current pixel position
                 if(x != currPixel.x() || y != currPixel.y()){
                     // Check if in image bounds
@@ -383,7 +383,17 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         y >= 0 && y < model->getImage()->height()) {
 
                         // Update pixel
-                        qDebug() << "alpha color is: " << userColor.alpha();
+                        //qDebug() << "alpha color is: " << userColor.alpha();
+
+                        switch(currTool){
+
+                        }
+
+                        if (me->button() == Qt::LeftButton){
+                            qDebug() << "Left button";
+                        } else if (me->button() == Qt::RightButton){
+                            qDebug() << "Right Button";
+                        }
                         model->setPixel(x, y, userColor.rgba());
 
                         // update current pixel
