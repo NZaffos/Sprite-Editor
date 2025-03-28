@@ -15,6 +15,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     setSLiderTextEdits();
     setColorPalette();
 
+    setFrameSelector();
+
     userColor = QColor(0, 0, 0, 255);
 
     scene = new QGraphicsScene(this);
@@ -25,6 +27,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     // Ensure the scenes area matches the pixmap
     scene -> setSceneRect(scene -> itemsBoundingRect());
+
+    createFrameButton();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
@@ -78,7 +82,147 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             &QToolButton::clicked,
             this,
             [this]() {addColorToPalette();});
+
+    // Frame selector
+    connect(ui->deleteFrameButton,
+            &QPushButton::clicked, this,
+            &MainWindow::deleteFrame);
+    connect(ui->addFrameButton,
+            &QPushButton::clicked, this,
+            &MainWindow::addFrameButtonClicked);
+    connect(ui->dublicateFrameButton,
+            &QPushButton::clicked, this,
+            &MainWindow::duplicateFrameButtonClicked);
+    connect(ui->shiftDownFrameButton,
+            &QPushButton::clicked, this,
+            &MainWindow::shiftFrameDownClicked);
+    connect(ui->shiftUpFrameButton,
+            &QPushButton::clicked, this,
+            &MainWindow::shiftFrameUpClicked);
+
+    // Animation fps slider connect
+    connect(ui->animationFpsSlider, &QSlider::valueChanged,
+            model, &Model::sliderValueChanged);
+    connect(model, &Model::updateAnimationIcon,
+            this, &MainWindow::drawAnimationIcon);
 } // End of constructor
+
+void MainWindow::setAnimationFpsSlider() {
+    QString sliderStyle = getSliderStyleSheet();
+    ui->animationFpsSlider->setStyleSheet(sliderStyle);
+    ui->animationFpsSlider->setRange(1, 60);
+}
+
+void MainWindow::drawAnimationIcon(int index) {
+    QPixmap newImage = model->getFrameThumbnail(index, 210, 210);
+    ui->animationDisplayLabel->setPixmap(newImage);
+}
+
+void MainWindow::setFrameSelector() {
+    framesScrollArea = ui->frameSelector;
+    framesContainer = ui->frameSelectorScrollContent;
+
+    framesLayout = new QVBoxLayout();
+    framesLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
+    framesLayout->setContentsMargins(6, 10, 0, 0);
+
+    framesContainer->setLayout(framesLayout);
+
+    framesScrollArea->setWidget(framesContainer);
+    framesScrollArea->setWidgetResizable(true);
+}
+
+void MainWindow::createFrameButton(){
+    QPushButton* frameButton = new QPushButton();
+
+    frameButton->setProperty("frameIndex", frameButtons.size());
+    updateFrameButtonIcon(frameButton);
+    connect(frameButton, &QPushButton::clicked, this, &MainWindow::frameButtonClicked);
+
+    framesLayout->addWidget(frameButton);
+    frameButtons.append(frameButton);
+}
+
+QPushButton* MainWindow::updateFrameButtonIcon(QPushButton* button) {
+    int index = button->property("frameIndex").toInt();
+    button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }");
+    QPixmap thumbnail = model->getFrameThumbnail(index, 80, 80);
+    button->setIcon(QIcon(thumbnail));
+    button->setIconSize(thumbnail.size());
+    button->setFixedSize(90, 90);
+
+    return button;
+}
+
+void MainWindow::frameButtonClicked() {
+    QPushButton* button = qobject_cast<QPushButton*>(sender());
+    if(button) {
+        int index = button->property("frameIndex").toInt();
+        qDebug() << "frameIndex: " << index;
+        model->selectFrame(index);
+        selectedFrameIndex = index;
+        ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+        updateView();
+    }
+}
+
+void MainWindow::deleteFrame() {
+    if(model->getFrames().size() <= 1)
+        return;
+
+    model->removeFrame(selectedFrameIndex);
+
+    QPushButton* buttonToRemove = frameButtons[selectedFrameIndex];
+    framesLayout->removeWidget(buttonToRemove);
+    buttonToRemove->deleteLater();
+    frameButtons.remove(selectedFrameIndex);
+
+    for (int i = selectedFrameIndex; i < frameButtons.size(); i++) {
+        frameButtons[i]->setProperty("frameIndex", i);
+    }
+
+    selectedFrameIndex = model->getCurrentFrameIndex();
+    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateView();
+}
+
+void MainWindow::addFrameButtonClicked() {
+    model->addFrame();
+    createFrameButton();
+    selectedFrameIndex = model->getCurrentFrameIndex();
+    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateView();
+}
+
+void MainWindow::duplicateFrameButtonClicked() {
+    model->duplicateFrame();
+    createFrameButton();
+    selectedFrameIndex = model->getCurrentFrameIndex();
+    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateView();
+}
+
+void MainWindow::shiftFrameUpClicked() {
+    if(selectedFrameIndex <= 0)
+        return;
+
+    model->shiftFrameUp();
+    selectedFrameIndex = model->getCurrentFrameIndex();
+    updateFrameButtonIcon(frameButtons[selectedFrameIndex + 1]);
+
+    updateView();
+}
+
+void MainWindow::shiftFrameDownClicked() {
+    if (selectedFrameIndex >= frameButtons.size() - 1)
+        return;
+
+    model->shiftFrameDown();
+    selectedFrameIndex = model->getCurrentFrameIndex();
+    updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
+
+    updateView();
+}
 
 void MainWindow::setColorPalette() {
     paletteScrollArea = ui->colorPalette;  // The QScrollArea
@@ -352,4 +496,8 @@ MainWindow::~MainWindow()
 void MainWindow::updateView(){
     scene->clear();
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+    if (!frameButtons.isEmpty() && selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size()){
+        updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
+    }
+
 }

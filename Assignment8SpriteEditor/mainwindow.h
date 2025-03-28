@@ -39,6 +39,7 @@ public:
     ~MainWindow();
 
 public slots:
+    void drawAnimationIcon(int index);
 
 private:
     Ui::MainWindow *ui;
@@ -49,12 +50,22 @@ private:
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
     QColor userColor; // User chosen color
 
-    // Blank Canvas
+    // Palette elements
     QScrollArea *paletteScrollArea;
     QWidget *paletteContainer;
     QGridLayout *paletteLayout;
     QVector<QPushButton *> colorButtons;
     int paletteCols = 6;
+
+    // Frame selector elements
+    QScrollArea *framesScrollArea;
+    QWidget *framesContainer;
+    QVBoxLayout *framesLayout;
+    QVector<QPushButton*> frameButtons;
+    int selectedFrameIndex = 0;
+
+    void setAnimationFpsSlider();
+
     QImage* qimage;
     QPainter *qpainter;
     QGraphicsScene *scene;
@@ -77,8 +88,21 @@ private slots:
     void setColorPalette();
     void addColorToPalette();
     void removeColorFromPalette(unsigned int index);
+
+    // Frame selector
+    void setFrameSelector();
+    void frameButtonClicked();
+    void deleteFrame();
+    void addFrameButtonClicked();
+    void duplicateFrameButtonClicked();
+    void createFrameButton();
+    QPushButton* updateFrameButtonIcon(QPushButton* button);
+    void shiftFrameUpClicked();
+    void shiftFrameDownClicked();
+
     void setColor();
     void updateView();
+
 
 private slots:
 
