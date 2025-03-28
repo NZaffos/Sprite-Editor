@@ -1,3 +1,6 @@
+/**
+ *
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -39,15 +42,34 @@ public:
     MainWindow(Model* model, QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * an enum class to hold all possible tools available to the user
+     * @brief The Tool enum
+     */
+    enum class Tool{
+        BRUSH,
+        ERASER
+    };
+    Q_ENUM(Tool)
+
 public slots:
 
 private:
     Ui::MainWindow *ui;
 
+    /**
+     * Instance of the model object
+     * @brief model
+     */
     Model* model;
     Displays* displays;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
+
+    /**
+     * Stores the current color active on the users brush
+     * @brief userColor
+     */
     QColor userColor; // User chosen color
 
     // Blank Canvas
@@ -63,10 +85,6 @@ private:
     bool drawing = false;
     QPointF currPixel;
 
-    enum class Tool{
-        BRUSH,
-        ERASER
-    };
     Tool currTool;
 
 private slots:
@@ -87,6 +105,10 @@ private slots:
     void setColor();
     void updateView();
 
+
+    void on_brushBttn_clicked();
+
+    void on_eraseBttn_clicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

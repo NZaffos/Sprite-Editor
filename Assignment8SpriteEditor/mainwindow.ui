@@ -360,6 +360,32 @@
      <string>(X:_, Y:_)</string>
     </property>
    </widget>
+   <widget class="QToolButton" name="brushBttn">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>30</y>
+      <width>71</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>brush</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="eraseBttn">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>100</y>
+      <width>71</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>eraser</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

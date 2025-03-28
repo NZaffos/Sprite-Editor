@@ -28,7 +28,9 @@ public:
      * @param userColor - new rgb value of the pixel
      */
     void setPixel(int x, int y, QColor userColor);
+    void erasePixel(int x, int y);
     void getPixel(int x, int y);
+    void setSelectColor(QColor color);
 
     int getCanvasX();
     int getCanvasY();

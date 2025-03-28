@@ -17,6 +17,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     userColor = QColor(0, 0, 0, 255);
 
+    currTool = Tool::BRUSH;
+
     scene = new QGraphicsScene(this);
     ui -> graphicsView -> setScene(scene);
 
@@ -308,14 +310,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                  currPixel = scenePos;
 
                  // Update pixel
-                 if (event->button() == Qt::LeftButton){
-                    //qDebug() << "alpha color is: " << userColor.alpha();
-                    model->setPixel(x, y, userColor);
+                 // Handle tool-specific actions
+                 switch(currTool) {
+                     case Tool::BRUSH:
+                         model->setPixel(x, y, userColor);  // Add brush logic here
+                         break; // <--- Add this
+                     case Tool::ERASER:
+                         model->erasePixel(x, y);
+                         break; // <--- Add this
+                     }
 
-                 } else if (event->button() == Qt::RightButton){
-                     // if right mouse button clicked - erease
-                     model->setPixel(x, y, QColor("rgba(0,0,0,0)"));
-                 }
                  updateView();
              }
          }
@@ -385,16 +389,18 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         // Update pixel
                         //qDebug() << "alpha color is: " << userColor.alpha();
 
-                        switch(currTool){
+                        switch(currTool) {
+                            case Tool::BRUSH:
+                                qDebug() << "using brush";
+                                model->setPixel(x, y, userColor);
+                                break; // <--- Add this
+                            case Tool::ERASER:
+                                qDebug() << "using eraser";
+                                model->erasePixel(x, y);
+                                break; // <--- Add this
+                            }
 
-                        }
-
-                        if (me->button() == Qt::LeftButton){
-                            qDebug() << "Left button";
-                        } else if (me->button() == Qt::RightButton){
-                            qDebug() << "Right Button";
-                        }
-                        model->setPixel(x, y, userColor.rgba());
+                        //model->setPixel(x, y, userColor.rgba());
 
                         // update current pixel
                         currPixel = scenePos;
@@ -411,3 +417,15 @@ void MainWindow::updateView(){
     scene->clear();
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
 }
+
+void MainWindow::on_brushBttn_clicked(){
+    currTool = Tool::BRUSH;
+    model->setSelectColor(QColor(0, 0, 0, 255)); // Black (to trigger blending)
+}
+
+void MainWindow::on_eraseBttn_clicked(){
+    currTool = Tool::ERASER;
+    model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
+}
+
+

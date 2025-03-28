@@ -2,7 +2,7 @@
 
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image->fill("rgba(0,0,0,0)");
+    image->fill(QColor(0, 0, 0, 50));
 }
 
 Model::~Model(){
@@ -64,6 +64,10 @@ void Model::setPixel(int x, int y, QColor userColor){
     // qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
 }
 
+void Model::erasePixel(int x, int y){
+    image->setPixelColor(x, y, QColor(0, 0, 0, 50));
+}
+
 void Model::getPixel(int x, int y){
     selectColor = image->pixelColor(x, y);
     //qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
@@ -75,6 +79,10 @@ int Model::getCanvasX(){
 
 int Model::getCanvasY(){
     return sizeY;
+}
+
+void Model::setSelectColor(QColor color){
+    selectColor = color;
 }
 
 QColor Model::blendAdditive(QColor src, QColor dest) {
