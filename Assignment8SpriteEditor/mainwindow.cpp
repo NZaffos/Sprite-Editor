@@ -293,7 +293,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
              int x = static_cast<int>(scenePos.x());
              int y = static_cast<int>(scenePos.y());
 
-             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+             //ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
              //qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
 
@@ -306,11 +306,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
                  // Update pixel
                  if (event->button() == Qt::LeftButton){
-                    qDebug() << "alpha color is: " << userColor.alpha();
+                    //qDebug() << "alpha color is: " << userColor.alpha();
                     model->setPixel(x, y, userColor);
+
                  } else if (event->button() == Qt::RightButton){
                      // if right mouse button clicked - erease
-                     model->setPixel(x, y, Qt::white);
+                     model->setPixel(x, y, QColor("rgba(0,0,0,0)"));
                  }
                  updateView();
              }

@@ -2,7 +2,7 @@
 
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image->fill("rgba(0,0,0,0");
+    image->fill("rgba(0,0,0,0)");
 }
 
 Model::~Model(){
@@ -42,9 +42,31 @@ void Model::removeFrame(unsigned int index) {
 // }
 
 void Model::setPixel(int x, int y, QColor userColor){
-    qDebug() << "select pixel at: " << x << ", " << y;
-    image->setPixel(x, y, userColor.rgba());
-    qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
+    getPixel(x, y);
+
+    //image->setPixelColor(x, y, userColor);
+
+    // if the pixel selected is empty
+    if (selectColor.red()   == 0
+     && selectColor.green() == 0
+     && selectColor.blue()  == 0
+     && selectColor.alpha() == 255
+    ){
+        qDebug() << "Pixel is empty";
+        image->setPixelColor(x, y, userColor);
+    } else {
+        QColor blendedColor = blendAdditive(userColor, selectColor);
+        image->setPixelColor(x, y, blendedColor); // Apply blended color
+    }
+
+    qDebug() << (selectColor == QColor(0, 0, 0, 255));
+
+    // qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
+}
+
+void Model::getPixel(int x, int y){
+    selectColor = image->pixelColor(x, y);
+    qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 
 int Model::getCanvasX(){
@@ -55,26 +77,20 @@ int Model::getCanvasY(){
     return sizeY;
 }
 
-// USE FOR ADDIVTIVE COLOR
+QColor Model::blendAdditive(QColor src, QColor dest) {
+    int redDest = dest.red(), greenDest = dest.green(), blueDest = dest.blue(), alphaDest = dest.alpha();
+    int redSrc = src.red(), greenSrc = src.green(), blueSrc = src.blue(), alphaSrc = src.alpha();
 
-// void Model::setPixel(int x, int y, QColor newColor) {
-//     QColor existingColor = image->pixelColor(x, y);  // Get the current pixel color
-//     QColor blendedColor = blendAdditive(existingColor, newColor);
-//     image->setPixelColor(x, y, blendedColor); // Apply blended color
-// }
+    // Compute new alpha
+    int alphaOverride = alphaSrc + alphaDest * (255 - alphaSrc) / 255;
+    if (alphaOverride == 0) return QColor(0, 0, 0, 0); // Fully transparent
 
-// QColor blendAdditive(QColor dest, QColor src) {
-//     int r_d = dest.red(), g_d = dest.green(), b_d = dest.blue(), a_d = dest.alpha();
-//     int r_s = src.red(), g_s = src.green(), b_s = src.blue(), a_s = src.alpha();
+    // Compute new RGB values
+    int redOverride = (redSrc * alphaSrc + redDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
+    int greenOverride = (greenSrc * alphaSrc + greenDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
+    int blueOverride = (blueSrc * alphaSrc + blueDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
 
-//     // Compute new alpha
-//     int a_o = a_s + a_d * (255 - a_s) / 255;
-//     if (a_o == 0) return QColor(0, 0, 0, 0); // Fully transparent
+    qDebug() << "Blended color is: " << "red: " << redOverride << "green: " << greenOverride << "blue: " << blueOverride << "alpha: " << alphaOverride;
 
-//     // Compute new RGB values
-//     int r_o = (r_s * a_s + r_d * a_d * (255 - a_s) / 255) / a_o;
-//     int g_o = (g_s * a_s + g_d * a_d * (255 - a_s) / 255) / a_o;
-//     int b_o = (b_s * a_s + b_d * a_d * (255 - a_s) / 255) / a_o;
-
-//     return QColor(r_o, g_o, b_o, a_o);
-// }
+    return QColor(redOverride, greenOverride, blueOverride, alphaOverride);
+}

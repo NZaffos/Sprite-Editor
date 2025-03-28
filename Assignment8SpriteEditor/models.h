@@ -28,7 +28,7 @@ public:
      * @param userColor - new rgb value of the pixel
      */
     void setPixel(int x, int y, QColor userColor);
-    void getPixel(QPointF currPixel);
+    void getPixel(int x, int y);
 
     int getCanvasX();
     int getCanvasY();
@@ -59,6 +59,8 @@ private:
     void mousePressEvent(QMouseEvent *event);
 
     QColor selectColor;
+
+    QColor blendAdditive(QColor dest, QColor src);
 
 private slots:
 
