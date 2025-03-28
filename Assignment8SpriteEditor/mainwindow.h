@@ -1,8 +1,12 @@
+/**
+ *
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 // Includes for different QT Objects
 #include <QMainWindow>
+using std::string;
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qpushbutton.h>
@@ -38,16 +42,35 @@ public:
     MainWindow(Model* model, QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * an enum class to hold all possible tools available to the user
+     * @brief The Tool enum
+     */
+    enum class Tool{
+        BRUSH,
+        ERASER
+    };
+    Q_ENUM(Tool)
+
 public slots:
     void drawAnimationIcon(int index);
 
 private:
     Ui::MainWindow *ui;
 
+    /**
+     * Instance of the model object
+     * @brief model
+     */
     Model* model;
     Displays* displays;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
+
+    /**
+     * Stores the current color active on the users brush
+     * @brief userColor
+     */
     QColor userColor; // User chosen color
 
     // Palette elements
@@ -72,6 +95,8 @@ private:
 
     bool drawing = false;
     QPointF currPixel;
+
+    Tool currTool;
 
 private slots:
     // Sliders and Value Labels
@@ -103,13 +128,12 @@ private slots:
     void setColor();
     void updateView();
 
-
-private slots:
-
+    void on_brushBttn_clicked();
+    void on_eraseBttn_clicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
+
 #endif // MAINWINDOW_H

@@ -25,6 +25,12 @@ public:
      * @param userColor - new rgb value of the pixel
      */
     void setPixel(int x, int y, QColor userColor);
+    void erasePixel(int x, int y);
+    void getPixel(int x, int y);
+    void setSelectColor(QColor color);
+
+    int getCanvasX();
+    int getCanvasY();
 
     /**
      * Adds a new frame to the animation
@@ -106,6 +112,12 @@ private:
     int animationFps = 1;
 
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleasedEvent(QMouseEvent *event);
+
+    QColor selectColor;
+
+    QColor blendAdditive(QColor dest, QColor src);
 
 private slots:
     void updateAnimationFrame(int index);

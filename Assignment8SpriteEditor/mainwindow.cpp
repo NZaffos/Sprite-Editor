@@ -19,6 +19,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     userColor = QColor(0, 0, 0, 255);
 
+    currTool = Tool::BRUSH;
+
     scene = new QGraphicsScene(this);
     ui -> graphicsView -> setScene(scene);
 
@@ -27,14 +29,20 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     // Ensure the scenes area matches the pixmap
     scene -> setSceneRect(scene -> itemsBoundingRect());
-
+      
     createFrameButton();
+      
+    // Get user canvas size
+    int canvasX = 725/model -> getCanvasX();
+    int canvasY = 725/model -> getCanvasY();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    ui->graphicsView->scale(10,10);
+    ui->graphicsView->scale(canvasX, canvasY);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    ui->graphicsView->viewport()->installEventFilter(this);
 
     // Enable mouse tracking
     ui -> graphicsView -> setMouseTracking(true);
@@ -261,6 +269,7 @@ void MainWindow::removeColorFromPalette(unsigned int index) {
 }
 
 void MainWindow::setColor() {
+
 }
 
 void MainWindow::setSliders(){
@@ -282,7 +291,7 @@ void MainWindow::updateSlider(int value) {
     } else if (slider == ui->blueSlider) {
         colorComponent = "blue";
     } else if (slider == ui->alphaSlider) {
-        colorComponent = "all";
+        colorComponent = "alpha";
     }
 
     updateSliderStyle(slider, value, colorComponent);  // Update the style for the corresponding slider
@@ -302,9 +311,10 @@ void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &co
         color = QString("rgb(0, 0, %1)").arg(value);
         userColor.setBlue(value);
         ui->blueSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "all") {
+    } else if (colorComponent == "alpha") {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
+        qDebug() << "alpha color is: " << userColor.alpha();
         ui->alphaSliderIO->setText(QString::number(value));
     }
 
@@ -413,7 +423,8 @@ MainWindow::~MainWindow()
 //     update(QRect(lastPoint, endPoint).normal)
 // }
 
- void MainWindow::mousePressEvent(QMouseEvent *event){
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    qDebug() << "mouse is pressed";
      if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton){
          // convert mouse click to global coordinates in mainwindow
          QPoint globalPos = event->globalPosition().toPoint();
@@ -431,6 +442,8 @@ MainWindow::~MainWindow()
              int x = static_cast<int>(scenePos.x());
              int y = static_cast<int>(scenePos.y());
 
+             //ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+
              //qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
 
              // Check if in image bounds
@@ -441,57 +454,108 @@ MainWindow::~MainWindow()
                  currPixel = scenePos;
 
                  // Update pixel
-                 if (event->button() == Qt::LeftButton){
-                    model->setPixel(x, y, userColor.rgba());
-                 } else if (event->button() == Qt::RightButton){
-                     // if right mouse button clicked - erease
-                     model->setPixel(x, y, Qt::white);
-                 }
+                 // Handle tool-specific actions
+                 switch(currTool) {
+                     case Tool::BRUSH:
+                         model->setPixel(x, y, userColor);  // Add brush logic here
+                         break; // <--- Add this
+                     case Tool::ERASER:
+                         model->erasePixel(x, y);
+                         break; // <--- Add this
+                     }
+
                  updateView();
              }
          }
      }
  }
 
- void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    qDebug() << "select pixel at scene Position";
-    if (drawing && (event -> button() == Qt::LeftButton)){
-        // map global coordinates to the graphicView's local coordinates
-        QPoint viewPos = ui -> graphicsView -> mapFromGlobal(event -> globalPosition().toPoint());
+// void MainWindow::mouseMoveEvent(QMouseEvent *event){
+//     qDebug() << "mouse is moving";
+//     if (drawing && (event->buttons() & Qt::LeftButton)){
+//         // map global coordinates to the graphicView's local coordinates
+//         QPoint viewPos = ui->graphicsView->mapFromGlobal(event->globalPosition().toPoint());
 
-        qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
+//         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
 
-        if (ui -> graphicsView -> rect().contains(viewPos)){
-            // Map to scene coordinates
-            QPointF scenePos = ui -> graphicsView ->mapToScene(viewPos);
+//         if (ui->graphicsView->rect().contains(viewPos)) {
+//             // Map to scene coordinates
+//             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-            // Get pixel position
+//             // Get pixel position
+//             int x = static_cast<int>(scenePos.x());
+//             int y = static_cast<int>(scenePos.y());
+
+//             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+
+//             // Check if moving from current pixel position
+//             if(x != currPixel.x() || y != currPixel.y()){
+//                 // Check if in image bounds
+//                 if (x >= 0 && x < model->getImage()->width() &&
+//                     y >= 0 && y < model->getImage()->height()) {
+
+//                     // Update pixel
+//                     qDebug() << "alpha color is: " << userColor.alpha();
+//                     model->setPixel(x, y, userColor.rgba());
+
+//                     // update current pixel
+//                     currPixel = scenePos;
+//                     updateView();
+//                 }
+//             }
+//         }
+//     }
+// }
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->graphicsView->viewport()) {
+        if (event->type() == QEvent::MouseMove) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+            QPoint localPos = mouseEvent->pos();
+            QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
+            QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
+            QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
+
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
+            ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            // Check if moving from current pixel position
-            if(x != currPixel.x() || y != currPixel.y()){
-                // Check if in image bounds
-                if (x >= 0 && x < model -> getImage() -> width() &&
-                    y >= 0 && y < model -> getImage() -> height()){
+            QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
-                    // Update pixel
-                    model -> setPixel(x, y, userColor.rgba());
+            if (me->buttons() & (Qt::LeftButton | Qt::RightButton)) {
+                // Check if moving from current pixel position
+                if(x != currPixel.x() || y != currPixel.y()){
+                    // Check if in image bounds
+                    if (x >= 0 && x < model->getImage()->width() &&
+                        y >= 0 && y < model->getImage()->height()) {
 
-                    // update current pixel
-                    currPixel = scenePos;
-                    updateView();
+                        // Update pixel
+                        //qDebug() << "alpha color is: " << userColor.alpha();
+
+                        switch(currTool) {
+                            case Tool::BRUSH:
+                                qDebug() << "using brush";
+                                model->setPixel(x, y, userColor);
+                                break; // <--- Add this
+                            case Tool::ERASER:
+                                qDebug() << "using eraser";
+                                model->erasePixel(x, y);
+                                break; // <--- Add this
+                            }
+
+                        //model->setPixel(x, y, userColor.rgba());
+
+                        // update current pixel
+                        currPixel = scenePos;
+                        updateView();
+                    }
                 }
             }
         }
     }
- }
-
- void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-     if (event -> button() == Qt::LeftButton){
-         drawing = false;
-     }
- }
+return QObject::eventFilter(obj, event);
+}
 
 void MainWindow::updateView(){
     scene->clear();
@@ -501,3 +565,15 @@ void MainWindow::updateView(){
     }
 
 }
+
+void MainWindow::on_brushBttn_clicked(){
+    currTool = Tool::BRUSH;
+    model->setSelectColor(QColor(0, 0, 0, 255)); // Black (to trigger blending)
+}
+
+void MainWindow::on_eraseBttn_clicked(){
+    currTool = Tool::ERASER;
+    model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
+}
+
+
