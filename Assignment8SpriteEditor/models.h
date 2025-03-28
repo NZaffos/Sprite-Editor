@@ -57,6 +57,8 @@ private:
     QImage *image;
 
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleasedEvent(QMouseEvent *event);
 
     QColor selectColor;
 

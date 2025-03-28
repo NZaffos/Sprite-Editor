@@ -36,6 +36,8 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    ui->graphicsView->viewport()->installEventFilter(this);
+
     // Enable mouse tracking
     ui -> graphicsView -> setMouseTracking(true);
     ui -> graphicsView -> viewport() -> setMouseTracking(true);
@@ -276,6 +278,7 @@ MainWindow::~MainWindow()
 // }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
+    qDebug() << "mouse is pressed";
      if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton){
          // convert mouse click to global coordinates in mainwindow
          QPoint globalPos = event->globalPosition().toPoint();
@@ -318,45 +321,79 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
      }
  }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    qDebug() << "select pixel at scene Position";
-    if (drawing && (event->button() == Qt::LeftButton)){
-        // map global coordinates to the graphicView's local coordinates
-        QPoint viewPos = ui->graphicsView->mapFromGlobal(event->globalPosition().toPoint());
+// void MainWindow::mouseMoveEvent(QMouseEvent *event){
+//     qDebug() << "mouse is moving";
+//     if (drawing && (event->buttons() & Qt::LeftButton)){
+//         // map global coordinates to the graphicView's local coordinates
+//         QPoint viewPos = ui->graphicsView->mapFromGlobal(event->globalPosition().toPoint());
 
-        qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
+//         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
 
-        if (ui->graphicsView->rect().contains(viewPos)) {
-            // Map to scene coordinates
+//         if (ui->graphicsView->rect().contains(viewPos)) {
+//             // Map to scene coordinates
+//             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
+
+//             // Get pixel position
+//             int x = static_cast<int>(scenePos.x());
+//             int y = static_cast<int>(scenePos.y());
+
+//             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+
+//             // Check if moving from current pixel position
+//             if(x != currPixel.x() || y != currPixel.y()){
+//                 // Check if in image bounds
+//                 if (x >= 0 && x < model->getImage()->width() &&
+//                     y >= 0 && y < model->getImage()->height()) {
+
+//                     // Update pixel
+//                     qDebug() << "alpha color is: " << userColor.alpha();
+//                     model->setPixel(x, y, userColor.rgba());
+
+//                     // update current pixel
+//                     currPixel = scenePos;
+//                     updateView();
+//                 }
+//             }
+//         }
+//     }
+// }
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->graphicsView->viewport()) {
+        if (event->type() == QEvent::MouseMove) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+            QPoint localPos = mouseEvent->pos();
+            QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
+            QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-            // Get pixel position
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
+            ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            // Check if moving from current pixel position
-            if(x != currPixel.x() || y != currPixel.y()){
-                // Check if in image bounds
-                if (x >= 0 && x < model->getImage()->width() &&
-                    y >= 0 && y < model->getImage()->height()) {
+            QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
-                    // Update pixel
-                    qDebug() << "alpha color is: " << userColor.alpha();
-                    model->setPixel(x, y, userColor.rgba());
+            if (me->buttons() & Qt::LeftButton) {
+                // Check if moving from current pixel position
+                if(x != currPixel.x() || y != currPixel.y()){
+                    // Check if in image bounds
+                    if (x >= 0 && x < model->getImage()->width() &&
+                        y >= 0 && y < model->getImage()->height()) {
 
-                    // update current pixel
-                    currPixel = scenePos;
-                    updateView();
+                        // Update pixel
+                        qDebug() << "alpha color is: " << userColor.alpha();
+                        model->setPixel(x, y, userColor.rgba());
+
+                        // update current pixel
+                        currPixel = scenePos;
+                        updateView();
+                    }
                 }
             }
         }
     }
-}
-
-void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-    if (event->button() == Qt::LeftButton) {
-         drawing = false;
-    }
+return QObject::eventFilter(obj, event);
 }
 
 void MainWindow::updateView(){
