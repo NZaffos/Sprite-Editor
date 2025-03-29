@@ -10,7 +10,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
     // New Displays
     displays = new Displays(model);
-    palette = new Palette(ui, userColor);
+    palette = new Palette(ui, model, userColor);
 
     setAnimationFpsSlider();
 
@@ -90,6 +90,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             palette,
             [this]()
             { palette->addColorToPalette(); });
+    connect(ui->deleteFromColoPalette,
+            &QToolButton::clicked,
+            palette,
+            &Palette::removeColorFromPalette);
 
     // Frame selector
     connect(ui->deleteFrameButton,
@@ -114,10 +118,13 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &MainWindow::shiftFrameUpClicked);
 
     // Animation fps slider connect
-    connect(ui->animationFpsSlider, &QSlider::valueChanged,
-            model, &Model::sliderValueChanged);
+    connect(ui->animationFpsSlider,
+            &QSlider::valueChanged,
+            model,
+            &Model::sliderValueChanged);
     connect(model, &Model::updateAnimationIcon,
-            this, &MainWindow::drawAnimationIcon);
+            this,
+            &MainWindow::drawAnimationIcon);
 } // End of constructor
 
 void MainWindow::setAnimationFpsSlider()

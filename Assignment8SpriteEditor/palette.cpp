@@ -1,9 +1,11 @@
 #include "palette.h"
 
-Palette::Palette(Ui::MainWindow *ui, QColor &userColor, QObject *parent)
-    : QObject(parent), ui(ui), userColor(userColor)
+Palette::Palette(Ui::MainWindow *ui, Model* model, QColor &userColor, QObject *parent)
+    : QObject(parent), ui(ui), userColor(userColor), model(model)
 {
     setColorPalette();
+    setSLiderTextEdits();
+    setSliders();
 }
 
 void Palette::setColorPalette()
@@ -27,25 +29,55 @@ void Palette::addColorToPalette()
 {
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
+
     colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
         .arg(userColor.red())
         .arg(userColor.green())
         .arg(userColor.blue())
         .arg(userColor.alpha()));
 
-    int row = colorButtons.size() / paletteCols;
-    int col = colorButtons.size() % paletteCols;
+    unsigned int index = colorButtons.size();
+
+    int row = index / paletteCols;
+    int col = index % paletteCols;
+
     paletteLayout->addWidget(colorButton, row, col);
 
     colorButtons.append(colorButton);
+
+    model->addToPalette(userColor);
+
+    connect(colorButton,
+            &QPushButton::pressed,
+            this,
+            [=]() {colorButtonPress(index);
+            });
 }
 
-// void ColorPalette::removeColorFromPalette(unsigned int index) {
-// }
+void Palette::removeColorFromPalette() {
+    if (!deleteButtonActive) {
+        return;
+    }
+    model->removeFromPalette(currentColorButtonIndex);
 
-// void ColorPalette::setColor() {
+    paletteLayout->removeWidget(colorButtons.at(currentColorButtonIndex));
 
-// }
+    deleteButtonActive = false;
+}
+
+void Palette::colorButtonPress(int index) {
+    qDebug() << "Button at index" << index << "was pressed!";
+
+    // Example: Retrieve button color
+    QPushButton *button = colorButtons.at(index);
+
+    deleteButtonActive = true;
+    currentColorButtonIndex = index;
+
+    QColor color = model->getColorFromPalette(index);
+    userColor = color;
+
+}
 
 void Palette::setSliders()
 {
