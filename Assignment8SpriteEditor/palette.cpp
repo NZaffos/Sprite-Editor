@@ -3,18 +3,19 @@
 Palette::Palette(Ui::MainWindow *ui, QColor &userColor, QObject *parent)
     : QObject(parent), ui(ui), userColor(userColor)
 {
+    setColorPalette();
 }
 
 void Palette::setColorPalette()
 {
-    paletteScrollArea = ui->colorPalette;              // The QScrollArea
-    paletteContainer = ui->colorPaletteScrollContents; // The inner QWidget
+    paletteScrollArea = ui->colorPalette;
+    paletteContainer = ui->colorPaletteScrollContents;
 
     paletteLayout = new QGridLayout();
     paletteLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    paletteLayout->setHorizontalSpacing(2);         // Reduce space between columns
-    paletteLayout->setVerticalSpacing(2);           // Reduce space between rows
-    paletteLayout->setContentsMargins(6, 10, 0, 0); // Remove extra margins
+    paletteLayout->setHorizontalSpacing(2);
+    paletteLayout->setVerticalSpacing(2);
+    paletteLayout->setContentsMargins(6, 10, 0, 0);
 
     paletteContainer->setLayout(paletteLayout);
 
@@ -27,10 +28,10 @@ void Palette::addColorToPalette()
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
     colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-                                   .arg(userColor.red())
-                                   .arg(userColor.green())
-                                   .arg(userColor.blue())
-                                   .arg(userColor.alpha()));
+        .arg(userColor.red())
+        .arg(userColor.green())
+        .arg(userColor.blue())
+        .arg(userColor.alpha()));
 
     int row = colorButtons.size() / paletteCols;
     int col = colorButtons.size() % paletteCols;
@@ -110,10 +111,10 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
     }
 
     QString colorStyle = QString("background-color: rgba(%1, %2, %3, %4);")
-                             .arg(userColor.red())
-                             .arg(userColor.green())
-                             .arg(userColor.blue())
-                             .arg(userColor.alpha());
+        .arg(userColor.red())
+        .arg(userColor.green())
+        .arg(userColor.blue())
+        .arg(userColor.alpha());
 
     ui->currentColor->setStyleSheet(colorStyle);
 
@@ -141,8 +142,7 @@ QString Palette::getSliderStyleSheet(QString color)
                "    width: 16px;"
                "    margin: -6px 0;"
                "    border-radius: 8px;"
-               "}")
-        .arg(color);
+               "}").arg(color);
 }
 
 void Palette::setSLiderTextEdits()
@@ -156,14 +156,13 @@ void Palette::setSLiderTextEdits()
 void Palette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color)
 {
     QString style = QString(
-                        "QLineEdit {"
-                        "    background-color: %1;"
-                        "    color: white;" // Brighten text
-                        "    border: 1px solid #555;"
-                        "    border-radius: 4px;"
-                        "    padding: 2px 4px;"
-                        "}")
-                        .arg(Color);
+        "QLineEdit {"
+        "    background-color: %1;"
+        "    color: white;" // Brighten text
+        "    border: 1px solid #555;"
+        "    border-radius: 4px;"
+        "    padding: 2px 4px;"
+        "}").arg(Color);
 
     textEdit->setStyleSheet(style);
 }
