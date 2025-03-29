@@ -3,7 +3,7 @@
 
 // This is the view class IMPORTANT:
 // Delete this comment before submission!!!
-MainWindow::MainWindow(Model* model, QWidget *parent)
+MainWindow::MainWindow(Model *model, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), model(model)
 {
     ui->setupUi(this);
@@ -12,32 +12,28 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     displays = new Displays(model);
     palette = new Palette(ui, userColor);
 
-    setSliders();
-    setSLiderTextEdits();
-    setColorPalette();
     setAnimationFpsSlider();
 
     setFrameSelector();
-
 
     userColor = QColor(0, 0, 0, 255);
 
     currTool = Tool::BRUSH;
 
     scene = new QGraphicsScene(this);
-    ui -> graphicsView -> setScene(scene);
+    ui->graphicsView->setScene(scene);
 
     // Add the pixmap to the scene
-    scene -> addPixmap(QPixmap::fromImage(*model -> getImage()));
+    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
 
     // Ensure the scenes area matches the pixmap
-    scene -> setSceneRect(scene -> itemsBoundingRect());
+    scene->setSceneRect(scene->itemsBoundingRect());
 
     createFrameButton();
 
     // Get user canvas size
-    int canvasX = 725/model -> getCanvasX();
-    int canvasY = 725/model -> getCanvasY();
+    int canvasX = 725 / model->getCanvasX();
+    int canvasY = 725 / model->getCanvasY();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
@@ -48,10 +44,10 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui->graphicsView->viewport()->installEventFilter(this);
 
     // Enable mouse tracking
-    ui -> graphicsView -> setMouseTracking(true);
-    ui -> graphicsView -> viewport() -> setMouseTracking(true);
+    ui->graphicsView->setMouseTracking(true);
+    ui->graphicsView->viewport()->setMouseTracking(true);
 
-    //Connects
+    // Connects
     connect(ui->redSlider,
             &QSlider::valueChanged,
             palette,
@@ -91,24 +87,30 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     // Color Palette
     connect(ui->addToPaletteButton,
             &QToolButton::clicked,
-            this,
-            [this]() {addColorToPalette();});
+            palette,
+            [this]()
+            { palette->addColorToPalette(); });
 
     // Frame selector
     connect(ui->deleteFrameButton,
-            &QPushButton::clicked, this,
+            &QPushButton::clicked,
+            this,
             &MainWindow::deleteFrame);
     connect(ui->addFrameButton,
-            &QPushButton::clicked, this,
+            &QPushButton::clicked,
+            this,
             &MainWindow::addFrameButtonClicked);
     connect(ui->dublicateFrameButton,
-            &QPushButton::clicked, this,
+            &QPushButton::clicked,
+            this,
             &MainWindow::duplicateFrameButtonClicked);
     connect(ui->shiftDownFrameButton,
-            &QPushButton::clicked, this,
+            &QPushButton::clicked,
+            this,
             &MainWindow::shiftFrameDownClicked);
     connect(ui->shiftUpFrameButton,
-            &QPushButton::clicked, this,
+            &QPushButton::clicked,
+            this,
             &MainWindow::shiftFrameUpClicked);
 
     // Animation fps slider connect
@@ -116,23 +118,41 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             model, &Model::sliderValueChanged);
     connect(model, &Model::updateAnimationIcon,
             this, &MainWindow::drawAnimationIcon);
-            palette,
-            [this]() {palette->addColorToPalette();
-            });
 } // End of constructor
 
-void MainWindow::setAnimationFpsSlider() {
-    QString sliderStyle = getSliderStyleSheet();
-    ui->animationFpsSlider->setStyleSheet(sliderStyle);
+void MainWindow::setAnimationFpsSlider()
+{
+    QString style =
+        "QSlider::groove:horizontal {"
+        "    border: 1px solid #999;"
+        "    height: 8px;"
+        "    background: #333;"
+        "    margin: 2px 0;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal {"
+        "    background: white;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "    background: white;"
+        "    border: 1px solid black;"
+        "    width: 16px;"
+        "    margin: -6px 0;"
+        "    border-radius: 8px;"
+        "}";
+    ui->animationFpsSlider->setStyleSheet(style);
     ui->animationFpsSlider->setRange(1, 60);
 }
 
-void MainWindow::drawAnimationIcon(int index) {
+void MainWindow::drawAnimationIcon(int index)
+{
     QPixmap newImage = model->getFrameThumbnail(index, 210, 210);
     ui->animationDisplayLabel->setPixmap(newImage);
 }
 
-void MainWindow::setFrameSelector() {
+void MainWindow::setFrameSelector()
+{
     framesScrollArea = ui->frameSelector;
     framesContainer = ui->frameSelectorScrollContent;
 
@@ -146,8 +166,9 @@ void MainWindow::setFrameSelector() {
     framesScrollArea->setWidgetResizable(true);
 }
 
-void MainWindow::createFrameButton(){
-    QPushButton* frameButton = new QPushButton();
+void MainWindow::createFrameButton()
+{
+    QPushButton *frameButton = new QPushButton();
 
     frameButton->setProperty("frameIndex", frameButtons.size());
     updateFrameButtonIcon(frameButton);
@@ -157,9 +178,10 @@ void MainWindow::createFrameButton(){
     frameButtons.append(frameButton);
 }
 
-QPushButton* MainWindow::updateFrameButtonIcon(QPushButton* button) {
+QPushButton *MainWindow::updateFrameButtonIcon(QPushButton *button)
+{
     int index = button->property("frameIndex").toInt();
-    //button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }"); // Use to change color of frame
+    // button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }"); // Use to change color of frame
     QPixmap thumbnail = model->getFrameThumbnail(index, 80, 80);
     button->setIcon(QIcon(thumbnail));
     button->setIconSize(thumbnail.size());
@@ -168,9 +190,11 @@ QPushButton* MainWindow::updateFrameButtonIcon(QPushButton* button) {
     return button;
 }
 
-void MainWindow::frameButtonClicked() {
-    QPushButton* button = qobject_cast<QPushButton*>(sender());
-    if(button) {
+void MainWindow::frameButtonClicked()
+{
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
+    if (button)
+    {
         int index = button->property("frameIndex").toInt();
         qDebug() << "frameIndex: " << index;
         model->selectFrame(index);
@@ -180,18 +204,20 @@ void MainWindow::frameButtonClicked() {
     }
 }
 
-void MainWindow::deleteFrame() {
-    if(model->getFrames().size() <= 1)
+void MainWindow::deleteFrame()
+{
+    if (model->getFrames().size() <= 1)
         return;
 
     model->removeFrame(selectedFrameIndex);
 
-    QPushButton* buttonToRemove = frameButtons[selectedFrameIndex];
+    QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
     framesLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
     frameButtons.remove(selectedFrameIndex);
 
-    for (int i = selectedFrameIndex; i < frameButtons.size(); i++) {
+    for (int i = selectedFrameIndex; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -200,7 +226,8 @@ void MainWindow::deleteFrame() {
     updateView();
 }
 
-void MainWindow::addFrameButtonClicked() {
+void MainWindow::addFrameButtonClicked()
+{
     model->addFrame();
     createFrameButton();
     selectedFrameIndex = model->getCurrentFrameIndex();
@@ -208,7 +235,8 @@ void MainWindow::addFrameButtonClicked() {
     updateView();
 }
 
-void MainWindow::duplicateFrameButtonClicked() {
+void MainWindow::duplicateFrameButtonClicked()
+{
     model->duplicateFrame();
     createFrameButton();
     selectedFrameIndex = model->getCurrentFrameIndex();
@@ -216,8 +244,9 @@ void MainWindow::duplicateFrameButtonClicked() {
     updateView();
 }
 
-void MainWindow::shiftFrameUpClicked() {
-    if(selectedFrameIndex <= 0)
+void MainWindow::shiftFrameUpClicked()
+{
+    if (selectedFrameIndex <= 0)
         return;
 
     model->shiftFrameUp();
@@ -227,7 +256,8 @@ void MainWindow::shiftFrameUpClicked() {
     updateView();
 }
 
-void MainWindow::shiftFrameDownClicked() {
+void MainWindow::shiftFrameDownClicked()
+{
     if (selectedFrameIndex >= frameButtons.size() - 1)
         return;
 
@@ -236,174 +266,6 @@ void MainWindow::shiftFrameDownClicked() {
     updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
 
     updateView();
-}
-
-void MainWindow::setColorPalette() {
-    paletteScrollArea = ui->colorPalette;  // The QScrollArea
-    paletteContainer = ui->colorPaletteScrollContents; // The inner QWidget
-
-    paletteLayout = new QGridLayout();
-    paletteLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    paletteLayout->setHorizontalSpacing(2);  // Reduce space between columns
-    paletteLayout->setVerticalSpacing(2);    // Reduce space between rows
-    paletteLayout->setContentsMargins(6, 10, 0, 0);  // Remove extra margins
-
-    paletteContainer->setLayout(paletteLayout);
-
-    paletteScrollArea->setWidget(paletteContainer);
-    paletteScrollArea->setWidgetResizable(true);
-
-}
-
-void MainWindow::addColorToPalette() {
-    QPushButton *colorButton = new QPushButton();
-    colorButton->setFixedSize(25, 25);
-    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-        .arg(userColor.red())
-        .arg(userColor.green())
-        .arg(userColor.blue())
-        .arg(userColor.alpha()));
-
-    int row = colorButtons.size() / paletteCols;
-    int col = colorButtons.size() % paletteCols;
-    paletteLayout->addWidget(colorButton, row, col);
-
-    colorButtons.append(colorButton);
-}
-
-void MainWindow::removeColorFromPalette(unsigned int index) {
-}
-
-void MainWindow::setColor() {
-
-}
-
-void MainWindow::setSliders(){
-    QString sliderStyle = getSliderStyleSheet();
-    ui->redSlider->setStyleSheet(sliderStyle);
-    ui->greenSlider->setStyleSheet(sliderStyle);
-    ui->blueSlider->setStyleSheet(sliderStyle);
-    ui->alphaSlider->setStyleSheet(sliderStyle);
-}
-
-void MainWindow::updateSlider(int value) {
-    QSlider *slider = qobject_cast<QSlider *>(sender());  // Get the slider that sent the signal
-
-    QString colorComponent;
-    if (slider == ui->redSlider) {
-        colorComponent = "red";
-    } else if (slider == ui->greenSlider) {
-        colorComponent = "green";
-    } else if (slider == ui->blueSlider) {
-        colorComponent = "blue";
-    } else if (slider == ui->alphaSlider) {
-        colorComponent = "alpha";
-    }
-
-    updateSliderStyle(slider, value, colorComponent);  // Update the style for the corresponding slider
-}
-
-void MainWindow::updateSliderStyle(QSlider *slider, int value, const QString &colorComponent) {
-    QString color;
-    if (colorComponent == "red") {
-        color = QString("rgb(%1, 0, 0)").arg(value);
-        userColor.setRed(value);
-        ui->redSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "green") {
-        color = QString("rgb(0, %1, 0)").arg(value);
-        userColor.setGreen(value);
-        ui->greenSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "blue") {
-        color = QString("rgb(0, 0, %1)").arg(value);
-        userColor.setBlue(value);
-        ui->blueSliderIO->setText(QString::number(value));
-    } else if (colorComponent == "alpha") {
-        color = QString("rgb(%1, %1, %1)").arg(value);
-        userColor.setAlpha(value);
-        qDebug() << "alpha color is: " << userColor.alpha();
-        ui->alphaSliderIO->setText(QString::number(value));
-    }
-
-    QString colorStyle = QString("background-color: rgba(%1, %2, %3, %4);")
-        .arg(userColor.red())
-        .arg(userColor.green())
-        .arg(userColor.blue())
-        .arg(userColor.alpha());
-
-    ui->currentColor->setStyleSheet(colorStyle);
-
-    QString style = getSliderStyleSheet(color);
-    slider->setStyleSheet(style);
-
-}
-
-QString MainWindow::getSliderStyleSheet(QString color) {
-    return QString(
-        "QSlider::groove:horizontal {"
-        "    border: 1px solid #999;"
-        "    height: 8px;"
-        "    background: #333;"
-        "    margin: 2px 0;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::sub-page:horizontal {"
-        "    background: %1;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::handle:horizontal {"
-        "    background: white;"
-        "    border: 1px solid black;"
-        "    width: 16px;"
-        "    margin: -6px 0;"
-        "    border-radius: 8px;"
-        "}")
-        .arg(color);
-}
-
-void MainWindow::setSLiderTextEdits() {
-    updateTextEditStyle(ui->redSliderIO, "rgb(0, 0, 0)");
-    updateTextEditStyle(ui->greenSliderIO, "rgb(0, 0, 0)");
-    updateTextEditStyle(ui->blueSliderIO, "rgb(0, 0, 0)");
-    updateTextEditStyle(ui->alphaSliderIO, "rgb(0, 0, 0)");
-}
-
-void MainWindow::updateTextEditStyle(QLineEdit *textEdit, const QString &Color) {
-    QString style = QString(
-        "QLineEdit {"
-        "    background-color: %1;"
-        "    color: white;"  // Brighten text
-        "    border: 1px solid #555;"
-        "    border-radius: 4px;"
-        "    padding: 2px 4px;"
-        "}"
-        ).arg(Color);
-
-    textEdit->setStyleSheet(style);
-}
-
-void MainWindow::sliderIOValue() {
-    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
-    bool ok;
-    int value = lineEdit->text().toInt(&ok);
-
-    if (!ok || value < 0) {
-        value = 0;
-    } else if (value > 255) {
-        value = 255;
-    }
-
-    lineEdit->setText(QString::number(value));
-
-    // Update the corresponding slider
-    if (lineEdit == ui->redSliderIO) {
-        ui->redSlider->setValue(value);
-    } else if (lineEdit == ui->greenSliderIO) {
-        ui->greenSlider->setValue(value);
-    } else if (lineEdit == ui->blueSliderIO) {
-        ui->blueSlider->setValue(value);
-    } else if (lineEdit == ui->alphaSliderIO) {
-        ui->alphaSlider->setValue(value);
-    }
 }
 
 MainWindow::~MainWindow()
@@ -427,51 +289,56 @@ MainWindow::~MainWindow()
 //     update(QRect(lastPoint, endPoint).normal)
 // }
 
-void MainWindow::mousePressEvent(QMouseEvent *event){
-     if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton){
-         // convert mouse click to global coordinates in mainwindow
-         QPoint globalPos = event->globalPosition().toPoint();
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)
+    {
+        // convert mouse click to global coordinates in mainwindow
+        QPoint globalPos = event->globalPosition().toPoint();
 
-         // map global coordinates to the graphicView's local coordinates
-         QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
+        // map global coordinates to the graphicView's local coordinates
+        QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
 
-         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
+        qDebug() << "select pixel at scene Position: " << viewPos.x() / 10 << ", " << viewPos.y() / 10;
 
-         if (ui->graphicsView->rect().contains(viewPos)){
-             // Map to scene coordinates
-             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
+        if (ui->graphicsView->rect().contains(viewPos))
+        {
+            // Map to scene coordinates
+            QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-             // Get pixel position
-             int x = static_cast<int>(scenePos.x());
-             int y = static_cast<int>(scenePos.y());
+            // Get pixel position
+            int x = static_cast<int>(scenePos.x());
+            int y = static_cast<int>(scenePos.y());
 
-             //ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
+            // ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-             //qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
+            // qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
 
-             // Check if in image bounds
-             if (x >= 0 && x < model->getImage()->width() &&
-                 y >= 0 && y < model->getImage()->height()){
+            // Check if in image bounds
+            if (x >= 0 && x < model->getImage()->width() &&
+                y >= 0 && y < model->getImage()->height())
+            {
 
-                 drawing = true;
-                 currPixel = scenePos;
+                drawing = true;
+                currPixel = scenePos;
 
-                 // Update pixel
-                 // Handle tool-specific actions
-                 switch(currTool) {
-                     case Tool::BRUSH:
-                         model->setPixel(x, y, userColor);  // Add brush logic here
-                         break; // <--- Add this
-                     case Tool::ERASER:
-                         model->erasePixel(x, y);
-                         break; // <--- Add this
-                     }
+                // Update pixel
+                // Handle tool-specific actions
+                switch (currTool)
+                {
+                case Tool::BRUSH:
+                    model->setPixel(x, y, userColor); // Add brush logic here
+                    break;                            // <--- Add this
+                case Tool::ERASER:
+                    model->erasePixel(x, y);
+                    break; // <--- Add this
+                }
 
-                 updateView();
-             }
-         }
-     }
- }
+                updateView();
+            }
+        }
+    }
+}
 
 // void MainWindow::mouseMoveEvent(QMouseEvent *event){
 //     qDebug() << "mouse is moving";
@@ -512,9 +379,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->graphicsView->viewport()) {
-        if (event->type() == QEvent::MouseMove) {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+    if (obj == ui->graphicsView->viewport())
+    {
+        if (event->type() == QEvent::MouseMove)
+        {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             QPoint localPos = mouseEvent->pos();
             QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
             QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
@@ -525,30 +394,34 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             int y = static_cast<int>(scenePos.y());
             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            QMouseEvent *me = static_cast<QMouseEvent*>(event);
+            QMouseEvent *me = static_cast<QMouseEvent *>(event);
 
-            if (me->buttons() & (Qt::LeftButton | Qt::RightButton)) {
+            if (me->buttons() & (Qt::LeftButton | Qt::RightButton))
+            {
                 // Check if moving from current pixel position
-                if(x != currPixel.x() || y != currPixel.y()){
+                if (x != currPixel.x() || y != currPixel.y())
+                {
                     // Check if in image bounds
                     if (x >= 0 && x < model->getImage()->width() &&
-                        y >= 0 && y < model->getImage()->height()) {
+                        y >= 0 && y < model->getImage()->height())
+                    {
 
                         // Update pixel
-                        //qDebug() << "alpha color is: " << userColor.alpha();
+                        // qDebug() << "alpha color is: " << userColor.alpha();
 
-                        switch(currTool) {
-                            case Tool::BRUSH:
-                                qDebug() << "using brush";
-                                model->setPixel(x, y, userColor);
-                                break; // <--- Add this
-                            case Tool::ERASER:
-                                qDebug() << "using eraser";
-                                model->erasePixel(x, y);
-                                break; // <--- Add this
-                            }
+                        switch (currTool)
+                        {
+                        case Tool::BRUSH:
+                            qDebug() << "using brush";
+                            model->setPixel(x, y, userColor);
+                            break; // <--- Add this
+                        case Tool::ERASER:
+                            qDebug() << "using eraser";
+                            model->erasePixel(x, y);
+                            break; // <--- Add this
+                        }
 
-                        //model->setPixel(x, y, userColor.rgba());
+                        // model->setPixel(x, y, userColor.rgba());
 
                         // update current pixel
                         currPixel = scenePos;
@@ -558,26 +431,27 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
-return QObject::eventFilter(obj, event);
+    return QObject::eventFilter(obj, event);
 }
 
-void MainWindow::updateView(){
+void MainWindow::updateView()
+{
     scene->clear();
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
-    if (!frameButtons.isEmpty() && selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size()){
+    if (!frameButtons.isEmpty() && selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size())
+    {
         updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
     }
-
 }
 
-void MainWindow::on_brushBttn_clicked(){
+void MainWindow::on_brushBttn_clicked()
+{
     currTool = Tool::BRUSH;
     model->setSelectColor(QColor(0, 0, 0, 255)); // Black (to trigger blending)
 }
 
-void MainWindow::on_eraseBttn_clicked(){
+void MainWindow::on_eraseBttn_clicked()
+{
     currTool = Tool::ERASER;
     model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
 }
-
-
