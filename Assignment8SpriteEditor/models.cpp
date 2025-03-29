@@ -2,7 +2,7 @@
 
 Model::Model(QObject *parent) : QObject(parent){
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image->fill("rgba(0,0,0,0");
+    image->fill("rgba(0, 0, 0, 0");
 }
 
 Model::~Model(){

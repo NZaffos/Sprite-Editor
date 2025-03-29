@@ -22,6 +22,7 @@
 // Includes for files
 #include "models.h"
 #include "displays.h"
+#include "colorpalette.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -41,20 +42,16 @@ public:
 public slots:
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 
     Model* model;
     Displays* displays;
+    ColorPalette* palette;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
-    QColor userColor; // User chosen color
+    QColor userColor; // User chosen color    
 
-    // Blank Canvas
-    QScrollArea *paletteScrollArea;
-    QWidget *paletteContainer;
-    QGridLayout *paletteLayout;
-    QVector<QPushButton *> colorButtons;
-    int paletteCols = 6;
+    // Canvas
     QImage* qimage;
     QPainter *qpainter;
     QGraphicsScene *scene;
@@ -63,21 +60,8 @@ private:
     QPointF currPixel;
 
 private slots:
-    // Sliders and Value Labels
-    void setSliders();
-    void updateSlider(int value);
-    void updateSliderStyle(QSlider *slider, int value, const QString &colorComponent);
-    QString getSliderStyleSheet(QString color = "rgba(0, 0, 0, 0)");
 
-    void setSLiderTextEdits();
-    void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
-    void sliderIOValue();
-
-    // Color palette
-    void setColorPalette();
-    void addColorToPalette();
-    void removeColorFromPalette(unsigned int index);
-    void setColor();
+    // Canvas
     void updateView();
 
 private slots:
