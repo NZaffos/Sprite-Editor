@@ -7,7 +7,8 @@
 #include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
 
-class Model : public QObject {
+class Model : public QObject
+{
     Q_OBJECT
 
 public:
@@ -15,7 +16,7 @@ public:
     ~Model();
 
     void clearCanvas();
-    QImage* getImage();
+    QImage *getImage();
 
     /**
      * Sets the color at a specific pixel coordinate in the image to the selected color
@@ -73,7 +74,7 @@ public:
      * Returns a reference to the list of all frames in the animation
      * @return a list containing all of the frames
      */
-    const std::vector<QImage>& getFrames() const;
+    const std::vector<QImage> &getFrames() const;
 
     void shiftFrameUp();
     void shiftFrameDown();
@@ -121,11 +122,9 @@ private:
 
 private slots:
     void updateAnimationFrame(int index);
-
 };
 
 #endif // MODELS_H
-
 
 // #include <QImage>
 // #include <QColor>

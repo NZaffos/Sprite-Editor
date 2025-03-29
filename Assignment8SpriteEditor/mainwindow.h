@@ -26,9 +26,11 @@ using std::string;
 // Includes for files
 #include "models.h"
 #include "displays.h"
+#include "palette.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
     class MainWindow;
 }
 
@@ -39,14 +41,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(Model* model, QWidget *parent = nullptr);
+    MainWindow(Model *model, QWidget *parent = nullptr);
     ~MainWindow();
 
     /**
      * an enum class to hold all possible tools available to the user
      * @brief The Tool enum
      */
-    enum class Tool{
+    enum class Tool
+    {
         BRUSH,
         ERASER
     };
@@ -62,8 +65,9 @@ private:
      * Instance of the model object
      * @brief model
      */
-    Model* model;
-    Displays* displays;
+    Model *model;
+    Displays *displays;
+    Palette *palette;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
 
@@ -73,23 +77,17 @@ private:
      */
     QColor userColor; // User chosen color
 
-    // Palette elements
-    QScrollArea *paletteScrollArea;
-    QWidget *paletteContainer;
-    QGridLayout *paletteLayout;
-    QVector<QPushButton *> colorButtons;
-    int paletteCols = 6;
-
     // Frame selector elements
     QScrollArea *framesScrollArea;
     QWidget *framesContainer;
     QVBoxLayout *framesLayout;
-    QVector<QPushButton*> frameButtons;
+    QVector<QPushButton *> frameButtons;
     int selectedFrameIndex = 0;
 
     void setAnimationFpsSlider();
 
-    QImage* qimage;
+    // Canvas
+    QImage *qimage;
     QPainter *qpainter;
     QGraphicsScene *scene;
 
@@ -99,20 +97,6 @@ private:
     Tool currTool;
 
 private slots:
-    // Sliders and Value Labels
-    void setSliders();
-    void updateSlider(int value);
-    void updateSliderStyle(QSlider *slider, int value, const QString &colorComponent);
-    QString getSliderStyleSheet(QString color = "rgba(0, 0, 0, 0)");
-
-    void setSLiderTextEdits();
-    void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
-    void sliderIOValue();
-
-    // Color palette
-    void setColorPalette();
-    void addColorToPalette();
-    void removeColorFromPalette(unsigned int index);
 
     // Frame selector
     void setFrameSelector();
@@ -121,11 +105,11 @@ private slots:
     void addFrameButtonClicked();
     void duplicateFrameButtonClicked();
     void createFrameButton();
-    QPushButton* updateFrameButtonIcon(QPushButton* button);
+    QPushButton *updateFrameButtonIcon(QPushButton *button);
     void shiftFrameUpClicked();
     void shiftFrameDownClicked();
 
-    void setColor();
+    // Canvas
     void updateView();
 
     void on_brushBttn_clicked();
