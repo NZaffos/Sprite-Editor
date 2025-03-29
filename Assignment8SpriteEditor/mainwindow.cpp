@@ -245,6 +245,7 @@ void MainWindow::duplicateFrameButtonClicked()
     createFrameButton();
     selectedFrameIndex = model->getCurrentFrameIndex();
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateFrameButtonStyle();
     updateView();
 }
 
@@ -257,6 +258,7 @@ void MainWindow::shiftFrameUpClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex + 1]);
 
+    updateFrameButtonStyle();
     updateView();
 }
 
@@ -269,6 +271,7 @@ void MainWindow::shiftFrameDownClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
 
+    updateFrameButtonStyle();
     updateView();
 }
 
