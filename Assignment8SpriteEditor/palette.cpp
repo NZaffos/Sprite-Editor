@@ -4,6 +4,7 @@ Palette::Palette(Ui::MainWindow *ui, QColor &userColor, QObject *parent)
     : QObject(parent), ui(ui), userColor(userColor)
 {
     setColorPalette();
+    setSliders();
 }
 
 void Palette::setColorPalette()

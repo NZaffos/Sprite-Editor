@@ -12,13 +12,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     displays = new Displays(model);
     palette = new Palette(ui, userColor);
 
-    // Set color picker ui
-    setSliders();
-    setSLiderTextEdits();
-
-    // Set color palette ui
-    setColorPalette();
-
     // Set fps slider ui
     setAnimationFpsSliderAndWindow();
 
@@ -133,7 +126,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 } // End of constructor
 
 void MainWindow::setAnimationFpsSliderAndWindow() {
-    QString sliderStyle = getSliderStyleSheet();
+    QString sliderStyle = palette->getSliderStyleSheet();
     ui->animationFpsSlider->setStyleSheet(sliderStyle);
     ui->animationFpsSlider->setRange(1, 60);
     updateFpsText(1);
