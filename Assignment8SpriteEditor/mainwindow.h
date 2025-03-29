@@ -85,6 +85,7 @@ private:
     int selectedFrameIndex = 0;
     void updateFrameButtonStyle();
 
+    // Animation elements
     void setAnimationFpsSliderAndWindow();
 
     // Canvas

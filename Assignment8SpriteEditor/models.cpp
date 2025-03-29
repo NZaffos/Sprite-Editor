@@ -80,7 +80,7 @@ QPixmap Model::getFrameThumbnail(int index, int width, int height) const
 {
     if (index < static_cast<int>(frames.size()) && index >= 0)
     {
-        return QPixmap::fromImage(frames[index]).scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        return QPixmap::fromImage(frames[index]).scaled(width, height, Qt::KeepAspectRatio, Qt::FastTransformation);
     }
     return QPixmap();
 }
