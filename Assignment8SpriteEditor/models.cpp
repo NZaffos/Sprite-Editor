@@ -155,7 +155,7 @@ void Model::setPixel(int x, int y, QColor userColor){
     //qDebug() << (selectColor == QColor(0, 0, 0, 255));
 
     // qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
-  
+
     if(currentFrameIndex < frames.size()){
         frames[currentFrameIndex] = *image;
     }

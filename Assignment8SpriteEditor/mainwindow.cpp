@@ -10,6 +10,7 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     // New Displays
     displays = new Displays(model);
+    palette = new Palette(ui, userColor);
 
     setSliders();
     setSLiderTextEdits();
@@ -31,9 +32,9 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
 
     // Ensure the scenes area matches the pixmap
     scene -> setSceneRect(scene -> itemsBoundingRect());
-      
+
     createFrameButton();
-      
+
     // Get user canvas size
     int canvasX = 725/model -> getCanvasX();
     int canvasY = 725/model -> getCanvasY();
@@ -50,42 +51,42 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui -> graphicsView -> setMouseTracking(true);
     ui -> graphicsView -> viewport() -> setMouseTracking(true);
 
-    // Connects
+    //Connects
     connect(ui->redSlider,
             &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
+            palette,
+            &Palette::updateSlider);
     connect(ui->redSliderIO,
             &QLineEdit::textChanged,
-            this,
-            &MainWindow::sliderIOValue);
+            palette,
+            &Palette::sliderIOValue);
 
     connect(ui->greenSlider,
             &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
+            palette,
+            &Palette::updateSlider);
     connect(ui->greenSliderIO,
             &QLineEdit::textChanged,
-            this,
-            &MainWindow::sliderIOValue);
+            palette,
+            &Palette::sliderIOValue);
 
     connect(ui->blueSlider,
             &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
+            palette,
+            &Palette::updateSlider);
     connect(ui->blueSliderIO,
             &QLineEdit::textChanged,
-            this,
-            &MainWindow::sliderIOValue);
+            palette,
+            &Palette::sliderIOValue);
 
     connect(ui->alphaSlider,
             &QSlider::valueChanged,
-            this,
-            &MainWindow::updateSlider);
+            palette,
+            &Palette::updateSlider);
     connect(ui->alphaSliderIO,
             &QLineEdit::textChanged,
-            this,
-            &MainWindow::sliderIOValue);
+            palette,
+            &Palette::sliderIOValue);
 
     // Color Palette
     connect(ui->addToPaletteButton,
@@ -115,6 +116,9 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
             model, &Model::sliderValueChanged);
     connect(model, &Model::updateAnimationIcon,
             this, &MainWindow::drawAnimationIcon);
+            palette,
+            [this]() {palette->addColorToPalette();
+            });
 } // End of constructor
 
 void MainWindow::setAnimationFpsSlider() {
@@ -410,9 +414,7 @@ MainWindow::~MainWindow()
     delete model;
 
     // Palette objects
-    delete paletteScrollArea;
-    delete paletteContainer;
-    delete paletteLayout;
+    delete palette;
 }
 
 // void drawLineTo(const QPoint &endPoint){
@@ -426,7 +428,6 @@ MainWindow::~MainWindow()
 // }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
-    qDebug() << "mouse is pressed";
      if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton){
          // convert mouse click to global coordinates in mainwindow
          QPoint globalPos = event->globalPosition().toPoint();
@@ -519,6 +520,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
+            // Get pixel position
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));

@@ -26,6 +26,7 @@ using std::string;
 // Includes for files
 #include "models.h"
 #include "displays.h"
+#include "palette.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -56,7 +57,7 @@ public slots:
     void drawAnimationIcon(int index);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 
     /**
      * Instance of the model object
@@ -64,6 +65,7 @@ private:
      */
     Model* model;
     Displays* displays;
+    Palette* palette;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
 
@@ -71,6 +73,7 @@ private:
      * Stores the current color active on the users brush
      * @brief userColor
      */
+    QColor userColor; // User chosen color
     QColor userColor; // User chosen color
 
     // Palette elements
@@ -89,6 +92,7 @@ private:
 
     void setAnimationFpsSlider();
 
+    // Canvas
     QImage* qimage;
     QPainter *qpainter;
     QGraphicsScene *scene;
@@ -99,11 +103,6 @@ private:
     Tool currTool;
 
 private slots:
-    // Sliders and Value Labels
-    void setSliders();
-    void updateSlider(int value);
-    void updateSliderStyle(QSlider *slider, int value, const QString &colorComponent);
-    QString getSliderStyleSheet(QString color = "rgba(0, 0, 0, 0)");
 
     void setSLiderTextEdits();
     void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
@@ -126,6 +125,7 @@ private slots:
     void shiftFrameDownClicked();
 
     void setColor();
+    // Canvas
     void updateView();
 
     void on_brushBttn_clicked();
