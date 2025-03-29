@@ -83,8 +83,9 @@ private:
     QVBoxLayout *framesLayout;
     QVector<QPushButton *> frameButtons;
     int selectedFrameIndex = 0;
+    void updateFrameButtonStyle();
 
-    void setAnimationFpsSlider();
+    void setAnimationFpsSliderAndWindow();
 
     // Canvas
     QImage *qimage;
@@ -108,6 +109,7 @@ private slots:
     QPushButton *updateFrameButtonIcon(QPushButton *button);
     void shiftFrameUpClicked();
     void shiftFrameDownClicked();
+    void updateFpsText(int value);
 
     // Canvas
     void updateView();

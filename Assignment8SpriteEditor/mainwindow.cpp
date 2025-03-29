@@ -12,8 +12,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     displays = new Displays(model);
     palette = new Palette(ui, model, userColor);
 
-    setAnimationFpsSlider();
+    // Set fps slider ui
+    setAnimationFpsSliderAndWindow();
 
+    // Set frame selector ui
     setFrameSelector();
 
     userColor = QColor(0, 0, 0, 255);
@@ -29,7 +31,9 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     // Ensure the scenes area matches the pixmap
     scene->setSceneRect(scene->itemsBoundingRect());
 
+    // Add default canvas to frame selector
     createFrameButton();
+    updateFrameButtonStyle();
 
     // Get user canvas size
     int canvasX = 725 / model->getCanvasX();
@@ -47,7 +51,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->viewport()->setMouseTracking(true);
 
-    // Connects
+    // Color pricker
     connect(ui->redSlider,
             &QSlider::valueChanged,
             palette,
@@ -117,55 +121,47 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             this,
             &MainWindow::shiftFrameUpClicked);
 
-    // Animation fps slider connect
-    connect(ui->animationFpsSlider,
-            &QSlider::valueChanged,
-            model,
-            &Model::sliderValueChanged);
+    // Animation window and slider
+    connect(ui->animationFpsSlider, &QSlider::valueChanged,
+            model, &Model::sliderValueChanged);
     connect(model, &Model::updateAnimationIcon,
-            this,
-            &MainWindow::drawAnimationIcon);
+            this, &MainWindow::drawAnimationIcon);
+    connect(model, &Model::updateFpsSliderIO,
+            this, &MainWindow::updateFpsText);
 } // End of constructor
 
-void MainWindow::setAnimationFpsSlider()
-{
-    QString style =
-        "QSlider::groove:horizontal {"
-        "    border: 1px solid #999;"
-        "    height: 8px;"
-        "    background: #333;"
-        "    margin: 2px 0;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::sub-page:horizontal {"
-        "    background: white;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::handle:horizontal {"
-        "    background: white;"
-        "    border: 1px solid black;"
-        "    width: 16px;"
-        "    margin: -6px 0;"
-        "    border-radius: 8px;"
-        "}";
-    ui->animationFpsSlider->setStyleSheet(style);
+void MainWindow::setAnimationFpsSliderAndWindow() {
+    QString sliderStyle = palette->getSliderStyleSheet();
+    ui->animationFpsSlider->setStyleSheet(sliderStyle);
     ui->animationFpsSlider->setRange(1, 60);
+    updateFpsText(1);
 }
 
-void MainWindow::drawAnimationIcon(int index)
-{
-    QPixmap newImage = model->getFrameThumbnail(index, 210, 210);
+void MainWindow::updateFpsText(int value) {
+    ui->animationFpsSliderIO->setText(QString("FPS: ") + QString::number(value));
+}
+
+void MainWindow::drawAnimationIcon(int index) {
+    QPixmap newImage = model->getFrameThumbnail(index, 220, 220);
     ui->animationDisplayLabel->setPixmap(newImage);
 }
 
-void MainWindow::setFrameSelector()
-{
+void MainWindow::updateFrameButtonStyle() {
+    for(int i = 0; i < frameButtons.size(); i++) {
+        if(i == selectedFrameIndex)
+            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
+        else
+            frameButtons[i]->setStyleSheet("QPushButton { no-border }");
+    }
+}
+
+void MainWindow::setFrameSelector() {
     framesScrollArea = ui->frameSelector;
     framesContainer = ui->frameSelectorScrollContent;
 
     framesLayout = new QVBoxLayout();
     framesLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
-    framesLayout->setContentsMargins(6, 10, 0, 0);
+    framesLayout->setContentsMargins(0, 20, 0, 20);
 
     framesContainer->setLayout(framesLayout);
 
@@ -188,11 +184,10 @@ void MainWindow::createFrameButton()
 QPushButton *MainWindow::updateFrameButtonIcon(QPushButton *button)
 {
     int index = button->property("frameIndex").toInt();
-    // button->setStyleSheet("QPushButton { background-color: rgb(80,80,255); }"); // Use to change color of frame
-    QPixmap thumbnail = model->getFrameThumbnail(index, 80, 80);
+    QPixmap thumbnail = model->getFrameThumbnail(index, 110, 110);
     button->setIcon(QIcon(thumbnail));
     button->setIconSize(thumbnail.size());
-    button->setFixedSize(90, 90);
+    button->setFixedSize(112, 112);
 
     return button;
 }
@@ -203,10 +198,10 @@ void MainWindow::frameButtonClicked()
     if (button)
     {
         int index = button->property("frameIndex").toInt();
-        qDebug() << "frameIndex: " << index;
         model->selectFrame(index);
         selectedFrameIndex = index;
         ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+        updateFrameButtonStyle();
         updateView();
     }
 }
@@ -230,6 +225,7 @@ void MainWindow::deleteFrame()
 
     selectedFrameIndex = model->getCurrentFrameIndex();
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateFrameButtonStyle();
     updateView();
 }
 
@@ -239,6 +235,7 @@ void MainWindow::addFrameButtonClicked()
     createFrameButton();
     selectedFrameIndex = model->getCurrentFrameIndex();
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateFrameButtonStyle();
     updateView();
 }
 
