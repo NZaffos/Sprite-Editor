@@ -1,10 +1,12 @@
-#include "colorpalette.h"
+#include "palette.h"
 
-ColorPalette::ColorPalette(Ui::MainWindow* ui, QColor& userColor)
-    : ui(ui), userColor(userColor) {
+
+Palette::Palette(Ui::MainWindow* ui, QColor& userColor, QObject* parent)
+    : QObject(parent), ui(ui), userColor(userColor) {
 }
 
-void ColorPalette::setColorPalette() {
+
+void Palette::setColorPalette() {
     paletteScrollArea = ui->colorPalette; // The QScrollArea
     paletteContainer = ui->colorPaletteScrollContents; // The inner QWidget
 
@@ -21,7 +23,7 @@ void ColorPalette::setColorPalette() {
 
 }
 
-void ColorPalette::addColorToPalette() {
+void Palette::addColorToPalette() {
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
     colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
@@ -44,7 +46,7 @@ void ColorPalette::addColorToPalette() {
 
 // }
 
-void ColorPalette::setSliders(){
+void Palette::setSliders(){
     QString sliderStyle = getSliderStyleSheet();
     ui->redSlider->setStyleSheet(sliderStyle);
     ui->greenSlider->setStyleSheet(sliderStyle);
@@ -52,7 +54,7 @@ void ColorPalette::setSliders(){
     ui->alphaSlider->setStyleSheet(sliderStyle);
 }
 
-void ColorPalette::updateSlider(int value) {
+void Palette::updateSlider(int value) {
     QSlider *slider = qobject_cast<QSlider *>(sender());  // Get the slider that sent the signal
 
     QString colorComponent;
@@ -69,7 +71,7 @@ void ColorPalette::updateSlider(int value) {
     updateSliderStyle(slider, value, colorComponent);  // Update the style for the corresponding slider
 }
 
-void ColorPalette::updateSliderStyle(QSlider *slider, int value, const QString &colorComponent) {
+void Palette::updateSliderStyle(QSlider *slider, int value, const QString &colorComponent) {
     QString color;
     if (colorComponent == "red") {
         color = QString("rgb(%1, 0, 0)").arg(value);
@@ -103,7 +105,7 @@ void ColorPalette::updateSliderStyle(QSlider *slider, int value, const QString &
 
 }
 
-QString ColorPalette::getSliderStyleSheet(QString color) {
+QString Palette::getSliderStyleSheet(QString color) {
     return QString(
                "QSlider::groove:horizontal {"
                "    border: 1px solid #999;"
@@ -126,14 +128,14 @@ QString ColorPalette::getSliderStyleSheet(QString color) {
         .arg(color);
 }
 
-void ColorPalette::setSLiderTextEdits() {
+void Palette::setSLiderTextEdits() {
     updateTextEditStyle(ui->redSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->greenSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->blueSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->alphaSliderIO, "rgb(0, 0, 0)");
 }
 
-void ColorPalette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color) {
+void Palette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color) {
     QString style = QString(
                         "QLineEdit {"
                         "    background-color: %1;"
@@ -147,7 +149,7 @@ void ColorPalette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color
     textEdit->setStyleSheet(style);
 }
 
-void ColorPalette::sliderIOValue() {
+void Palette::sliderIOValue() {
     QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
     bool ok;
     int value = lineEdit->text().toInt(&ok);
@@ -172,7 +174,7 @@ void ColorPalette::sliderIOValue() {
     }
 }
 
-ColorPalette::~ColorPalette() {
+Palette::~Palette() {
     delete paletteScrollArea;
     delete paletteContainer;
     delete paletteLayout;

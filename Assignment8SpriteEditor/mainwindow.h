@@ -22,7 +22,7 @@
 // Includes for files
 #include "models.h"
 #include "displays.h"
-#include "colorpalette.h"
+#include "palette.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -46,7 +46,7 @@ private:
 
     Model* model;
     Displays* displays;
-    ColorPalette* palette;
+    Palette* palette;
 
     QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
     QColor userColor; // User chosen color    

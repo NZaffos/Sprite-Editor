@@ -9,7 +9,7 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui->setupUi(this);
 
     displays = new Displays(model);
-    palette = new ColorPalette(ui, userColor);
+    palette = new Palette(ui, userColor);
 
 
     userColor = QColor(0, 0, 0, 255);
@@ -36,42 +36,42 @@ MainWindow::MainWindow(Model* model, QWidget *parent)
     ui -> graphicsView -> setMouseTracking(true);
     ui -> graphicsView -> viewport() -> setMouseTracking(true);
 
-    // Connects
+    //Connects
     connect(ui->redSlider,
             &QSlider::valueChanged,
             palette,
-            &ColorPalette::updateSlider);
+            &Palette::updateSlider);
     connect(ui->redSliderIO,
             &QLineEdit::textChanged,
             palette,
-            &ColorPalette::sliderIOValue);
+            &Palette::sliderIOValue);
 
     connect(ui->greenSlider,
             &QSlider::valueChanged,
             palette,
-            &ColorPalette::updateSlider);
+            &Palette::updateSlider);
     connect(ui->greenSliderIO,
             &QLineEdit::textChanged,
             palette,
-            &ColorPalette::sliderIOValue);
+            &Palette::sliderIOValue);
 
     connect(ui->blueSlider,
             &QSlider::valueChanged,
             palette,
-            &ColorPalette::updateSlider);
+            &Palette::updateSlider);
     connect(ui->blueSliderIO,
             &QLineEdit::textChanged,
             palette,
-            &ColorPalette::sliderIOValue);
+            &Palette::sliderIOValue);
 
     connect(ui->alphaSlider,
             &QSlider::valueChanged,
             palette,
-            &ColorPalette::updateSlider);
+            &Palette::updateSlider);
     connect(ui->alphaSliderIO,
             &QLineEdit::textChanged,
             palette,
-            &ColorPalette::sliderIOValue);
+            &Palette::sliderIOValue);
 
     // Color Palette
     connect(ui->addToPaletteButton,
