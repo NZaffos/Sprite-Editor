@@ -125,24 +125,24 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
 QString Palette::getSliderStyleSheet(QString color)
 {
     return QString(
-               "QSlider::groove:horizontal {"
-               "    border: 1px solid #999;"
-               "    height: 8px;"
-               "    background: #333;"
-               "    margin: 2px 0;"
-               "    border-radius: 4px;"
-               "}"
-               "QSlider::sub-page:horizontal {"
-               "    background: %1;"
-               "    border-radius: 4px;"
-               "}"
-               "QSlider::handle:horizontal {"
-               "    background: white;"
-               "    border: 1px solid black;"
-               "    width: 16px;"
-               "    margin: -6px 0;"
-               "    border-radius: 8px;"
-               "}").arg(color);
+        "QSlider::groove:horizontal {"
+        "    border: 1px solid #999;"
+        "    height: 8px;"
+        "    background: #333;"
+        "    margin: 2px 0;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal {"
+        "    background: %1;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "    background: white;"
+        "    border: 1px solid black;"
+        "    width: 16px;"
+        "    margin: -6px 0;"
+        "    border-radius: 8px;"
+        "}").arg(color);
 }
 
 void Palette::setSLiderTextEdits()
