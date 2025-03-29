@@ -49,8 +49,8 @@ void Model::removeFrame(unsigned int index)
 
     frames.erase(frames.begin() + index);
 
-    if (index > 0)
-        currentFrameIndex = index--;
+    if(currentFrameIndex > 0)
+        currentFrameIndex--;
     else
         currentFrameIndex = 0;
 
@@ -125,6 +125,7 @@ void Model::swapFrame(bool swapUp)
 void Model::sliderValueChanged(int value)
 {
     animationFps = value;
+    emit updateFpsSliderIO(value);
 }
 
 void Model::updateAnimationFrame(int index)
