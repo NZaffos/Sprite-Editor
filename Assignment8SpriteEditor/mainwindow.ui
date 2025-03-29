@@ -16,6 +16,12 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1300</width>
+    <height>800</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>1300</width>
@@ -55,7 +61,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>731</width>
+       <width>725</width>
        <height>725</height>
       </rect>
      </property>
@@ -72,8 +78,8 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>64</width>
-      <height>32</height>
+      <width>60</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -89,10 +95,10 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>105</x>
+      <x>90</x>
       <y>10</y>
-      <width>64</width>
-      <height>32</height>
+      <width>60</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -109,9 +115,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>55</y>
+      <y>50</y>
       <width>210</width>
-      <height>300</height>
+      <height>320</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -123,12 +129,90 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QToolButton" name="brushBttn">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>brush</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="eraseBttn">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>20</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>eraser</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="temp1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>temp1</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="temp2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>120</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>temp2</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="temp3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>temp3</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="temp4">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>220</y>
+       <width>90</width>
+       <height>90</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>temp4</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QSlider" name="redSlider">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>375</y>
+      <y>385</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -144,7 +228,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>415</y>
+      <y>425</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -160,7 +244,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>455</y>
+      <y>465</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -176,7 +260,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>495</y>
+      <y>505</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -195,7 +279,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>535</y>
+      <y>545</y>
       <width>175</width>
       <height>25</height>
      </rect>
@@ -217,7 +301,7 @@
     <property name="geometry">
      <rect>
       <x>205</x>
-      <y>535</y>
+      <y>545</y>
       <width>25</width>
       <height>25</height>
      </rect>
@@ -236,7 +320,7 @@
     <property name="geometry">
      <rect>
       <x>205</x>
-      <y>570</y>
+      <y>580</y>
       <width>25</width>
       <height>25</height>
      </rect>
@@ -255,7 +339,7 @@
     <property name="geometry">
      <rect>
       <x>175</x>
-      <y>375</y>
+      <y>385</y>
       <width>55</width>
       <height>25</height>
      </rect>
@@ -271,7 +355,7 @@
     <property name="geometry">
      <rect>
       <x>175</x>
-      <y>495</y>
+      <y>505</y>
       <width>55</width>
       <height>25</height>
      </rect>
@@ -287,7 +371,7 @@
     <property name="geometry">
      <rect>
       <x>175</x>
-      <y>455</y>
+      <y>465</y>
       <width>55</width>
       <height>25</height>
      </rect>
@@ -303,7 +387,7 @@
     <property name="geometry">
      <rect>
       <x>175</x>
-      <y>415</y>
+      <y>425</y>
       <width>55</width>
       <height>25</height>
      </rect>
@@ -319,9 +403,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>570</y>
+      <y>580</y>
       <width>175</width>
-      <height>200</height>
+      <height>190</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -342,7 +426,7 @@
        <x>0</x>
        <y>0</y>
        <width>173</width>
-       <height>198</height>
+       <height>188</height>
       </rect>
      </property>
     </widget>
@@ -490,6 +574,12 @@
       <height>220</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <stylestrategy>NoAntialias</stylestrategy>
+      <hintingpreference>PreferNoHinting</hintingpreference>
+     </font>
+    </property>
     <property name="text">
      <string>TextLabel</string>
     </property>
@@ -503,34 +593,14 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="acceptDrops">
+     <bool>true</bool>
+    </property>
     <property name="text">
      <string>(X:_, Y:_)</string>
     </property>
-   </widget>
-   <widget class="QToolButton" name="brushBttn">
-    <property name="geometry">
-     <rect>
-      <x>980</x>
-      <y>30</y>
-      <width>71</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>brush</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="eraseBttn">
-    <property name="geometry">
-     <rect>
-      <x>980</x>
-      <y>100</y>
-      <width>71</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>eraser</string>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="animationFpsSliderIO">

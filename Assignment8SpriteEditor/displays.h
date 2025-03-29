@@ -5,13 +5,14 @@
 #include <QLabel>
 #include "models.h"
 
-class Displays : public QWidget {
+class Displays : public QWidget
+{
     Q_OBJECT
 public:
-    explicit Displays(Model* model, QWidget* parent = nullptr);
+    explicit Displays(Model *model, QWidget *parent = nullptr);
 
 private:
-    Model* model;
+    Model *model;
 };
 
 #endif // DISPLAYS_H
