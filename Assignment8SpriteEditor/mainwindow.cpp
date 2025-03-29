@@ -10,7 +10,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
     // New Displays
     displays = new Displays(model);
-    palette = new Palette(ui, userColor);
+    palette = new Palette(ui, model, userColor);
 
     // Set fps slider ui
     setAnimationFpsSliderAndWindow();
@@ -19,6 +19,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     setFrameSelector();
 
     userColor = QColor(0, 0, 0, 255);
+
     currTool = Tool::BRUSH;
 
     scene = new QGraphicsScene(this);
@@ -28,12 +29,12 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
 
     // Ensure the scenes area matches the pixmap
-    scene -> setSceneRect(scene -> itemsBoundingRect());
+    scene->setSceneRect(scene->itemsBoundingRect());
 
     // Add default canvas to frame selector
     createFrameButton();
     updateFrameButtonStyle();
-      
+
     // Get user canvas size
     int canvasX = 725 / model->getCanvasX();
     int canvasY = 725 / model->getCanvasY();
@@ -93,6 +94,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             palette,
             [this]()
             { palette->addColorToPalette(); });
+    connect(ui->deleteFromColoPalette,
+            &QToolButton::clicked,
+            palette,
+            &Palette::removeColorFromPalette);
 
     // Frame selector
     connect(ui->deleteFrameButton,
@@ -240,7 +245,6 @@ void MainWindow::duplicateFrameButtonClicked()
     createFrameButton();
     selectedFrameIndex = model->getCurrentFrameIndex();
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
-    updateFrameButtonStyle();
     updateView();
 }
 
@@ -253,7 +257,6 @@ void MainWindow::shiftFrameUpClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex + 1]);
 
-    updateFrameButtonStyle();
     updateView();
 }
 
@@ -266,7 +269,6 @@ void MainWindow::shiftFrameDownClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
 
-    updateFrameButtonStyle();
     updateView();
 }
 

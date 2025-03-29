@@ -227,3 +227,15 @@ QColor Model::blendAdditive(QColor src, QColor dest)
 
     return QColor(redOverride, greenOverride, blueOverride, alphaOverride);
 }
+
+void Model::addToPalette(QColor color) {
+    palette.push_back(color);
+}
+
+void Model::removeFromPalette(unsigned int index) {
+    palette.removeAt(index);
+}
+
+QColor Model::getColorFromPalette(unsigned int index) {
+    return palette.at(index);
+}

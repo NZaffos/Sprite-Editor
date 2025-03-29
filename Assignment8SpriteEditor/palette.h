@@ -2,6 +2,8 @@
 #define PALETTE_H
 
 #include "ui_mainwindow.h"
+#include "models.h"
+
 #include <QObject>
 #include <QtWidgets/qgridlayout.h>
 
@@ -9,7 +11,7 @@ class Palette : public QObject
 {
     Q_OBJECT
 public:
-    Palette(Ui::MainWindow *ui, QColor &userColor, QObject *parent = nullptr);
+    Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *parent = nullptr);
     ~Palette();
 
     void setSliders();
@@ -24,18 +26,25 @@ public:
     // Color palette
     void setColorPalette();
     void addColorToPalette();
-    void removeColorFromPalette(unsigned int index);
+    void removeColorFromPalette();
     void setColor();
 
 private:
     Ui::MainWindow *ui;
     QColor &userColor;
+    Model* model;
+
+    bool deleteButtonActive = false;
+    unsigned int currentColorButtonIndex = 0;
 
     QScrollArea *paletteScrollArea;
     QWidget *paletteContainer;
     QGridLayout *paletteLayout;
     QVector<QPushButton *> colorButtons;
     int paletteCols = 6;
+
+    void colorButtonPress(int index);
+
 };
 
 #endif // PALETTE_H

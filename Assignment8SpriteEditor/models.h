@@ -80,6 +80,26 @@ public:
     void shiftFrameDown();
     void swapFrame(bool swapUp);
 
+    // Palette
+
+    /**
+     * @brief addToPalette
+     */
+    void addToPalette(QColor);
+
+    /**
+     * @brief removeFromPalette
+     * @param index
+     */
+    void removeFromPalette(unsigned int index);
+
+    /**
+     * @brief getColorFromPalette
+     * @param index
+     * @return
+     */
+    QColor getColorFromPalette(unsigned int index);
+
 signals:
     void canvasUpdated();
     void frameSelected(unsigned int index);
@@ -120,6 +140,11 @@ private:
     QColor selectColor;
 
     QColor blendAdditive(QColor dest, QColor src);
+
+    /**
+     * @brief palette
+     */
+    QVector<QColor> palette;
 
 private slots:
     void updateAnimationFrame(int index);
