@@ -83,6 +83,7 @@ signals:
     void canvasUpdated();
     void frameSelected(unsigned int index);
     int updateAnimationIcon(int index);
+    int updateFpsSliderIO(int value);
 
 public slots:
     void sliderValueChanged(int value);

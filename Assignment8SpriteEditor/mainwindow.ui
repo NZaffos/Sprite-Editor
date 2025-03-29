@@ -352,7 +352,7 @@
      <rect>
       <x>1030</x>
       <y>319</y>
-      <width>181</width>
+      <width>161</width>
       <height>431</height>
      </rect>
     </property>
@@ -364,7 +364,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>179</width>
+       <width>159</width>
        <height>429</height>
       </rect>
      </property>
@@ -373,7 +373,7 @@
    <widget class="QToolButton" name="addFrameButton">
     <property name="geometry">
      <rect>
-      <x>1240</x>
+      <x>1220</x>
       <y>320</y>
       <width>31</width>
       <height>51</height>
@@ -392,7 +392,7 @@
    <widget class="QToolButton" name="deleteFrameButton">
     <property name="geometry">
      <rect>
-      <x>1240</x>
+      <x>1220</x>
       <y>480</y>
       <width>31</width>
       <height>51</height>
@@ -411,7 +411,7 @@
    <widget class="QToolButton" name="dublicateFrameButton">
     <property name="geometry">
      <rect>
-      <x>1240</x>
+      <x>1220</x>
       <y>400</y>
       <width>31</width>
       <height>51</height>
@@ -430,7 +430,7 @@
    <widget class="QToolButton" name="shiftUpFrameButton">
     <property name="geometry">
      <rect>
-      <x>1240</x>
+      <x>1220</x>
       <y>560</y>
       <width>31</width>
       <height>51</height>
@@ -449,7 +449,7 @@
    <widget class="QToolButton" name="shiftDownFrameButton">
     <property name="geometry">
      <rect>
-      <x>1240</x>
+      <x>1220</x>
       <y>640</y>
       <width>31</width>
       <height>51</height>
@@ -468,9 +468,9 @@
    <widget class="QSlider" name="animationFpsSlider">
     <property name="geometry">
      <rect>
-      <x>1060</x>
+      <x>1030</x>
       <y>270</y>
-      <width>161</width>
+      <width>151</width>
       <height>25</height>
      </rect>
     </property>
@@ -483,16 +483,16 @@
    </widget>
    <widget class="QLabel" name="animationDisplayLabel">
     <property name="geometry">
-        <rect>
-            <x>1030</x>
-            <y>30</y>
-            <width>220</width>
-            <height>220</height>
-        </rect>
+     <rect>
+      <x>1030</x>
+      <y>30</y>
+      <width>220</width>
+      <height>220</height>
+     </rect>
     </property>
-        <property name="text">
-            <string>TextLabel</string>
-       </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
    <widget class="QLineEdit" name="coordinate">
     <property name="geometry">
@@ -531,6 +531,25 @@
     </property>
     <property name="text">
      <string>eraser</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="animationFpsSliderIO">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>270</y>
+      <width>55</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>FPS: </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
