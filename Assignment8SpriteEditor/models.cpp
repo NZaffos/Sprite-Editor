@@ -31,15 +31,19 @@ void Model::addFrame()
 {
     QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
     newFrame.fill(QColor(0, 0, 0, 50)); // Adjust to create new frame as default
-    frames.push_back(newFrame);
-    selectFrame(frames.size() - 1);
+
+    auto pos = frames.begin() + currentFrameIndex + 1;
+    frames.insert(pos, newFrame);
+    selectFrame(++currentFrameIndex);
 }
 
 void Model::duplicateFrame()
 {
     QImage newFrame = frames[currentFrameIndex].copy();
-    frames.push_back(newFrame);
-    selectFrame(frames.size() - 1);
+
+    auto pos = frames.begin() + currentFrameIndex + 1;
+    frames.insert(pos, newFrame);
+    selectFrame(++currentFrameIndex);
 }
 
 void Model::removeFrame(unsigned int index)
