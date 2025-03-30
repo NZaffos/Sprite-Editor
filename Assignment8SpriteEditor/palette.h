@@ -17,9 +17,10 @@ public:
     void setSliders();
     void updateSlider(int value);
     void updateSliderStyle(QSlider *slider, int value, const QString &colorComponent);
+    void updateSlidersToColor(QColor color);
     QString getSliderStyleSheet(QString color = "rgba(0, 0, 0, 0)");
 
-    void setSLiderTextEdits();
+    void setSliderTextEdits();
     void updateTextEditStyle(QLineEdit *lineEdit, const QString &Color);
     void sliderIOValue();
 

@@ -12,9 +12,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     displays = new Displays(ui, model);
     palette = new Palette(ui, model, userColor);
 
-    userColor = QColor(0, 0, 0, 255);
-    currTool = Tool::BRUSH;
-
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
@@ -33,6 +30,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->viewport()->installEventFilter(this);
+
+    // Set palette sliders
+    palette->updateSlidersToColor(QColor(255, 0, 0, 255));
+    currTool = Tool::BRUSH;
 
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
@@ -166,6 +167,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 case Tool::ERASER:
                     model->erasePixel(x, y);
                     break; // <--- Add this
+                case Tool::EYE:
+                    palette->updateSlidersToColor(model->getImage()->pixelColor(x, y));
+                    currTool = Tool::BRUSH;
+                    break;
+                default:
+                    break;
                 }
 
                 updateView();
@@ -216,6 +223,8 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                             qDebug() << "using eraser";
                             model->erasePixel(x, y);
                             break; // <--- Add this
+                        default:
+                            break;
                         }
 
                         // model->setPixel(x, y, userColor.rgba());
@@ -249,6 +258,10 @@ void MainWindow::on_eraseBttn_clicked()
     model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
 }
 
+void MainWindow::on_eyeBttn_clicked()
+{
+    currTool = Tool::EYE;
+}
 
 
 void MainWindow::on_newButton_clicked()

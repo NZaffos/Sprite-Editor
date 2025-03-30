@@ -4,7 +4,7 @@ Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *p
     : QObject(parent), ui(ui), userColor(userColor), model(model)
 {
     setColorPalette();
-    setSLiderTextEdits();
+    setSliderTextEdits();
     setSliders();
 }
 
@@ -114,6 +114,13 @@ void Palette::updateSlider(int value)
     updateSliderStyle(slider, value, colorComponent); // Update the style for the corresponding slider
 }
 
+void Palette::updateSlidersToColor(QColor color){
+    updateSliderStyle(ui->redSlider, color.red(), "red");
+    updateSliderStyle(ui->greenSlider, color.green(), "green");
+    updateSliderStyle(ui->blueSlider, color.blue(), "blue");
+    updateSliderStyle(ui->alphaSlider, color.alpha(), "alpha");
+}
+
 void Palette::updateSliderStyle(QSlider *slider, int value, const QString &colorComponent)
 {
     QString color;
@@ -179,7 +186,7 @@ QString Palette::getSliderStyleSheet(QString color)
         .arg(color);
 }
 
-void Palette::setSLiderTextEdits()
+void Palette::setSliderTextEdits()
 {
     updateTextEditStyle(ui->redSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->greenSliderIO, "rgb(0, 0, 0)");

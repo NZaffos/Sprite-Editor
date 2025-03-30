@@ -54,7 +54,13 @@ public:
     enum class Tool
     {
         BRUSH,
-        ERASER
+        ERASER,
+        PAINT,
+        EYE,
+        MIRROR,
+        ROTATE,
+        RECTANGLE,
+        ELLIPSE
     };
     Q_ENUM(Tool)
 
@@ -87,6 +93,7 @@ private slots:
 
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();
+    void on_eyeBttn_clicked();
 
     // New Button
     void on_newButton_clicked();
