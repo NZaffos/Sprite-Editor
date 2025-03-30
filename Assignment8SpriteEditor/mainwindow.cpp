@@ -136,7 +136,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)
+    if (event->button() == Qt::LeftButton)
     {
         // convert mouse click to global coordinates in mainwindow
         QPoint globalPos = event->globalPosition().toPoint();
@@ -172,7 +172,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 switch (currTool)
                 {
                 case Tool::BRUSH:
-                    model->setPixel(x, y, userColor); // Add brush logic here
+                    model->setPixelTracker(x, y, userColor); // Add brush logic here
                     break;                            // <--- Add this
                 case Tool::ERASER:
                     model->erasePixel(x, y);
@@ -210,7 +210,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
             QMouseEvent *me = static_cast<QMouseEvent *>(event);
 
-            if (me->buttons() & (Qt::LeftButton | Qt::RightButton))
+            if (me->buttons() & (Qt::LeftButton))
             {
                 // Check if moving from current pixel position
                 if (x != currPixel.x() || y != currPixel.y())
@@ -227,7 +227,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         {
                         case Tool::BRUSH:
                             qDebug() << "using brush";
-                            model->setPixel(x, y, userColor);
+                            model->setPixelTracker(x, y, userColor);
                             break; // <--- Add this
                         case Tool::ERASER:
                             qDebug() << "using eraser";
@@ -246,8 +246,25 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 }
             }
         }
+        else if(event->type() == QEvent::MouseButtonRelease){
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            if(mouseEvent->button() == Qt::LeftButton)
+            {
+                qDebug() << "clearing tracker";
+                model->clearTracker();
+            }
+        }
     }
     return QObject::eventFilter(obj, event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        qDebug() << "clearing tracker";
+        model->clearTracker();
+    }
 }
 
 void MainWindow::updateView()

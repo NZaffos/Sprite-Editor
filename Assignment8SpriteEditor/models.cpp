@@ -14,6 +14,9 @@ Model::Model(QObject *parent) : QObject(parent)
 
     frames.push_back(*image);
     updateAnimationFrame();
+
+    tracker = new QImage(size, size, QImage::Format_ARGB32);
+    clearTracker();
 }
 
 Model::~Model()
@@ -32,6 +35,11 @@ void Model::clearCanvas()
     if (frames.size() > 0)
         frames[currentFrameIndex] = *image;
     emit canvasUpdated();
+}
+
+void Model::clearTracker()
+{
+    tracker->fill(QColor(0,0,0,0));
 }
 
 void Model::addFrame()
@@ -239,6 +247,14 @@ void Model::setPixel(int x, int y, QColor userColor)
         frames[currentFrameIndex] = *image;
     }
     emit canvasUpdated();
+    tracker->setPixelColor(x, y, userColor);
+}
+
+void Model::setPixelTracker(int x, int y, QColor userColor){
+    if(tracker->pixelColor(x,y) == userColor){
+        return;
+    }
+    setPixel(x,y,userColor);
 }
 
 void Model::erasePixel(int x, int y)

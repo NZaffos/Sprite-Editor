@@ -25,6 +25,7 @@ public:
      * @param userColor - new rgb value of the pixel
      */
     void setPixel(int x, int y, QColor userColor);
+    void setPixelTracker(int x, int y, QColor userColor);
     void erasePixel(int x, int y);
     void getPixel(int x, int y);
     void setSelectColor(QColor color);
@@ -108,6 +109,7 @@ signals:
 public slots:
     void sliderValueChanged(int value);
     void clearCanvas();
+    void clearTracker();
     void toggleAnimation();
     void saveProject();
     void loadProject();
@@ -141,6 +143,8 @@ private:
     QColor selectColor;
 
     QColor blendAdditive(QColor dest, QColor src);
+
+    QImage *tracker;
 
     /**
      * @brief palette
