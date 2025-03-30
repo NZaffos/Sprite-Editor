@@ -13,7 +13,7 @@ Model::Model(QObject *parent) : QObject(parent)
     clearCanvas();
 
     frames.push_back(*image);
-    updateAnimationFrame(0);
+    updateAnimationFrame();
 }
 
 Model::~Model()
@@ -29,13 +29,15 @@ QImage *Model::getImage()
 void Model::clearCanvas()
 {
     image->fill(QColor(0, 0, 0, 50));
+    if (frames.size() > 0)
+        frames[currentFrameIndex] = *image;
     emit canvasUpdated();
 }
 
 void Model::addFrame()
 {
     QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
-    clearCanvas();
+    newFrame.fill(QColor(0, 0, 0, 50));
 
     auto pos = frames.begin() + currentFrameIndex + 1;
     frames.insert(pos, newFrame);
@@ -141,16 +143,31 @@ void Model::sliderValueChanged(int value)
     emit updateFpsSliderIO(value);
 }
 
-void Model::updateAnimationFrame(int index)
-{
-    emit updateAnimationIcon(index);
+void Model::toggleAnimation(){
+    if(animationPlaying) {
+        animationPlaying = false;
+        emit togglePlayPauseButtonIcon(false);
+    }
+    else {
+        animationPlaying = true;
+        updateAnimationFrame();
+        emit togglePlayPauseButtonIcon(true);
+    }
+}
 
-    if (index >= static_cast<int>(frames.size()) - 1)
-        index = 0;
+void Model::updateAnimationFrame()
+{
+    if(!animationPlaying)
+        return;
+
+    emit updateAnimationIcon(animationIndex);
+
+    if (animationIndex >= static_cast<int>(frames.size()) - 1)
+        animationIndex = 0;
     else
-        index++;
-    QTimer::singleShot(1000 / animationFps, this, [this, index]()
-                       { updateAnimationFrame(index); });
+        animationIndex++;
+    QTimer::singleShot(1000 / animationFps, this, [this]()
+                       { updateAnimationFrame(); });
 }
 
 // #include "tools.h"

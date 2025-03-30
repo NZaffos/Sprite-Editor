@@ -110,7 +110,10 @@ private slots:
     QPushButton *updateFrameButtonIcon(QPushButton *button);
     void shiftFrameUpClicked();
     void shiftFrameDownClicked();
+
+    // Animation
     void updateFpsText(int value);
+    void toggleAnimationPlayPauseIcon(bool enabled);
 
     // Canvas
     void updateView();
