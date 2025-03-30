@@ -99,6 +99,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QPushButton::clicked,
             model,
             &Model::loadProject);
+
 } // End of constructor
 
 MainWindow::~MainWindow()
@@ -173,43 +174,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     }
 }
 
-// void MainWindow::mouseMoveEvent(QMouseEvent *event){
-//     qDebug() << "mouse is moving";
-//     if (drawing && (event->buttons() & Qt::LeftButton)){
-//         // map global coordinates to the graphicView's local coordinates
-//         QPoint viewPos = ui->graphicsView->mapFromGlobal(event->globalPosition().toPoint());
-
-//         qDebug() << "select pixel at scene Position: " << viewPos.x()/10 << ", " << viewPos.y()/10;
-
-//         if (ui->graphicsView->rect().contains(viewPos)) {
-//             // Map to scene coordinates
-//             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
-
-//             // Get pixel position
-//             int x = static_cast<int>(scenePos.x());
-//             int y = static_cast<int>(scenePos.y());
-
-//             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
-
-//             // Check if moving from current pixel position
-//             if(x != currPixel.x() || y != currPixel.y()){
-//                 // Check if in image bounds
-//                 if (x >= 0 && x < model->getImage()->width() &&
-//                     y >= 0 && y < model->getImage()->height()) {
-
-//                     // Update pixel
-//                     qDebug() << "alpha color is: " << userColor.alpha();
-//                     model->setPixel(x, y, userColor.rgba());
-
-//                     // update current pixel
-//                     currPixel = scenePos;
-//                     updateView();
-//                 }
-//             }
-//         }
-//     }
-// }
-
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->graphicsView->viewport())
@@ -283,4 +247,33 @@ void MainWindow::on_eraseBttn_clicked()
 {
     currTool = Tool::ERASER;
     model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
+}
+
+
+
+void MainWindow::on_newButton_clicked()
+{
+    bool ok;
+    // Ask for the number of rows
+    QString rowText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the number of rows:"), QLineEdit::Normal, QString(), &ok);
+    if (!ok || rowText.isEmpty())
+        return;  // User cancelled or left empty
+
+    bool conversionOK;
+    int rows = rowText.toInt(&conversionOK);
+    if (!conversionOK) {
+        QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer for rows."));
+        return;
+    }
+
+    // Ask for the number of columns
+    QString colText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the number of columns:"), QLineEdit::Normal, QString(), &ok);
+    if (!ok || colText.isEmpty())
+        return;  // User cancelled or left empty
+
+    int columns = colText.toInt(&conversionOK);
+    if (!conversionOK) {
+        QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer for columns."));
+        return;
+    }
 }

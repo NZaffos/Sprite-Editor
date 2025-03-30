@@ -23,6 +23,10 @@ using std::string;
 #include <QMouseEvent>
 #include <QRgb>
 
+// For creating new file
+#include <QInputDialog>
+#include <QMessageBox>
+
 // Includes for files
 #include "models.h"
 #include "displays.h"
@@ -83,6 +87,9 @@ private slots:
 
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();
+
+    // New Button
+    void on_newButton_clicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
