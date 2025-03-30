@@ -1,6 +1,6 @@
 #include "palette.h"
 
-Palette::Palette(Ui::MainWindow *ui, Model* model, QColor &userColor, QObject *parent)
+Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *parent)
     : QObject(parent), ui(ui), userColor(userColor), model(model)
 {
     setColorPalette();
@@ -31,10 +31,10 @@ void Palette::addColorToPalette()
     colorButton->setFixedSize(25, 25);
 
     colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-        .arg(userColor.red())
-        .arg(userColor.green())
-        .arg(userColor.blue())
-        .arg(userColor.alpha()));
+                                   .arg(userColor.red())
+                                   .arg(userColor.green())
+                                   .arg(userColor.blue())
+                                   .arg(userColor.alpha()));
 
     unsigned int index = colorButtons.size();
 
@@ -50,12 +50,16 @@ void Palette::addColorToPalette()
     connect(colorButton,
             &QPushButton::pressed,
             this,
-            [=]() {colorButtonPress(index);
+            [=]()
+            {
+                colorButtonPress(index);
             });
 }
 
-void Palette::removeColorFromPalette() {
-    if (!deleteButtonActive) {
+void Palette::removeColorFromPalette()
+{
+    if (!deleteButtonActive)
+    {
         return;
     }
     model->removeFromPalette(currentColorButtonIndex);
@@ -65,7 +69,8 @@ void Palette::removeColorFromPalette() {
     deleteButtonActive = false;
 }
 
-void Palette::colorButtonPress(int index) {
+void Palette::colorButtonPress(int index)
+{
     qDebug() << "Button at index" << index << "was pressed!";
 
     deleteButtonActive = true;
@@ -73,7 +78,6 @@ void Palette::colorButtonPress(int index) {
 
     QColor color = model->getColorFromPalette(index);
     userColor = color;
-
 }
 
 void Palette::setSliders()
@@ -140,10 +144,10 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
     }
 
     QString colorStyle = QString("background-color: rgba(%1, %2, %3, %4);")
-        .arg(userColor.red())
-        .arg(userColor.green())
-        .arg(userColor.blue())
-        .arg(userColor.alpha());
+                             .arg(userColor.red())
+                             .arg(userColor.green())
+                             .arg(userColor.blue())
+                             .arg(userColor.alpha());
 
     ui->currentColor->setStyleSheet(colorStyle);
 
@@ -154,24 +158,25 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
 QString Palette::getSliderStyleSheet(QString color)
 {
     return QString(
-        "QSlider::groove:horizontal {"
-        "    border: 1px solid #999;"
-        "    height: 8px;"
-        "    background: #333;"
-        "    margin: 2px 0;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::sub-page:horizontal {"
-        "    background: %1;"
-        "    border-radius: 4px;"
-        "}"
-        "QSlider::handle:horizontal {"
-        "    background: white;"
-        "    border: 1px solid black;"
-        "    width: 16px;"
-        "    margin: -6px 0;"
-        "    border-radius: 8px;"
-        "}").arg(color);
+               "QSlider::groove:horizontal {"
+               "    border: 1px solid #999;"
+               "    height: 8px;"
+               "    background: #333;"
+               "    margin: 2px 0;"
+               "    border-radius: 4px;"
+               "}"
+               "QSlider::sub-page:horizontal {"
+               "    background: %1;"
+               "    border-radius: 4px;"
+               "}"
+               "QSlider::handle:horizontal {"
+               "    background: white;"
+               "    border: 1px solid black;"
+               "    width: 16px;"
+               "    margin: -6px 0;"
+               "    border-radius: 8px;"
+               "}")
+        .arg(color);
 }
 
 void Palette::setSLiderTextEdits()
@@ -185,13 +190,14 @@ void Palette::setSLiderTextEdits()
 void Palette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color)
 {
     QString style = QString(
-        "QLineEdit {"
-        "    background-color: %1;"
-        "    color: white;" // Brighten text
-        "    border: 1px solid #555;"
-        "    border-radius: 4px;"
-        "    padding: 2px 4px;"
-        "}").arg(Color);
+                        "QLineEdit {"
+                        "    background-color: %1;"
+                        "    color: white;" // Brighten text
+                        "    border: 1px solid #555;"
+                        "    border-radius: 4px;"
+                        "    padding: 2px 4px;"
+                        "}")
+                        .arg(Color);
 
     textEdit->setStyleSheet(style);
 }

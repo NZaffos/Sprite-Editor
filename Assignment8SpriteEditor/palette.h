@@ -32,7 +32,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QColor &userColor;
-    Model* model;
+    Model *model;
 
     bool deleteButtonActive = false;
     unsigned int currentColorButtonIndex = 0;
@@ -44,7 +44,6 @@ private:
     int paletteCols = 6;
 
     void colorButtonPress(int index);
-
 };
 
 #endif // PALETTE_H

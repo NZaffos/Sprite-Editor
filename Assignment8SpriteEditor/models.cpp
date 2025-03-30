@@ -53,7 +53,8 @@ void Model::duplicateFrame()
 
 void Model::removeFrame(unsigned int index)
 {
-    if (frames.size() <= 1 || index >= frames.size()) {
+    if (frames.size() <= 1 || index >= frames.size())
+    {
         clearCanvas();
         frames[0] = *image;
         return;
@@ -61,7 +62,7 @@ void Model::removeFrame(unsigned int index)
 
     frames.erase(frames.begin() + index);
 
-    if(currentFrameIndex > 0)
+    if (currentFrameIndex > 0)
         currentFrameIndex--;
     else
         currentFrameIndex = 0;
@@ -240,28 +241,35 @@ QColor Model::blendAdditive(QColor src, QColor dest)
     return QColor(redOverride, greenOverride, blueOverride, alphaOverride);
 }
 
-void Model::addToPalette(QColor color) {
+void Model::addToPalette(QColor color)
+{
     palette.push_back(color);
 }
 
-void Model::removeFromPalette(unsigned int index) {
+void Model::removeFromPalette(unsigned int index)
+{
     palette.removeAt(index);
 }
 
-QColor Model::getColorFromPalette(unsigned int index) {
+QColor Model::getColorFromPalette(unsigned int index)
+{
     return palette.at(index);
 }
 
-void Model::saveProject(){
+void Model::saveProject()
+{
     QJsonObject json;
     json["width"] = image->width();
     json["frameCount"] = int(frames.size());
 
     QJsonArray frameData;
-    for(QImage &frame : frames){
+    for (QImage &frame : frames)
+    {
         QJsonArray singleFrame;
-        for (int y = 0; y < image->width(); ++y) {
-            for (int x = 0; x < image->width(); ++x) {
+        for (int y = 0; y < image->width(); ++y)
+        {
+            for (int x = 0; x < image->width(); ++x)
+            {
                 QColor color = frame.pixelColor(x, y);
                 singleFrame.append(color.red());
                 singleFrame.append(color.green());
@@ -278,32 +286,36 @@ void Model::saveProject(){
                                                     "",
                                                     "SSP Files (.ssp);;All Files (*)");
 
-    if (!filePath.isEmpty()) {
+    if (!filePath.isEmpty())
+    {
         QJsonDocument doc(json);
 
         QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly)) {
+        if (file.open(QIODevice::WriteOnly))
+        {
             file.write(doc.toJson());
             file.close();
-        }else {
+        }
+        else
+        {
             QMessageBox::warning(nullptr, "Save Error", "Failed to save SSP file.");
         }
     }
 }
 
-void Model::loadProject(){
-    frames.clear();
-    clearCanvas();
-    palette.clear();
+void Model::loadProject()
+{
 
     QString filePath = QFileDialog::getOpenFileName(nullptr,
                                                     "Load Project",
                                                     "QDir::rootPath()",
                                                     "SSP Files (.ssp);;All Files (*)");
-    if (!filePath.isEmpty()){
+    if (!filePath.isEmpty())
+    {
         QFile file(filePath);
-        //Attempt to open the file
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // Attempt to open the file
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             QMessageBox::warning(nullptr, "Error", "Unable to open the file.");
             return;
         }
@@ -312,8 +324,14 @@ void Model::loadProject(){
         QByteArray fileData = file.readAll();
         file.close();
 
+        // File has been choosen so now we clear.
+        frames.clear();
+        clearCanvas();
+        palette.clear();
+
         QJsonDocument doc = QJsonDocument::fromJson(fileData);
-        if (doc.isObject()) {
+        if (doc.isObject())
+        {
             // Extract the width and frameCount from the doc
             QJsonObject jsonObject = doc.object();
             int width = jsonObject["width"].toInt();
@@ -322,18 +340,21 @@ void Model::loadProject(){
             qDebug() << "Width:" << width << "Frame Count:" << frameCount;
             QJsonArray jsonFrames = jsonObject["frames"].toArray();
 
-            //SET SIZE OF CANVAS HERE
-            for(int i = 0; i < frameCount; i++){
+            // SET SIZE OF CANVAS HERE
+            for (int i = 0; i < frameCount; i++)
+            {
                 addFrame();
             }
 
             int frameIndex = 0;
-            for (const QJsonValue &frameValue : jsonFrames) {
+            for (const QJsonValue &frameValue : jsonFrames)
+            {
                 selectFrame(frameIndex);
                 QJsonArray frameArray = frameValue.toArray();
 
                 // Loop through the RGBA values for the frame
-                for (int i = 0; i < frameArray.size() / 4; i += 4) {
+                for (int i = 0; i < frameArray.size() / 4; i += 4)
+                {
                     int red = frameArray[4 * i].toInt();
                     int green = frameArray[4 * i + 1].toInt();
                     int blue = frameArray[4 * i + 2].toInt();
@@ -344,9 +365,10 @@ void Model::loadProject(){
                 }
                 frameIndex++;
             }
-        } else {
+        }
+        else
+        {
             QMessageBox::warning(nullptr, "Error", "The JSON format is incorrect.");
         }
-
     }
 }
