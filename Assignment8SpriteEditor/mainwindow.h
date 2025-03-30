@@ -57,8 +57,6 @@ public:
         ERASER,
         PAINT,
         EYE,
-        MIRROR,
-        ROTATE,
         RECTANGLE,
         ELLIPSE
     };

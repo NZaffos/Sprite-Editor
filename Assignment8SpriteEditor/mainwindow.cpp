@@ -101,6 +101,16 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             model,
             &Model::loadProject);
 
+    // Mirror/Rotate connections
+    connect(ui->mirrorBttn,
+            &QPushButton::clicked,
+            model,
+            &Model::mirrorFrame);
+    connect(ui->rotateBttn,
+            &QPushButton::clicked,
+            model,
+            &Model::rotateFrame);
+
 } // End of constructor
 
 MainWindow::~MainWindow()
@@ -262,7 +272,6 @@ void MainWindow::on_eyeBttn_clicked()
 {
     currTool = Tool::EYE;
 }
-
 
 void MainWindow::on_newButton_clicked()
 {

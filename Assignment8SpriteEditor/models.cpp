@@ -137,6 +137,34 @@ void Model::swapFrame(bool swapUp)
     emit canvasUpdated();
 }
 
+void Model::mirrorFrame(){
+    QImage temp = image->copy();
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            image->setPixelColor(i,j,temp.pixelColor(size-1-i,j));
+        }
+    }
+    if (currentFrameIndex < frames.size())
+    {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
+}
+
+void Model::rotateFrame(){
+    QImage temp = image->copy();
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            image->setPixelColor(i,j,temp.pixelColor(j,size-1-i));
+        }
+    }
+    if (currentFrameIndex < frames.size())
+    {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
+}
+
 void Model::sliderValueChanged(int value)
 {
     animationFps = value;

@@ -111,6 +111,8 @@ public slots:
     void toggleAnimation();
     void saveProject();
     void loadProject();
+    void mirrorFrame();
+    void rotateFrame();
 
 private:
     /**
