@@ -223,7 +223,7 @@ void Model::getPixel(int x, int y)
     // qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 
-int Model::getCanvasX()
+int Model::getCanvasSize()
 {
     return size;
 }

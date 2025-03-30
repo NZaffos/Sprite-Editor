@@ -29,8 +29,7 @@ public:
     void getPixel(int x, int y);
     void setSelectColor(QColor color);
 
-    int getCanvasX();
-    int getCanvasY();
+    int getCanvasSize();
 
     /**
      * Adds a new frame to the animation
