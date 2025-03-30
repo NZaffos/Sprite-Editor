@@ -122,12 +122,28 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &MainWindow::shiftFrameUpClicked);
 
     // Animation window and slider
-    connect(ui->animationFpsSlider, &QSlider::valueChanged,
-            model, &Model::sliderValueChanged);
-    connect(model, &Model::updateAnimationIcon,
-            this, &MainWindow::drawAnimationIcon);
-    connect(model, &Model::updateFpsSliderIO,
-            this, &MainWindow::updateFpsText);
+    connect(ui->animationFpsSlider,
+            &QSlider::valueChanged,
+            model,
+            &Model::sliderValueChanged);
+    connect(model,
+            &Model::updateAnimationIcon,
+            this,
+            &MainWindow::drawAnimationIcon);
+    connect(model,
+            &Model::updateFpsSliderIO,
+            this,
+            &MainWindow::updateFpsText);
+
+    //New/Save/Load connections
+    connect(ui->saveButton,
+            &QPushButton::clicked,
+            model,
+            &Model::saveProject);
+    connect(ui->loadButton,
+            &QPushButton::clicked,
+            model,
+            &Model::loadProject);
 } // End of constructor
 
 void MainWindow::setAnimationFpsSliderAndWindow() {

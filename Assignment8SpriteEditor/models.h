@@ -108,6 +108,8 @@ signals:
 
 public slots:
     void sliderValueChanged(int value);
+    void saveProject();
+    void loadProject();
 
 private:
     /**

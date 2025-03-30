@@ -68,9 +68,6 @@ void Palette::removeColorFromPalette() {
 void Palette::colorButtonPress(int index) {
     qDebug() << "Button at index" << index << "was pressed!";
 
-    // Example: Retrieve button color
-    QPushButton *button = colorButtons.at(index);
-
     deleteButtonActive = true;
     currentColorButtonIndex = index;
 
