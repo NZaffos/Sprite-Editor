@@ -2,17 +2,55 @@
 #define DISPLAYS_H
 
 #include <QWidget>
-#include <QLabel>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QVector>
 #include "models.h"
+#include "ui_mainwindow.h"
 
+/**
+ * This class handles displaying the frame selector and animation preview
+ */
 class Displays : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit Displays(Model *model, QWidget *parent = nullptr);
+    explicit Displays(Ui::MainWindow *ui, Model *model, QWidget *parent = nullptr);
+
+private slots:
+    // Frame selector
+    void frameButtonClicked();
+    void addFrameButtonClicked();
+    void deleteFrameButtonClicked();
+    void duplicateFrameButtonClicked();
+    void shiftFrameUpClicked();
+    void shiftFrameDownClicked();
+
+    // Animation
+    void updateFpsText(int value);
+    void toggleAnimationPlayPauseIcon(bool enabled);
+    void drawAnimationIcon(int index);
+
+    // Canvas updated
+    void onCanvasUpdated();
 
 private:
+    Ui::MainWindow *ui;
     Model *model;
+
+    // Frame selector
+    QVBoxLayout *framesLayout = nullptr;
+    QVector<QPushButton *> frameButtons;
+    int selectedFrameIndex = 0;
+    void initializeFrameSelector();
+    void createFrameButton(int index);
+    QPushButton *updateFrameButtonIcon(QPushButton *button);
+    void updateFrameButtonStyle();
+
+    // Animation
+    void initializeAnimationControls();
 };
 
 #endif // DISPLAYS_H

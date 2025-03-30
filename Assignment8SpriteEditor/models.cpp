@@ -71,7 +71,7 @@ void Model::removeFrame(unsigned int index)
 
     *image = frames[currentFrameIndex];
 
-    emit frameSelected(currentFrameIndex);
+    emit frameModified(currentFrameIndex);
     emit canvasUpdated();
 }
 
@@ -81,7 +81,7 @@ void Model::selectFrame(unsigned int index)
     {
         *image = frames[index];
         currentFrameIndex = index;
-        emit frameSelected(index);
+        emit frameModified(index);
         emit canvasUpdated();
     }
 }
@@ -133,7 +133,7 @@ void Model::swapFrame(bool swapUp)
     currentFrameIndex += offset;
 
     *image = frames[currentFrameIndex].copy();
-    emit frameSelected(currentFrameIndex);
+    emit frameModified(currentFrameIndex);
     emit canvasUpdated();
 }
 
@@ -210,16 +210,23 @@ void Model::setPixel(int x, int y, QColor userColor)
     {
         frames[currentFrameIndex] = *image;
     }
+    emit canvasUpdated();
 }
 
 void Model::erasePixel(int x, int y)
 {
     image->setPixelColor(x, y, QColor(0, 0, 0, 50));
+
+    if (currentFrameIndex < frames.size()) {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
 }
 
 void Model::getPixel(int x, int y)
 {
     selectColor = image->pixelColor(x, y);
+
     // qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 

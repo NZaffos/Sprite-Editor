@@ -46,7 +46,6 @@ public:
 
     /**
      * an enum class to hold all possible tools available to the user
-     * @brief The Tool enum
      */
     enum class Tool
     {
@@ -55,17 +54,10 @@ public:
     };
     Q_ENUM(Tool)
 
-public slots:
-    void drawAnimationIcon(int index);
-
 private:
     Ui::MainWindow *ui;
-
-    /**
-     * Instance of the model object
-     * @brief model
-     */
     Model *model;
+
     Displays *displays;
     Palette *palette;
 
@@ -73,48 +65,19 @@ private:
 
     /**
      * Stores the current color active on the users brush
-     * @brief userColor
      */
-    QColor userColor; // User chosen color
-
-    // Frame selector elements
-    QScrollArea *framesScrollArea;
-    QWidget *framesContainer;
-    QVBoxLayout *framesLayout;
-    QVector<QPushButton *> frameButtons;
-    int selectedFrameIndex = 0;
-    void updateFrameButtonStyle();
-
-    // Animation elements
-    void setAnimationFpsSliderAndWindow();
+    QColor userColor;
+    Tool currTool;
 
     // Canvas
     QImage *qimage;
     QPainter *qpainter;
     QGraphicsScene *scene;
-
     bool drawing = false;
     QPointF currPixel;
 
-    Tool currTool;
 
 private slots:
-
-    // Frame selector
-    void setFrameSelector();
-    void frameButtonClicked();
-    void deleteFrame();
-    void addFrameButtonClicked();
-    void duplicateFrameButtonClicked();
-    void createFrameButton(int index);
-    QPushButton *updateFrameButtonIcon(QPushButton *button);
-    void shiftFrameUpClicked();
-    void shiftFrameDownClicked();
-
-    // Animation
-    void updateFpsText(int value);
-    void toggleAnimationPlayPauseIcon(bool enabled);
-
     // Canvas
     void updateView();
 

@@ -9,14 +9,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->setupUi(this);
 
     // New Displays
-    displays = new Displays(model);
+    displays = new Displays(ui, model);
     palette = new Palette(ui, model, userColor);
-
-    // Set fps slider ui
-    setAnimationFpsSliderAndWindow();
-
-    // Set frame selector ui
-    setFrameSelector();
 
     userColor = QColor(0, 0, 0, 255);
     currTool = Tool::BRUSH;
@@ -30,10 +24,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     // Ensure the scenes area matches the pixmap
     scene->setSceneRect(scene->itemsBoundingRect());
 
-    // Add default canvas to frame selector
-    createFrameButton(0);
-    updateFrameButtonStyle();
-
     // Get user canvas size
     int canvasX = 725 / model->getCanvasX();
     int canvasY = 725 / model->getCanvasY();
@@ -43,7 +33,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->scale(canvasX, canvasY);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     ui->graphicsView->viewport()->installEventFilter(this);
 
     // Enable mouse tracking
@@ -101,48 +90,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QToolButton::clicked,
             palette,
             &Palette::removeColorFromPalette);
-
-    // Frame selector
-    connect(ui->deleteFrameButton,
-            &QPushButton::clicked,
-            this,
-            &MainWindow::deleteFrame);
-    connect(ui->addFrameButton,
-            &QPushButton::clicked,
-            this,
-            &MainWindow::addFrameButtonClicked);
-    connect(ui->dublicateFrameButton,
-            &QPushButton::clicked,
-            this,
-            &MainWindow::duplicateFrameButtonClicked);
-    connect(ui->shiftDownFrameButton,
-            &QPushButton::clicked,
-            this,
-            &MainWindow::shiftFrameDownClicked);
-    connect(ui->shiftUpFrameButton,
-            &QPushButton::clicked,
-            this,
-            &MainWindow::shiftFrameUpClicked);
-    connect(ui->clearCanvasButton, &QPushButton::clicked,
-            model, &Model::clearCanvas);
-
-    // Animation window and slider
-    connect(ui->animationFpsSlider,
-            &QSlider::valueChanged,
-            model,
-            &Model::sliderValueChanged);
-    connect(model,
-            &Model::updateAnimationIcon,
-            this,
-            &MainWindow::drawAnimationIcon);
-    connect(model,
-            &Model::updateFpsSliderIO,
-            this,
-            &MainWindow::updateFpsText);
-    connect(model,
-            &Model::togglePlayPauseButtonIcon,
-            this,
-            &MainWindow::toggleAnimationPlayPauseIcon);
       
     // New/Save/Load connections
     connect(ui->saveButton,
@@ -154,181 +101,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             model,
             &Model::loadProject);
 } // End of constructor
-
-void MainWindow::setAnimationFpsSliderAndWindow()
-{
-    QString sliderStyle = palette->getSliderStyleSheet();
-    ui->animationFpsSlider->setStyleSheet(sliderStyle);
-    ui->animationFpsSlider->setRange(1, 60);
-    updateFpsText(1);
-}
-
-void MainWindow::toggleAnimationPlayPauseIcon(bool enabled) 
-{
-    if (enabled)
-        ui->animationPlayPauseButton->setText(QString("| |"));
-    else
-        ui->animationPlayPauseButton->setText(QString(">"));
-}
-
-void MainWindow::updateFpsText(int value) 
-{
-    ui->animationFpsSliderIO->setText(QString("FPS: ") + QString::number(value));
-}
-
-void MainWindow::drawAnimationIcon(int index)
-{
-    QPixmap newImage = model->getFrameThumbnail(index, 220, 220);
-    ui->animationDisplayLabel->setPixmap(newImage);
-}
-
-void MainWindow::updateFrameButtonStyle()
-{
-    for (int i = 0; i < frameButtons.size(); i++)
-    {
-        if (i == selectedFrameIndex)
-            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
-        else
-            frameButtons[i]->setStyleSheet("QPushButton { no-border }");
-    }
-}
-
-void MainWindow::setFrameSelector()
-{
-    framesScrollArea = ui->frameSelector;
-    framesContainer = ui->frameSelectorScrollContent;
-
-    framesLayout = new QVBoxLayout();
-    framesLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
-    framesLayout->setContentsMargins(0, 20, 0, 20);
-
-    framesContainer->setLayout(framesLayout);
-
-    framesScrollArea->setWidget(framesContainer);
-    framesScrollArea->setWidgetResizable(true);
-}
-
-void MainWindow::createFrameButton(int index)
-{
-    QPushButton *frameButton = new QPushButton();
-
-    frameButton->setProperty("frameIndex", index);
-    updateFrameButtonIcon(frameButton);
-    connect(frameButton, &QPushButton::clicked, this, &MainWindow::frameButtonClicked);
-
-    framesLayout->insertWidget(index, frameButton);
-    frameButtons.insert(index, frameButton);
-}
-
-QPushButton *MainWindow::updateFrameButtonIcon(QPushButton *button)
-{
-    int index = button->property("frameIndex").toInt();
-    QPixmap thumbnail = model->getFrameThumbnail(index, 110, 110);
-    button->setIcon(QIcon(thumbnail));
-    button->setIconSize(thumbnail.size());
-    button->setFixedSize(112, 112);
-
-    return button;
-}
-
-void MainWindow::frameButtonClicked()
-{
-    QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (button)
-    {
-        int index = button->property("frameIndex").toInt();
-        model->selectFrame(index);
-        selectedFrameIndex = index;
-        updateFrameButtonStyle();
-        updateView();
-    }
-}
-
-void MainWindow::deleteFrame()
-{
-    QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
-    if (model->getFrames().size() <= 1) {
-        model->removeFrame(selectedFrameIndex);
-    
-    model->removeFrame(selectedFrameIndex);
-
-        updateFrameButtonIcon(buttonToRemove);
-        updateView();
-        return;
-    }
-
-    model->removeFrame(selectedFrameIndex);
-    framesLayout->removeWidget(buttonToRemove);
-    buttonToRemove->deleteLater();
-    frameButtons.remove(selectedFrameIndex);
-
-    for (int i = selectedFrameIndex; i < frameButtons.size(); i++)
-    {
-        frameButtons[i]->setProperty("frameIndex", i);
-    }
-
-    selectedFrameIndex = model->getCurrentFrameIndex();
-    updateFrameButtonStyle();
-    updateView();
-}
-
-void MainWindow::addFrameButtonClicked()
-{
-    model->addFrame();
-    int newIndex = model->getCurrentFrameIndex();
-    createFrameButton(newIndex);
-
-    for (int i = newIndex + 1; i < frameButtons.size(); i++)
-    {
-        frameButtons[i]->setProperty("frameIndex", i);
-    }
-
-    selectedFrameIndex = newIndex;
-    updateFrameButtonStyle();
-    updateView();
-}
-
-void MainWindow::duplicateFrameButtonClicked()
-{
-    model->duplicateFrame();
-    int newIndex = model->getCurrentFrameIndex();
-    createFrameButton(newIndex);
-
-    for (int i = newIndex + 1; i < frameButtons.size(); i++)
-    {
-        frameButtons[i]->setProperty("frameIndex", i);
-    }
-
-    selectedFrameIndex = newIndex;
-    updateFrameButtonStyle();
-    updateView();
-}
-
-void MainWindow::shiftFrameUpClicked()
-{
-    if (selectedFrameIndex <= 0)
-        return;
-
-    model->shiftFrameUp();
-    selectedFrameIndex = model->getCurrentFrameIndex();
-    updateFrameButtonIcon(frameButtons[selectedFrameIndex + 1]);
-
-    updateFrameButtonStyle();
-    updateView();
-}
-
-void MainWindow::shiftFrameDownClicked()
-{
-    if (selectedFrameIndex >= frameButtons.size() - 1)
-        return;
-
-    model->shiftFrameDown();
-    selectedFrameIndex = model->getCurrentFrameIndex();
-    updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
-
-    updateFrameButtonStyle();
-    updateView();
-}
 
 MainWindow::~MainWindow()
 {
@@ -500,10 +272,6 @@ void MainWindow::updateView()
 {
     scene->clear();
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
-    if (!frameButtons.isEmpty() && selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size())
-    {
-        updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
-    }
 }
 
 void MainWindow::on_brushBttn_clicked()

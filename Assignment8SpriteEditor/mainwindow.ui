@@ -711,7 +711,7 @@
       <height>52</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="animationIO">
      <property name="spacing">
       <number>2</number>
      </property>

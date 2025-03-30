@@ -101,7 +101,7 @@ public:
 
 signals:
     void canvasUpdated();
-    void frameSelected(unsigned int index);
+    void frameModified(unsigned int index);
     int updateAnimationIcon(int index);
     int updateFpsSliderIO(int value);
     bool togglePlayPauseButtonIcon(bool enabled);
