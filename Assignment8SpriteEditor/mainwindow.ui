@@ -135,7 +135,7 @@
        <x>10</x>
        <y>20</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
@@ -148,63 +148,89 @@
        <x>110</x>
        <y>20</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
       <string>eraser</string>
      </property>
     </widget>
-    <widget class="QToolButton" name="temp1">
+    <widget class="QToolButton" name="paintBttn">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>120</y>
+       <y>95</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
-      <string>temp1</string>
+      <string>paint bucket</string>
      </property>
     </widget>
-    <widget class="QToolButton" name="temp2">
+    <widget class="QToolButton" name="eyeBttn">
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>120</y>
+       <y>95</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
-      <string>temp2</string>
+      <string>eye dropper</string>
      </property>
     </widget>
-    <widget class="QToolButton" name="temp3">
+    <widget class="QToolButton" name="mirrorBttn">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>220</y>
+       <y>170</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
-      <string>temp3</string>
+      <string>mirror</string>
      </property>
     </widget>
-    <widget class="QToolButton" name="temp4">
+    <widget class="QToolButton" name="rotateBttn">
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>220</y>
+       <y>170</y>
        <width>90</width>
-       <height>90</height>
+       <height>65</height>
       </rect>
      </property>
      <property name="text">
-      <string>temp4</string>
+      <string>rotate</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="rectangleBttn">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>245</y>
+       <width>90</width>
+       <height>65</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>rectangle</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="ellipseBttn">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>245</y>
+       <width>90</width>
+       <height>65</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>ellipse</string>
      </property>
     </widget>
    </widget>

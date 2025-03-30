@@ -9,7 +9,7 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
+    image = new QImage(size, size, QImage::Format_ARGB32);
     clearCanvas();
 
     frames.push_back(*image);
@@ -36,7 +36,7 @@ void Model::clearCanvas()
 
 void Model::addFrame()
 {
-    QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
+    QImage newFrame(size, size, QImage::Format_ARGB32);
     newFrame.fill(QColor(0, 0, 0, 50));
 
     auto pos = frames.begin() + currentFrameIndex + 1;
@@ -225,12 +225,7 @@ void Model::getPixel(int x, int y)
 
 int Model::getCanvasX()
 {
-    return sizeX;
-}
-
-int Model::getCanvasY()
-{
-    return sizeY;
+    return size;
 }
 
 void Model::setSelectColor(QColor color)
@@ -378,7 +373,7 @@ void Model::loadProject()
                     int alpha = frameArray[4 * i + 3].toInt();
 
                     QColor color(red, green, blue, alpha);
-                    setPixel(i % sizeX, i / sizeX, color);
+                    setPixel(i % size, i / size, color);
                 }
                 frameIndex++;
             }

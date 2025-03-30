@@ -115,16 +115,10 @@ public slots:
 
 private:
     /**
-     * Determines the width of our canvas
-     * @brief sizeX
+     * Determines the dimensions of our square canvas
+     * @brief size
      */
-    int sizeX = 32;
-
-    /**
-     * Determines the height of the canvas
-     * @brief sizeY
-     */
-    int sizeY = 32;
+    int size = 32;
 
     /**
      * The main canvas displayed on the users screen
