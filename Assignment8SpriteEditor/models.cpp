@@ -10,7 +10,7 @@
 Model::Model(QObject *parent) : QObject(parent)
 {
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image->fill(QColor(0, 0, 0, 50));
+    clearCanvas();
 
     frames.push_back(*image);
     updateAnimationFrame(0);
@@ -28,29 +28,36 @@ QImage *Model::getImage()
 
 void Model::clearCanvas()
 {
-    image->fill(Qt::white); // Clear canvas to white
+    image->fill(QColor(0, 0, 0, 50));
     emit canvasUpdated();
 }
 
 void Model::addFrame()
 {
     QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
-    newFrame.fill(QColor(0, 0, 0, 50)); // Adjust to create new frame as default
-    frames.push_back(newFrame);
-    selectFrame(frames.size() - 1);
+    clearCanvas();
+
+    auto pos = frames.begin() + currentFrameIndex + 1;
+    frames.insert(pos, newFrame);
+    selectFrame(++currentFrameIndex);
 }
 
 void Model::duplicateFrame()
 {
     QImage newFrame = frames[currentFrameIndex].copy();
-    frames.push_back(newFrame);
-    selectFrame(frames.size() - 1);
+
+    auto pos = frames.begin() + currentFrameIndex + 1;
+    frames.insert(pos, newFrame);
+    selectFrame(++currentFrameIndex);
 }
 
 void Model::removeFrame(unsigned int index)
 {
-    if (frames.size() <= 1 || index >= frames.size())
+    if (frames.size() <= 1 || index >= frames.size()) {
+        clearCanvas();
+        frames[0] = *image;
         return;
+    }
 
     frames.erase(frames.begin() + index);
 
@@ -85,7 +92,7 @@ QPixmap Model::getFrameThumbnail(int index, int width, int height) const
 {
     if (index < static_cast<int>(frames.size()) && index >= 0)
     {
-        return QPixmap::fromImage(frames[index]).scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        return QPixmap::fromImage(frames[index]).scaled(width, height, Qt::KeepAspectRatio, Qt::FastTransformation);
     }
     return QPixmap();
 }

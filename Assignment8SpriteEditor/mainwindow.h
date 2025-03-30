@@ -85,6 +85,7 @@ private:
     int selectedFrameIndex = 0;
     void updateFrameButtonStyle();
 
+    // Animation elements
     void setAnimationFpsSliderAndWindow();
 
     // Canvas
@@ -105,7 +106,7 @@ private slots:
     void deleteFrame();
     void addFrameButtonClicked();
     void duplicateFrameButtonClicked();
-    void createFrameButton();
+    void createFrameButton(int index);
     QPushButton *updateFrameButtonIcon(QPushButton *button);
     void shiftFrameUpClicked();
     void shiftFrameDownClicked();

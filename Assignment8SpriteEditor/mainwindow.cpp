@@ -32,7 +32,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     scene->setSceneRect(scene->itemsBoundingRect());
 
     // Add default canvas to frame selector
-    createFrameButton();
+    createFrameButton(0);
     updateFrameButtonStyle();
 
     // Get user canvas size
@@ -185,16 +185,16 @@ void MainWindow::setFrameSelector() {
     framesScrollArea->setWidgetResizable(true);
 }
 
-void MainWindow::createFrameButton()
+void MainWindow::createFrameButton(int index)
 {
     QPushButton *frameButton = new QPushButton();
 
-    frameButton->setProperty("frameIndex", frameButtons.size());
+    frameButton->setProperty("frameIndex", index);
     updateFrameButtonIcon(frameButton);
     connect(frameButton, &QPushButton::clicked, this, &MainWindow::frameButtonClicked);
 
-    framesLayout->addWidget(frameButton);
-    frameButtons.append(frameButton);
+    framesLayout->insertWidget(index, frameButton);
+    frameButtons.insert(index, frameButton);
 }
 
 QPushButton *MainWindow::updateFrameButtonIcon(QPushButton *button)
@@ -224,12 +224,14 @@ void MainWindow::frameButtonClicked()
 
 void MainWindow::deleteFrame()
 {
-    if (model->getFrames().size() <= 1)
-        return;
-
-    model->removeFrame(selectedFrameIndex);
-
     QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
+    model->removeFrame(selectedFrameIndex);
+    if (model->getFrames().size() <= 1) {
+        updateFrameButtonIcon(buttonToRemove);
+        updateView();
+        return;
+    }
+
     framesLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
     frameButtons.remove(selectedFrameIndex);
@@ -248,8 +250,14 @@ void MainWindow::deleteFrame()
 void MainWindow::addFrameButtonClicked()
 {
     model->addFrame();
-    createFrameButton();
-    selectedFrameIndex = model->getCurrentFrameIndex();
+    int newIndex = model->getCurrentFrameIndex();
+    createFrameButton(newIndex);
+
+    for(int i = newIndex + 1; i < frameButtons.size(); i++) {
+        frameButtons[i]->setProperty("frameIndex", i);
+    }
+
+    selectedFrameIndex = newIndex;
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
     updateFrameButtonStyle();
     updateView();
@@ -258,9 +266,16 @@ void MainWindow::addFrameButtonClicked()
 void MainWindow::duplicateFrameButtonClicked()
 {
     model->duplicateFrame();
-    createFrameButton();
-    selectedFrameIndex = model->getCurrentFrameIndex();
+    int newIndex = model->getCurrentFrameIndex();
+    createFrameButton(newIndex);
+
+    for(int i = newIndex + 1; i < frameButtons.size(); i++) {
+        frameButtons[i]->setProperty("frameIndex", i);
+    }
+
+    selectedFrameIndex = newIndex;
     ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
+    updateFrameButtonStyle();
     updateView();
 }
 
@@ -273,6 +288,7 @@ void MainWindow::shiftFrameUpClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex + 1]);
 
+    updateFrameButtonStyle();
     updateView();
 }
 
@@ -285,6 +301,7 @@ void MainWindow::shiftFrameDownClicked()
     selectedFrameIndex = model->getCurrentFrameIndex();
     updateFrameButtonIcon(frameButtons[selectedFrameIndex - 1]);
 
+    updateFrameButtonStyle();
     updateView();
 }
 
