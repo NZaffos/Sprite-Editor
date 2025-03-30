@@ -208,12 +208,14 @@ void MainWindow::frameButtonClicked()
 
 void MainWindow::deleteFrame()
 {
-    if (model->getFrames().size() <= 1)
-        return;
-
-    model->removeFrame(selectedFrameIndex);
-
     QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
+    model->removeFrame(selectedFrameIndex);
+    if (model->getFrames().size() <= 1) {
+        updateFrameButtonIcon(buttonToRemove);
+        updateView();
+        return;
+    }
+
     framesLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
     frameButtons.remove(selectedFrameIndex);

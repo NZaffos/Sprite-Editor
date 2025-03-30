@@ -5,7 +5,7 @@
 Model::Model(QObject *parent) : QObject(parent)
 {
     image = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
-    image->fill(QColor(0, 0, 0, 50));
+    clearCanvas();
 
     frames.push_back(*image);
     updateAnimationFrame(0);
@@ -23,14 +23,14 @@ QImage *Model::getImage()
 
 void Model::clearCanvas()
 {
-    image->fill(Qt::white); // Clear canvas to white
+    image->fill(QColor(0, 0, 0, 50));
     emit canvasUpdated();
 }
 
 void Model::addFrame()
 {
     QImage newFrame(sizeX, sizeY, QImage::Format_ARGB32);
-    newFrame.fill(QColor(0, 0, 0, 50)); // Adjust to create new frame as default
+    clearCanvas();
 
     auto pos = frames.begin() + currentFrameIndex + 1;
     frames.insert(pos, newFrame);
@@ -48,8 +48,11 @@ void Model::duplicateFrame()
 
 void Model::removeFrame(unsigned int index)
 {
-    if (frames.size() <= 1 || index >= frames.size())
+    if (frames.size() <= 1 || index >= frames.size()) {
+        clearCanvas();
+        frames[0] = *image;
         return;
+    }
 
     frames.erase(frames.begin() + index);
 
