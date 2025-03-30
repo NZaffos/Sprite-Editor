@@ -19,7 +19,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     setFrameSelector();
 
     userColor = QColor(0, 0, 0, 255);
-
     currTool = Tool::BRUSH;
 
     scene = new QGraphicsScene(this);
@@ -51,7 +50,11 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->viewport()->setMouseTracking(true);
 
-    // Color pricker
+    // Canvas updating
+    connect(model, &Model::canvasUpdated,
+            this, &MainWindow::updateView);
+
+    // Color picker
     connect(ui->redSlider,
             &QSlider::valueChanged,
             palette,
@@ -120,6 +123,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QPushButton::clicked,
             this,
             &MainWindow::shiftFrameUpClicked);
+    connect(ui->clearCanvasButton, &QPushButton::clicked,
+            model, &Model::clearCanvas);
 
     // Animation window and slider
     connect(ui->animationFpsSlider, &QSlider::valueChanged,
@@ -128,6 +133,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             this, &MainWindow::drawAnimationIcon);
     connect(model, &Model::updateFpsSliderIO,
             this, &MainWindow::updateFpsText);
+    connect(ui->animationPlayPauseButton, &QPushButton::clicked,
+            model, &Model::toggleAnimation);
+    connect(model, &Model::togglePlayPauseButtonIcon,
+            this, &MainWindow::toggleAnimationPlayPauseIcon);
 } // End of constructor
 
 void MainWindow::setAnimationFpsSliderAndWindow() {
@@ -135,6 +144,13 @@ void MainWindow::setAnimationFpsSliderAndWindow() {
     ui->animationFpsSlider->setStyleSheet(sliderStyle);
     ui->animationFpsSlider->setRange(1, 60);
     updateFpsText(1);
+}
+
+void MainWindow::toggleAnimationPlayPauseIcon(bool enabled) {
+    if (enabled)
+        ui->animationPlayPauseButton->setText(QString("| |"));
+    else
+        ui->animationPlayPauseButton->setText(QString(">"));
 }
 
 void MainWindow::updateFpsText(int value) {
@@ -200,7 +216,6 @@ void MainWindow::frameButtonClicked()
         int index = button->property("frameIndex").toInt();
         model->selectFrame(index);
         selectedFrameIndex = index;
-        ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
         updateFrameButtonStyle();
         updateView();
     }
@@ -209,13 +224,14 @@ void MainWindow::frameButtonClicked()
 void MainWindow::deleteFrame()
 {
     QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
-    model->removeFrame(selectedFrameIndex);
     if (model->getFrames().size() <= 1) {
+        model->removeFrame(selectedFrameIndex);
         updateFrameButtonIcon(buttonToRemove);
         updateView();
         return;
     }
 
+    model->removeFrame(selectedFrameIndex);
     framesLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
     frameButtons.remove(selectedFrameIndex);
@@ -226,7 +242,6 @@ void MainWindow::deleteFrame()
     }
 
     selectedFrameIndex = model->getCurrentFrameIndex();
-    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
     updateFrameButtonStyle();
     updateView();
 }
@@ -242,7 +257,6 @@ void MainWindow::addFrameButtonClicked()
     }
 
     selectedFrameIndex = newIndex;
-    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
     updateFrameButtonStyle();
     updateView();
 }
@@ -258,7 +272,6 @@ void MainWindow::duplicateFrameButtonClicked()
     }
 
     selectedFrameIndex = newIndex;
-    ui->deleteFrameButton->setEnabled(model->getFrames().size() > 1);
     updateFrameButtonStyle();
     updateView();
 }

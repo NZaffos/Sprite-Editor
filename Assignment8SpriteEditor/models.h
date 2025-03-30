@@ -15,7 +15,6 @@ public:
     Model(QObject *parent = nullptr);
     ~Model();
 
-    void clearCanvas();
     QImage *getImage();
 
     /**
@@ -105,9 +104,12 @@ signals:
     void frameSelected(unsigned int index);
     int updateAnimationIcon(int index);
     int updateFpsSliderIO(int value);
+    bool togglePlayPauseButtonIcon(bool enabled);
 
 public slots:
     void sliderValueChanged(int value);
+    void clearCanvas();
+    void toggleAnimation();
 
 private:
     /**
@@ -132,6 +134,8 @@ private:
     std::vector<QImage> frames;
     unsigned int currentFrameIndex = 0;
     int animationFps = 1;
+    int animationIndex = 0;
+    bool animationPlaying = true;
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -147,7 +151,7 @@ private:
     QVector<QColor> palette;
 
 private slots:
-    void updateAnimationFrame(int index);
+    void updateAnimationFrame();
 };
 
 #endif // MODELS_H
