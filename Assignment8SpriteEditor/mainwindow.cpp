@@ -255,25 +255,14 @@ void MainWindow::on_newButton_clicked()
 {
     bool ok;
     // Ask for the number of rows
-    QString rowText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the number of rows:"), QLineEdit::Normal, QString(), &ok);
+    QString rowText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the size of the canvas:"), QLineEdit::Normal, QString(), &ok);
     if (!ok || rowText.isEmpty())
         return;  // User cancelled or left empty
 
     bool conversionOK;
     int rows = rowText.toInt(&conversionOK);
     if (!conversionOK) {
-        QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer for rows."));
-        return;
-    }
-
-    // Ask for the number of columns
-    QString colText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the number of columns:"), QLineEdit::Normal, QString(), &ok);
-    if (!ok || colText.isEmpty())
-        return;  // User cancelled or left empty
-
-    int columns = colText.toInt(&conversionOK);
-    if (!conversionOK) {
-        QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer for columns."));
+        QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
     }
 }
