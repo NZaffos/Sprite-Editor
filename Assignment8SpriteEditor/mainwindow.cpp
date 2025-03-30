@@ -127,51 +127,74 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             model, &Model::clearCanvas);
 
     // Animation window and slider
-    connect(ui->animationFpsSlider, &QSlider::valueChanged,
-            model, &Model::sliderValueChanged);
-    connect(model, &Model::updateAnimationIcon,
-            this, &MainWindow::drawAnimationIcon);
-    connect(model, &Model::updateFpsSliderIO,
-            this, &MainWindow::updateFpsText);
-    connect(ui->animationPlayPauseButton, &QPushButton::clicked,
-            model, &Model::toggleAnimation);
-    connect(model, &Model::togglePlayPauseButtonIcon,
-            this, &MainWindow::toggleAnimationPlayPauseIcon);
+    connect(ui->animationFpsSlider,
+            &QSlider::valueChanged,
+            model,
+            &Model::sliderValueChanged);
+    connect(model,
+            &Model::updateAnimationIcon,
+            this,
+            &MainWindow::drawAnimationIcon);
+    connect(model,
+            &Model::updateFpsSliderIO,
+            this,
+            &MainWindow::updateFpsText);
+    connect(model,
+            &Model::togglePlayPauseButtonIcon,
+            this,
+            &MainWindow::toggleAnimationPlayPauseIcon);
+      
+    // New/Save/Load connections
+    connect(ui->saveButton,
+            &QPushButton::clicked,
+            model,
+            &Model::saveProject);
+    connect(ui->loadButton,
+            &QPushButton::clicked,
+            model,
+            &Model::loadProject);
 } // End of constructor
 
-void MainWindow::setAnimationFpsSliderAndWindow() {
+void MainWindow::setAnimationFpsSliderAndWindow()
+{
     QString sliderStyle = palette->getSliderStyleSheet();
     ui->animationFpsSlider->setStyleSheet(sliderStyle);
     ui->animationFpsSlider->setRange(1, 60);
     updateFpsText(1);
 }
 
-void MainWindow::toggleAnimationPlayPauseIcon(bool enabled) {
+void MainWindow::toggleAnimationPlayPauseIcon(bool enabled) 
+{
     if (enabled)
         ui->animationPlayPauseButton->setText(QString("| |"));
     else
         ui->animationPlayPauseButton->setText(QString(">"));
 }
 
-void MainWindow::updateFpsText(int value) {
+void MainWindow::updateFpsText(int value) 
+{
     ui->animationFpsSliderIO->setText(QString("FPS: ") + QString::number(value));
 }
 
-void MainWindow::drawAnimationIcon(int index) {
+void MainWindow::drawAnimationIcon(int index)
+{
     QPixmap newImage = model->getFrameThumbnail(index, 220, 220);
     ui->animationDisplayLabel->setPixmap(newImage);
 }
 
-void MainWindow::updateFrameButtonStyle() {
-    for(int i = 0; i < frameButtons.size(); i++) {
-        if(i == selectedFrameIndex)
+void MainWindow::updateFrameButtonStyle()
+{
+    for (int i = 0; i < frameButtons.size(); i++)
+    {
+        if (i == selectedFrameIndex)
             frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
         else
             frameButtons[i]->setStyleSheet("QPushButton { no-border }");
     }
 }
 
-void MainWindow::setFrameSelector() {
+void MainWindow::setFrameSelector()
+{
     framesScrollArea = ui->frameSelector;
     framesContainer = ui->frameSelectorScrollContent;
 
@@ -226,6 +249,9 @@ void MainWindow::deleteFrame()
     QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
     if (model->getFrames().size() <= 1) {
         model->removeFrame(selectedFrameIndex);
+    
+    model->removeFrame(selectedFrameIndex);
+
         updateFrameButtonIcon(buttonToRemove);
         updateView();
         return;
@@ -252,7 +278,8 @@ void MainWindow::addFrameButtonClicked()
     int newIndex = model->getCurrentFrameIndex();
     createFrameButton(newIndex);
 
-    for(int i = newIndex + 1; i < frameButtons.size(); i++) {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -267,7 +294,8 @@ void MainWindow::duplicateFrameButtonClicked()
     int newIndex = model->getCurrentFrameIndex();
     createFrameButton(newIndex);
 
-    for(int i = newIndex + 1; i < frameButtons.size(); i++) {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 

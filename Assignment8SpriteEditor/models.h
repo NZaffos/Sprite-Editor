@@ -110,6 +110,8 @@ public slots:
     void sliderValueChanged(int value);
     void clearCanvas();
     void toggleAnimation();
+    void saveProject();
+    void loadProject();
 
 private:
     /**
