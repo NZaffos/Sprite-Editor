@@ -25,12 +25,11 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     scene->setSceneRect(scene->itemsBoundingRect());
 
     // Get user canvas size
-    int canvasX = 725 / model->getCanvasX();
-    int canvasY = 725 / model->getCanvasY();
+    int canvasSize = 725 / model->getCanvasSize();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    ui->graphicsView->scale(canvasX, canvasY);
+    ui->graphicsView->scale(canvasSize, canvasSize);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->viewport()->installEventFilter(this);
