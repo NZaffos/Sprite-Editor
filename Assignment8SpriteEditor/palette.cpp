@@ -37,24 +37,17 @@ void Palette::addColorToPalette()
                                    .arg(userColor.blue())
                                    .arg(userColor.alpha()));
 
-    unsigned int index = colorButtons.size();
-
+    int index = colorButtons.size();
     int row = index / paletteCols;
     int col = index % paletteCols;
 
     paletteLayout->addWidget(colorButton, row, col);
-
     colorButtons.append(colorButton);
-
     model->addToPalette(userColor);
 
-    connect(colorButton,
-            &QPushButton::pressed,
-            this,
-            [=]()
-            {
-                colorButtonPress(index);
-            });
+    connect(colorButton, &QPushButton::pressed, this, [=]() {
+        colorButtonPress(colorButton);
+    });
 }
 
 void Palette::removeColorFromPalette()
@@ -63,16 +56,55 @@ void Palette::removeColorFromPalette()
     {
         return;
     }
+
     model->removeFromPalette(currentColorButtonIndex);
 
-    paletteLayout->removeWidget(colorButtons.at(currentColorButtonIndex));
+    // Remove button from layout and delete it
+    QPushButton* buttonToRemove = colorButtons.at(currentColorButtonIndex);
+    paletteLayout->removeWidget(buttonToRemove);
+    buttonToRemove->deleteLater();
+
+    // Remove from button list
+    colorButtons.removeAt(currentColorButtonIndex);
+
+    // Need to clear the layout and rebuild it so the buttons "slide down"
+    while (QLayoutItem* item = paletteLayout->takeAt(0)) {
+        delete item;
+    }
+
+    // Rebuild the layout with updated positions
+    for (int i = 0; i < colorButtons.size(); i++) {
+        int row = i / paletteCols;
+        int col = i % paletteCols;
+        paletteLayout->addWidget(colorButtons[i], row, col);
+    }
+
+    // Update button connections
+    for (int i = 0; i < colorButtons.size(); i++) {
+        QPushButton* button = colorButtons[i];
+        // We first should make sure the button is disconnected
+        disconnect(button,
+                   &QPushButton::pressed,
+                   nullptr,
+                   nullptr);
+        // Re Add the connections for each button
+        connect(button,
+                &QPushButton::pressed,
+                this,
+                [=]() {colorButtonPress(button);
+                });
+    }
 
     deleteButtonActive = false;
 }
 
-void Palette::colorButtonPress(int index)
+void Palette::colorButtonPress(QPushButton* button)
 {
     deleteButtonActive = true;
+
+    // Ge the index of the pressed button
+    int index = colorButtons.indexOf(button);
+
     currentColorButtonIndex = index;
 
     QColor color = model->getColorFromPalette(index);
