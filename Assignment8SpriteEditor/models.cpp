@@ -24,6 +24,8 @@ Model::Model(QObject *parent) : QObject(parent)
 Model::~Model()
 {
     delete image;
+    delete shapePreview;
+    delete tracker;
 }
 
 QImage *Model::getImage()
@@ -33,7 +35,7 @@ QImage *Model::getImage()
 
 void Model::clearCanvas()
 {
-    image->fill(QColor(0, 0, 0, 50));
+    image->fill(0);
     if (frames.size() > 0)
         frames[currentFrameIndex] = *image;
     emit canvasUpdated();
@@ -41,15 +43,15 @@ void Model::clearCanvas()
 
 void Model::clearNonCanvas()
 {
-    tracker->fill(QColor(0,0,0,0));
-    shapePreview->fill(QColor(0,0,0,0));
+    tracker->fill(0);
+    shapePreview->fill(0);
     emit canvasUpdated();
 }
 
 void Model::addFrame()
 {
     QImage newFrame(size, size, QImage::Format_ARGB32);
-    newFrame.fill(QColor(0, 0, 0, 50));
+    newFrame.fill(0);
 
     auto pos = frames.begin() + currentFrameIndex + 1;
     frames.insert(pos, newFrame);
@@ -301,11 +303,15 @@ void Model::mergeShapePreview(){
     QPainter painter(image);
     painter.drawImage(0, 0, *shapePreview);
     painter.end();
+    if (currentFrameIndex < frames.size()) {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
 }
 
 void Model::erasePixel(int x, int y)
 {
-    image->setPixelColor(x, y, QColor(0, 0, 0, 50));
+    image->setPixelColor(x, y, QColor(0,0,0,0));
 
     if (currentFrameIndex < frames.size()) {
         frames[currentFrameIndex] = *image;

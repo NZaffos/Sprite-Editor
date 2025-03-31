@@ -68,8 +68,7 @@ private:
 
     Displays *displays;
     Palette *palette;
-
-    QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
+    QPixmap background;
 
     /**
      * Stores the current color active on the users brush
@@ -105,7 +104,6 @@ private slots:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 };
 

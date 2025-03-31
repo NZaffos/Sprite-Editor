@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QtMath>
 
 // This is the view class IMPORTANT:
 // Delete this comment before submission!!!
@@ -39,6 +40,32 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->viewport()->setMouseTracking(true);
+
+    // Background
+    int width = model->getCanvasSize();
+    QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
+    bgImage.fill(QColor(150, 150, 150, 100));
+    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width))/8);
+    QPainter painter(&bgImage);
+    QPen pen;
+    pen.setColor(QColor(150, 150, 150, 255));
+    painter.setPen(pen);
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(QColor(150, 150, 150, 255));
+    painter.setBrush(brush);
+    int boxCount = width / checkerboardWidth;
+    for(int i = 0; i < boxCount; i++){
+        for(int j = 0; j < boxCount; j++){
+            if((i + j) % 2 == 1){
+                continue;
+            }
+            painter.drawRect(i * checkerboardWidth, j * checkerboardWidth, checkerboardWidth - 1, checkerboardWidth - 1);
+        }
+    }
+    background = QPixmap::fromImage(bgImage);
+
+    updateView();
 
     // Canvas updating
     connect(model, &Model::canvasUpdated,
@@ -310,18 +337,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        qDebug() << "clearing tracker and shapePreview";
-        model->clearNonCanvas();
-    }
-}
-
 void MainWindow::updateView()
 {
     scene->clear();
+    scene->addPixmap(background);
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
     scene->addPixmap(QPixmap::fromImage(*model->getShapePreview()));
 }
