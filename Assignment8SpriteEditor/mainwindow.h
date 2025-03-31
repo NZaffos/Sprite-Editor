@@ -84,6 +84,11 @@ private:
     bool drawing = false;
     QPointF currPixel;
 
+    /**
+     * Initialize the buttons with the proper style
+     */
+    void initializeButtons();
+
 
 private slots:
     // Canvas

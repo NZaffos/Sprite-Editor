@@ -6,6 +6,7 @@ Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *p
     setColorPalette();
     setSliderTextEdits();
     setSliders();
+    setButtons();
 }
 
 void Palette::setColorPalette()
@@ -224,6 +225,18 @@ void Palette::sliderIOValue()
     {
         ui->alphaSlider->setValue(value);
     }
+}
+
+void Palette::setButtons() {
+    QString style = QString(
+        "    background-color: rgb(0, 0, 0);"
+        "    color: white;" // Brighten text
+        "    border: 1px solid #555;"
+        "    border-radius: 4px;"
+        "    padding: 2px 4px;"
+        );
+    ui->addToPaletteButton->setStyleSheet(style);
+    ui->deleteFromColoPalette->setStyleSheet(style);
 }
 
 QString Palette::getSliderStyleSheet(QString color)

@@ -29,6 +29,7 @@ public:
     void addColorToPalette();
     void removeColorFromPalette();
     void setColor();
+    void setButtons();
 
 private:
     Ui::MainWindow *ui;

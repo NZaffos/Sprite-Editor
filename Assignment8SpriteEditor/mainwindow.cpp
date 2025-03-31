@@ -33,6 +33,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
     // Set palette sliders
     palette->updateSlidersToColor(QColor(0, 0, 0, 255));
+    initializeButtons();
     currTool = Tool::BRUSH;
 
     // Enable mouse tracking
@@ -112,6 +113,20 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &Model::rotateFrame);
 
 } // End of constructor
+
+void MainWindow::initializeButtons() {
+    QString style = QString(
+                        "    background-color: rgb(0, 0, 0);"
+                        "    color: white;" // Brighten text
+                        "    border: 1px solid #555;"
+                        "    border-radius: 4px;"
+                        "    padding: 2px 4px;"
+    );
+    ui->toolBox->setStyleSheet(QString("QToolButton {") + style + QString("}"));
+    ui->saveButton->setStyleSheet(style);
+    ui->newButton->setStyleSheet(style);
+    ui->loadButton->setStyleSheet(style);
+}
 
 MainWindow::~MainWindow()
 {
