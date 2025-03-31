@@ -56,6 +56,9 @@
     <property name="mouseTracking">
      <bool>false</bool>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
     <widget class="QGraphicsView" name="graphicsView">
      <property name="geometry">
       <rect>
@@ -133,52 +136,172 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
+       <y>34</y>
        <width>90</width>
-       <height>65</height>
+       <height>61</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
      </property>
      <property name="text">
       <string>brush</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/brush.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="eraseBttn">
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>20</y>
+       <y>34</y>
        <width>90</width>
-       <height>65</height>
+       <height>61</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
      </property>
      <property name="text">
       <string>eraser</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/eraser.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>45</width>
+       <height>45</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="paintBttn">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>95</y>
+       <y>100</y>
        <width>90</width>
-       <height>65</height>
+       <height>61</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+     </property>
      <property name="text">
-      <string>paint bucket</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/bucket.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="eyeBttn">
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>95</y>
+       <y>99</y>
        <width>90</width>
-       <height>65</height>
+       <height>61</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
      </property>
      <property name="text">
       <string>eye dropper</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/eyedropper.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="mirrorBttn">
@@ -190,8 +313,38 @@
        <height>65</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+     </property>
      <property name="text">
       <string>mirror</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/mirror.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="rotateBttn">
@@ -203,8 +356,38 @@
        <height>65</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+     </property>
      <property name="text">
       <string>rotate</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/rotate.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="rectangleBttn">
@@ -216,8 +399,38 @@
        <height>65</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+     </property>
      <property name="text">
       <string>rectangle</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/rectangle.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
     <widget class="QToolButton" name="ellipseBttn">
@@ -229,8 +442,38 @@
        <height>65</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+     </property>
      <property name="text">
       <string>ellipse</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/icons/icons/eclipse.png</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
    </widget>
@@ -540,9 +783,9 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>1210</x>
+      <x>1200</x>
       <y>320</y>
-      <width>41</width>
+      <width>61</width>
       <height>431</height>
      </rect>
     </property>
@@ -555,8 +798,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>+</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/addlayer.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -587,8 +854,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>D</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/duplicate.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -619,8 +910,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>-</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/removelayer.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -651,8 +966,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>^</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/moveup.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -683,8 +1022,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>v</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/movedown.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -715,8 +1078,32 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">/* Idle */
+QToolButton {
+    background-color: #f0f0f0;  /* Light gray */
+    border: 1px solid #a0a0a0;
+    border-radius: 3px;  
+}
+
+/* Hover */
+QToolButton:hover {
+    background-color: #e0e0e0; 
+}
+
+/* Pressed */
+QToolButton:pressed {
+    background-color: #3498db;  /* Blue */
+    border: 3px solid #1a5276;
+}</string>
+       </property>
        <property name="text">
         <string>C</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/icons/icons/clear.png</normalon>
+        </iconset>
        </property>
        <property name="iconSize">
         <size>

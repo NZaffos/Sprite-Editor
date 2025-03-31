@@ -17,6 +17,8 @@ public:
 
     QImage *getImage();
 
+    void createImage(int size);
+
     /**
      * Sets the color at a specific pixel coordinate in the image to the selected color
      * @brief setPixel
@@ -110,6 +112,8 @@ public:
 
     void mergeShapePreview();
 
+    void createImage();
+
 signals:
     void canvasUpdated();
     void frameModified(unsigned int index);
@@ -135,7 +139,7 @@ private:
      * Determines the dimensions of our square canvas
      * @brief size
      */
-    int size = 32;
+    int size;
 
     /**
      * The main canvas displayed on the users screen
