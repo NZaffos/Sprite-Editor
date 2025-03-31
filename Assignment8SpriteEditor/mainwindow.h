@@ -27,6 +27,10 @@ using std::string;
 #include <QInputDialog>
 #include <QMessageBox>
 
+// For Cursor
+#include <QCursor>
+#include<QStyle>
+
 // Includes for files
 #include "models.h"
 #include "displays.h"
@@ -68,8 +72,7 @@ private:
 
     Displays *displays;
     Palette *palette;
-
-    QColor const defaultColor = QColor(255, 255, 255, 255); // Opaque white
+    QPixmap background;
 
     /**
      * Stores the current color active on the users brush
@@ -88,6 +91,7 @@ private:
      * Initialize the buttons with the proper style
      */
     void initializeButtons();
+    void createCanvas();
 
     /**
      * Switches the border fo the tool selector to the new tool
@@ -98,17 +102,20 @@ private:
 private slots:
     // Canvas
     void updateView();
+    void createBg();
 
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();
     void on_eyeBttn_clicked();
+    void on_rectangleBttn_clicked();
+    void on_ellipseBttn_clicked();
+    void on_paintBttn_clicked();
 
     // New Button
     void on_newButton_clicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 };
 

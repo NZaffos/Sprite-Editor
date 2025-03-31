@@ -45,7 +45,7 @@ private:
     QVector<QPushButton *> colorButtons;
     int paletteCols = 6;
 
-    void colorButtonPress(int index);
+    void colorButtonPress(QPushButton* button);
 };
 
 #endif // PALETTE_H

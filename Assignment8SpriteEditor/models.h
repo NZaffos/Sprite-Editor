@@ -17,6 +17,8 @@ public:
 
     QImage *getImage();
 
+    void createImage(int size);
+
     /**
      * Sets the color at a specific pixel coordinate in the image to the selected color
      * @brief setPixel
@@ -99,17 +101,37 @@ public:
      */
     QColor getColorFromPalette(unsigned int index);
 
+    // Rect/Ellipse
+    void shapeStart(int x, int y);
+
+    void rectangleShape(int x, int y, QColor usercolor);
+
+    void ellipseShape(int x, int y, QColor usercolor);
+
+    QImage *getShapePreview();
+
+    void mergeShapePreview();
+
+    void createImage();
+
+    void paintBucket(int x, int y, QColor userColor);
+
+    void paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace);
+
 signals:
     void canvasUpdated();
     void frameModified(unsigned int index);
     int updateAnimationIcon(int index);
     int updateFpsSliderIO(int value);
     bool togglePlayPauseButtonIcon(bool enabled);
+    void requestNewFrame();
+    void requestDeleteFrame(unsigned int index);
+    void requestNewSelectedFrameIndex(unsigned int index);
 
 public slots:
     void sliderValueChanged(int value);
     void clearCanvas();
-    void clearTracker();
+    void clearNonCanvas();
     void toggleAnimation();
     void saveProject();
     void loadProject();
@@ -121,7 +143,7 @@ private:
      * Determines the dimensions of our square canvas
      * @brief size
      */
-    int size = 32;
+    int size;
 
     /**
      * The main canvas displayed on the users screen
@@ -145,6 +167,9 @@ private:
     QColor blendAdditive(QColor dest, QColor src);
 
     QImage *tracker;
+    QImage *shapePreview;
+    int shapeStartX;
+    int shapeStartY;
 
     /**
      * @brief palette

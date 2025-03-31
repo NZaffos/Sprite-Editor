@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QtMath>
 
 // This is the view class IMPORTANT:
 // Delete this comment before submission!!!
@@ -15,21 +16,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    // Add the pixmap to the scene
-    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
-
-    // Ensure the scenes area matches the pixmap
-    scene->setSceneRect(scene->itemsBoundingRect());
-
-    // Get user canvas size
-    int canvasSize = 725 / model->getCanvasSize();
-
-    // Configure the view
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    ui->graphicsView->scale(canvasSize, canvasSize);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->viewport()->installEventFilter(this);
+    createCanvas();
 
     // Set palette sliders
     palette->updateSlidersToColor(QColor(0, 0, 0, 255));
@@ -39,6 +26,11 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->viewport()->setMouseTracking(true);
+
+    // Background
+    createBg();
+
+    updateView();
 
     // Canvas updating
     connect(model, &Model::canvasUpdated,
@@ -91,7 +83,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QToolButton::clicked,
             palette,
             &Palette::removeColorFromPalette);
-      
+
     // New/Save/Load connections
     connect(ui->saveButton,
             &QPushButton::clicked,
@@ -101,6 +93,18 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QPushButton::clicked,
             model,
             &Model::loadProject);
+    connect(model,
+            &Model::requestNewFrame,
+            displays,
+            &Displays::addFrameButtonClicked);
+    connect(model,
+            &Model::requestNewSelectedFrameIndex,
+            displays,
+            &Displays::setSelectedFrameIndex);
+    connect(model,
+            &Model::requestDeleteFrame,
+            displays,
+            &Displays::setSelectedFrameIndex);
 
     // Mirror/Rotate connections
     connect(ui->mirrorBttn,
@@ -161,8 +165,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         // map global coordinates to the graphicView's local coordinates
         QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
 
-        qDebug() << "select pixel at scene Position: " << viewPos.x() / 10 << ", " << viewPos.y() / 10;
-
         if (ui->graphicsView->rect().contains(viewPos))
         {
             // Map to scene coordinates
@@ -198,6 +200,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                     palette->updateSlidersToColor(model->getImage()->pixelColor(x, y));
                     currTool = Tool::BRUSH;
                     break;
+                case Tool::RECTANGLE:
+                case Tool::ELLIPSE:
+                    model->shapeStart(x,y);
+                    break;
+                case Tool::PAINT:
+                    model->paintBucket(x, y, userColor);
                 default:
                     break;
                 }
@@ -210,53 +218,70 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->graphicsView->viewport())
-    {
-        if (event->type() == QEvent::MouseMove)
-        {
+    if (obj == ui->graphicsView->viewport()) {
+        if (event->type() == QEvent::Enter) {
+            QPixmap toolPixmap;
+            // Select the appropriate icon based on the current tool.
+            if (currTool == Tool::BRUSH) {
+                toolPixmap.load(":/icons/icons/brush.png");
+            } else if (currTool == Tool::ERASER) {
+                toolPixmap.load(":/icons/icons/eraser.png");
+            } else if (currTool == Tool::EYE) {
+                toolPixmap.load(":/icons/icons/eyedropper.png");
+            } else if (currTool == Tool::PAINT) {
+                toolPixmap.load(":/icons/icons/bucket.png");
+            } else {
+                // Fallback icon if needed.
+                toolPixmap.load(":/icons/icons/brush.png");
+            }
+
+            // Scale the pixmap to 32x32 while keeping the aspect ratio.
+            QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            // Set the hotspot to the center of the pixmap.
+            QCursor toolCursor(scaledPixmap, scaledPixmap.width() / 2, scaledPixmap.height() / 2);
+            ui->graphicsView->viewport()->setCursor(toolCursor);
+        }
+        // When the mouse leaves the canvas, revert to the default cursor.
+        else if (event->type() == QEvent::Leave) {
+            ui->graphicsView->viewport()->unsetCursor();
+        }
+        // Existing handling for MouseMove events.
+        else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             QPoint localPos = mouseEvent->pos();
             QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
             QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-            // Get pixel position
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            QMouseEvent *me = static_cast<QMouseEvent *>(event);
-
-            if (me->buttons() & (Qt::LeftButton))
+            if (mouseEvent->buttons() & Qt::LeftButton)
             {
                 // Check if moving from current pixel position
                 if (x != currPixel.x() || y != currPixel.y())
                 {
-                    // Check if in image bounds
                     if (x >= 0 && x < model->getImage()->width() &&
                         y >= 0 && y < model->getImage()->height())
                     {
-
-                        // Update pixel
-                        // qDebug() << "alpha color is: " << userColor.alpha();
-
                         switch (currTool)
                         {
                         case Tool::BRUSH:
-                            qDebug() << "using brush";
                             model->setPixelTracker(x, y, userColor);
-                            break; // <--- Add this
+                            break;
                         case Tool::ERASER:
-                            qDebug() << "using eraser";
                             model->erasePixel(x, y);
-                            break; // <--- Add this
+                            break;
+                        case Tool::RECTANGLE:
+                            model->rectangleShape(x, y, userColor);
+                            break;
+                        case Tool::ELLIPSE:
+                            model->ellipseShape(x, y, userColor);
+                            break;
                         default:
                             break;
                         }
-
-                        // model->setPixel(x, y, userColor.rgba());
-
-                        // update current pixel
                         currPixel = scenePos;
                         updateView();
                     }
@@ -267,27 +292,34 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             if(mouseEvent->button() == Qt::LeftButton)
             {
-                qDebug() << "clearing tracker";
-                model->clearTracker();
+                QPoint localPos = mouseEvent->pos();
+                QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
+                QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
+                QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
+
+                int x = static_cast<int>(scenePos.x());
+                int y = static_cast<int>(scenePos.y());
+                if(x >= 0 && x < model->getImage()->width() &&
+                    y >= 0 && y < model->getImage()->height() &&
+                    (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
+                    qDebug() << "ready to merge!";
+                    model->mergeShapePreview();
+                }
+                qDebug() << "clearing tracker and shapePreview";
+                model->clearNonCanvas();
             }
         }
     }
     return QObject::eventFilter(obj, event);
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        qDebug() << "clearing tracker";
-        model->clearTracker();
-    }
-}
 
 void MainWindow::updateView()
 {
     scene->clear();
+    scene->addPixmap(background);
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+    scene->addPixmap(QPixmap::fromImage(*model->getShapePreview()));
 }
 
 void MainWindow::on_brushBttn_clicked()
@@ -310,6 +342,21 @@ void MainWindow::on_eyeBttn_clicked()
     currTool = Tool::EYE;
 }
 
+void MainWindow::on_rectangleBttn_clicked()
+{
+    currTool = Tool::RECTANGLE;
+}
+
+void MainWindow::on_ellipseBttn_clicked()
+{
+    currTool = Tool::ELLIPSE;
+}
+
+void MainWindow::on_paintBttn_clicked()
+{
+    currTool = Tool::PAINT;
+}
+
 void MainWindow::on_newButton_clicked()
 {
     bool ok;
@@ -324,6 +371,66 @@ void MainWindow::on_newButton_clicked()
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
     }
+
+    model->createImage(rows);
+    createCanvas();
+    createBg();
+
+    updateView();
+}
+
+void MainWindow::createCanvas(){
+    // Add the pixmap to the scene
+    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+
+    // Ensure the scenes area matches the pixmap
+    scene->setSceneRect(scene->itemsBoundingRect());
+
+    // Get user canvas size
+    int canvasSize = 725 / model->getCanvasSize();
+
+    qDebug() << "Canvas Size: " << canvasSize;
+
+    // Configure the view
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
+    ui->graphicsView->resetTransform();
+    ui->graphicsView->scale(canvasSize, canvasSize);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->viewport()->installEventFilter(this);
+}
+
+void MainWindow::createBg(){
+    // Background
+    int width = model->getCanvasSize();
+
+    qDebug() << "Checker Size: " << width;
+
+    QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
+    bgImage.fill(QColor(150, 150, 150, 100));
+
+    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width))/8);
+
+    QPainter painter(&bgImage);
+    QPen pen;
+    pen.setColor(QColor(150, 150, 150, 255));
+    painter.setPen(pen);
+
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(QColor(150, 150, 150, 255));
+    painter.setBrush(brush);
+
+    int boxCount = width / checkerboardWidth;
+    for(int i = 0; i < boxCount; i++){
+        for(int j = 0; j < boxCount; j++){
+            if((i + j) % 2 == 1){
+                continue;
+            }
+            painter.drawRect(i * checkerboardWidth, j * checkerboardWidth, checkerboardWidth - 1, checkerboardWidth - 1);
+        }
+    }
+    background = QPixmap::fromImage(bgImage);
 }
 
 void MainWindow::updateToolBorderSelection(Tool newTool)

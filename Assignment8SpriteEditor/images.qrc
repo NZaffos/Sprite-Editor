@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/brush.png</file>
+        <file>icons/bucket.png</file>
+        <file>icons/eclipse.png</file>
+        <file>icons/eraser.png</file>
+        <file>icons/eyedropper.png</file>
+        <file>icons/rectangle.png</file>
+        <file>icons/rotate.png</file>
+        <file>icons/mirror.png</file>
+        <file>icons/addlayer.png</file>
+        <file>icons/clear.png</file>
+        <file>icons/duplicate.png</file>
+        <file>icons/moveup.png</file>
+        <file>icons/removelayer.png</file>
+        <file>icons/movedown.png</file>
+    </qresource>
+</RCC>

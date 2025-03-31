@@ -27,19 +27,20 @@ public:
      * @param parent
      */
     explicit Displays(Ui::MainWindow *ui, Model *model, QWidget *parent = nullptr);
-
+public slots:
+    /**
+     * A handler for when the add frame button is clicked
+     * Adds a new frame right after the currently selected frame
+     */
+    void addFrameButtonClicked();
+    
+    void setSelectedFrameIndex(unsigned int index);
 private slots:
     /**
      * A handler for when one of the frames is clicked
      * Selects the clicked frame
      */
     void frameButtonClicked();
-
-    /**
-     * A handler for when the add frame button is clicked
-     * Adds a new frame right after the currently selected frame
-     */
-    void addFrameButtonClicked();
 
     /**
      * A handler for when the delete frame button is clicked
