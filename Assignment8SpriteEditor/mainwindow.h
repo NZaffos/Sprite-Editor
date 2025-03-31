@@ -97,6 +97,8 @@ private slots:
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();
     void on_eyeBttn_clicked();
+    void on_rectangleBttn_clicked();
+    void on_ellipseBttn_clicked();
 
     // New Button
     void on_newButton_clicked();
