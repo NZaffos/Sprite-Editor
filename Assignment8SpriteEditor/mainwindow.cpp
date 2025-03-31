@@ -128,6 +128,8 @@ void MainWindow::initializeButtons() {
     ui->saveButton->setStyleSheet(style);
     ui->newButton->setStyleSheet(style);
     ui->loadButton->setStyleSheet(style);
+    ui->mirrorBttn->setStyleSheet(style);
+    ui->rotateBttn->setStyleSheet(style);
 
     updateToolBorderSelection(currTool);
 }
