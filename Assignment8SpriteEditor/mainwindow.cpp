@@ -2,8 +2,6 @@
 #include "ui_mainwindow.h"
 #include <QtMath>
 
-// This is the view class IMPORTANT:
-// Delete this comment before submission!!!
 MainWindow::MainWindow(Model *model, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), model(model)
 {
@@ -302,10 +300,8 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 if(x >= 0 && x < model->getImage()->width() &&
                     y >= 0 && y < model->getImage()->height() &&
                     (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
-                    qDebug() << "ready to merge!";
                     model->mergeShapePreview();
                 }
-                qDebug() << "clearing tracker and shapePreview";
                 model->clearNonCanvas();
             }
         }
@@ -425,8 +421,8 @@ void MainWindow::createBg(){
     painter.setBrush(brush);
 
     int boxCount = width / checkerboardWidth;
-    for(int i = 0; i < boxCount; i++){
-        for(int j = 0; j < boxCount; j++){
+    for(int i = 0; i < boxCount + 1; i++){
+        for(int j = 0; j < boxCount + 1; j++){
             if((i + j) % 2 == 1){
                 continue;
             }
