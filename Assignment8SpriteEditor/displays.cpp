@@ -106,7 +106,7 @@ void Displays::updateFrameButtonStyle()
     for (int i = 0; i < frameButtons.size(); i++)
     {
         if (i == selectedFrameIndex)
-            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
+            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; border-radius: 4px}");
         else
             frameButtons[i]->setStyleSheet("");
     }
@@ -235,6 +235,10 @@ void Displays::initializeAnimationControls()
         "}"));
     ui->animationFpsSliderIO->setStyleSheet(getButtonStyle());
     ui->animationPlayPauseButton->setStyleSheet(getButtonStyle());
+
+    ui->animationDisplayLabel->setStyleSheet(QString(
+        "border: 2px solid #555;"
+        "border-radius: 4px"));
 
     connect(ui->animationFpsSlider,
             &QSlider::valueChanged,

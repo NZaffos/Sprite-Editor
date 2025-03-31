@@ -344,16 +344,19 @@ void MainWindow::on_eyeBttn_clicked()
 
 void MainWindow::on_rectangleBttn_clicked()
 {
+    updateToolBorderSelection(Tool::RECTANGLE);
     currTool = Tool::RECTANGLE;
 }
 
 void MainWindow::on_ellipseBttn_clicked()
 {
+    updateToolBorderSelection(Tool::ELLIPSE);
     currTool = Tool::ELLIPSE;
 }
 
 void MainWindow::on_paintBttn_clicked()
 {
+    updateToolBorderSelection(Tool::PAINT);
     currTool = Tool::PAINT;
 }
 

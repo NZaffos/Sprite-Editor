@@ -296,6 +296,10 @@ void Model::paintBucket(int x, int y, QColor userColor) {
         return;
     }
     paintBucketRecursive(x, y, userColor, colorToReplace);
+    if (currentFrameIndex < frames.size()) {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
 }
 
 void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace) {
