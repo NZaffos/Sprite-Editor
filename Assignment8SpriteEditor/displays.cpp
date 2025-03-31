@@ -223,7 +223,7 @@ void Displays::initializeAnimationControls()
         "    border-radius: 4px;"
         "}"
         "QSlider::sub-page:horizontal {"
-        "    background: rgba(0, 0, 0, 0);"
+        "    background: black;"
         "    border-radius: 4px;"
         "}"
         "QSlider::handle:horizontal {"
