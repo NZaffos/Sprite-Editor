@@ -27,6 +27,9 @@ public:
      * @param parent
      */
     explicit Displays(Ui::MainWindow *ui, Model *model, QWidget *parent = nullptr);
+
+    void rebuildFrameButtonsFromModel();
+
 public slots:
     /**
      * A handler for when the add frame button is clicked

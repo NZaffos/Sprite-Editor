@@ -378,6 +378,8 @@ void MainWindow::on_newButton_clicked()
     }
 
     model->createImage(rows);
+    displays->rebuildFrameButtonsFromModel();
+
     createCanvas();
     createBg();
 

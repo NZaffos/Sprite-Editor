@@ -250,6 +250,22 @@ void Displays::initializeAnimationControls()
             &Model::toggleAnimation);
 }
 
+void Displays::rebuildFrameButtonsFromModel()
+{
+    while (!frameButtons.isEmpty()) {
+        QPushButton *button = frameButtons.takeLast();
+        framesLayout->removeWidget(button);
+        button->deleteLater();
+    }
+
+    int frameCount = model->getFrames().size();
+    for (int i = 0; i < frameCount; ++i)
+        createFrameButton(i);
+
+    selectedFrameIndex = 0;
+    updateFrameButtonStyle();
+}
+
 void Displays::updateFpsText(int value)
 {
     ui->animationFpsSliderIO->setText(QString("FPS: %1").arg(value));
