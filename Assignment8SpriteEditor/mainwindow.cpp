@@ -33,8 +33,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
     // Set palette sliders
     palette->updateSlidersToColor(QColor(0, 0, 0, 255));
-    initializeButtons();
     currTool = Tool::BRUSH;
+    initializeButtons();
 
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
@@ -126,6 +126,8 @@ void MainWindow::initializeButtons() {
     ui->saveButton->setStyleSheet(style);
     ui->newButton->setStyleSheet(style);
     ui->loadButton->setStyleSheet(style);
+
+    updateToolBorderSelection(currTool);
 }
 
 MainWindow::~MainWindow()
@@ -290,18 +292,21 @@ void MainWindow::updateView()
 
 void MainWindow::on_brushBttn_clicked()
 {
+    updateToolBorderSelection(Tool::BRUSH);
     currTool = Tool::BRUSH;
     model->setSelectColor(QColor(0, 0, 0, 255)); // Black (to trigger blending)
 }
 
 void MainWindow::on_eraseBttn_clicked()
 {
+    updateToolBorderSelection(Tool::ERASER);
     currTool = Tool::ERASER;
     model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
 }
 
 void MainWindow::on_eyeBttn_clicked()
 {
+    updateToolBorderSelection(Tool::EYE);
     currTool = Tool::EYE;
 }
 
@@ -318,5 +323,37 @@ void MainWindow::on_newButton_clicked()
     if (!conversionOK) {
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
+    }
+}
+
+void MainWindow::updateToolBorderSelection(Tool newTool)
+{
+    ui->brushBttn->setStyleSheet("");
+    ui->eraseBttn->setStyleSheet("");
+    ui->eyeBttn->setStyleSheet("");
+    ui->paintBttn->setStyleSheet("");
+    ui->rectangleBttn->setStyleSheet("");
+    ui->ellipseBttn->setStyleSheet("");
+
+    switch (newTool)
+    {
+    case Tool::BRUSH:
+        ui->brushBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::ERASER:
+        ui->eraseBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::ELLIPSE:
+        ui->ellipseBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::EYE:
+        ui->eyeBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::PAINT:
+        ui->paintBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::RECTANGLE:
+        ui->rectangleBttn->setStyleSheet("border: 2px solid blue");
+        break;
     }
 }

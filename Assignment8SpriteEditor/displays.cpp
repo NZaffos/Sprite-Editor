@@ -1,5 +1,11 @@
+/**
+ * Implementation of display class. Handles displaying the frame selector and animation preview
+ *
+ * @authors Noah Zaffos, Nash Hawkins
+ * @date 3/28/2025
+ */
+
 #include "displays.h"
-#include <QPainter>
 
 Displays::Displays(Ui::MainWindow *ui, Model *model, QWidget *parent)
     : QWidget(parent), ui(ui), model(model)
