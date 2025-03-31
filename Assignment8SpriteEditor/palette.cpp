@@ -120,7 +120,7 @@ void Palette::colorButtonPress(QPushButton* button)
 void Palette::setButtonStyleSheetActive(QPushButton* button, QColor originalColor)
 {
     button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);"
-                                  "border: 1px solid white;")
+                                  "border: 1px solid blue;")
                               .arg(originalColor.red())
                               .arg(originalColor.green())
                               .arg(originalColor.blue())
