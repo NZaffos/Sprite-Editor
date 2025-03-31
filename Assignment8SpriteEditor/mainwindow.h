@@ -93,6 +93,11 @@ private:
     void initializeButtons();
     void createCanvas();
 
+    /**
+     * Switches the border fo the tool selector to the new tool
+     * @param newTool The new tool to be selected
+     */
+    void updateToolBorderSelection(Tool newTool);
 
 private slots:
     // Canvas
