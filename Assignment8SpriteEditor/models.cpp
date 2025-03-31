@@ -303,7 +303,6 @@ void Model::paintBucket(int x, int y, QColor userColor) {
 }
 
 void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace) {
-    try {
     if (x >= size || x < 0 || y >= size || y < 0) {
         return;
     }
@@ -320,22 +319,6 @@ void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToR
     // Y
     paintBucketRecursive(x, y + 1, userColor, colorToReplace);
     paintBucketRecursive(x, y - 1, userColor, colorToReplace);
-
-    // X Diagnal
-    paintBucketRecursive(x + 1, y + 1, userColor, colorToReplace);
-    paintBucketRecursive(x - 1, y - 1, userColor, colorToReplace);
-
-    // Y Diagnal
-    paintBucketRecursive(x - 1, y + 1, userColor, colorToReplace);
-    paintBucketRecursive(x + 1, y - 1, userColor, colorToReplace);
-
-
-        // Your code that might throw an exception
-    } catch (const std::exception& e) {
-        qDebug() << "Exception caught:" << e.what();
-    } catch (...) {
-        qDebug() << "Unknown exception caught!";
-    }
 }
 
 void Model::mergeShapePreview(){
