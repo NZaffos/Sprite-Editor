@@ -208,6 +208,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                     palette->updateSlidersToColor(model->getImage()->pixelColor(x, y));
                     currTool = Tool::BRUSH;
                     break;
+                case Tool::RECTANGLE:
+                case Tool::ELLIPSE:
+                    model->shapeStart(x,y);
+                    break;
                 default:
                     break;
                 }
@@ -260,6 +264,14 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                             qDebug() << "using eraser";
                             model->erasePixel(x, y);
                             break; // <--- Add this
+                        case Tool::RECTANGLE:
+                            qDebug() << "using rectangle";
+                            model->rectangleShape(x, y, userColor);
+                            break;
+                        case Tool::ELLIPSE:
+                            qDebug() << "using ellipse";
+                            model->ellipseShape(x, y, userColor);
+                            break;
                         default:
                             break;
                         }
@@ -277,8 +289,21 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             if(mouseEvent->button() == Qt::LeftButton)
             {
-                qDebug() << "clearing tracker";
-                model->clearTracker();
+                QPoint localPos = mouseEvent->pos();
+                QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
+                QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
+                QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
+
+                // Get pixel position
+                int x = static_cast<int>(scenePos.x());
+                int y = static_cast<int>(scenePos.y());
+                if(x >= 0 && x < model->getImage()->width() &&
+                        y >= 0 && y < model->getImage()->height() &&(currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
+                    qDebug() << "ready to merge!";
+                    model->mergeShapePreview();
+                }
+                qDebug() << "clearing tracker and shapePreview";
+                model->clearNonCanvas();
             }
         }
     }
@@ -289,8 +314,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        qDebug() << "clearing tracker";
-        model->clearTracker();
+        qDebug() << "clearing tracker and shapePreview";
+        model->clearNonCanvas();
     }
 }
 
@@ -298,6 +323,7 @@ void MainWindow::updateView()
 {
     scene->clear();
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+    scene->addPixmap(QPixmap::fromImage(*model->getShapePreview()));
 }
 
 void MainWindow::on_brushBttn_clicked()
@@ -315,6 +341,16 @@ void MainWindow::on_eraseBttn_clicked()
 void MainWindow::on_eyeBttn_clicked()
 {
     currTool = Tool::EYE;
+}
+
+void MainWindow::on_rectangleBttn_clicked()
+{
+    currTool = Tool::RECTANGLE;
+}
+
+void MainWindow::on_ellipseBttn_clicked()
+{
+    currTool = Tool::ELLIPSE;
 }
 
 void MainWindow::on_newButton_clicked()

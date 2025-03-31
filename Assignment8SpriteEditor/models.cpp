@@ -1,4 +1,5 @@
 #include "models.h"
+#include "qpainter.h"
 #include "qpixmap.h"
 #include "QTimer"
 #include "QJsonObject"
@@ -16,7 +17,8 @@ Model::Model(QObject *parent) : QObject(parent)
     updateAnimationFrame();
 
     tracker = new QImage(size, size, QImage::Format_ARGB32);
-    clearTracker();
+    shapePreview = new QImage(size, size, QImage::Format_ARGB32);
+    clearNonCanvas();
 }
 
 Model::~Model()
@@ -37,9 +39,11 @@ void Model::clearCanvas()
     emit canvasUpdated();
 }
 
-void Model::clearTracker()
+void Model::clearNonCanvas()
 {
     tracker->fill(QColor(0,0,0,0));
+    shapePreview->fill(QColor(0,0,0,0));
+    emit canvasUpdated();
 }
 
 void Model::addFrame()
@@ -256,6 +260,47 @@ void Model::setPixelTracker(int x, int y, QColor userColor){
         return;
     }
     setPixel(x,y,userColor);
+}
+
+QImage *Model::getShapePreview(){
+    return shapePreview;
+}
+
+void Model::shapeStart(int x, int y){
+    shapeStartX = x;
+    shapeStartY = y;
+}
+
+void Model::rectangleShape(int x, int y, QColor userColor){
+    shapePreview->fill(QColor(0,0,0,0));
+    QPainter painter(shapePreview);
+    QPen pen(userColor);
+    pen.setWidth(1);
+    painter.setPen(pen);
+    painter.drawRect(std::min(shapeStartX, x),
+                     std::min(shapeStartY, y),
+                     qAbs(shapeStartX - x),
+                     qAbs(shapeStartY - y));
+    painter.end();
+}
+
+void Model::ellipseShape(int x, int y, QColor userColor){
+    shapePreview->fill(QColor(0,0,0,0));
+    QPainter painter(shapePreview);
+    QPen pen(userColor);
+    pen.setWidth(1);
+    painter.setPen(pen);
+    painter.drawEllipse(std::min(shapeStartX, x),
+                     std::min(shapeStartY, y),
+                     qAbs(shapeStartX - x),
+                     qAbs(shapeStartY - y));
+    painter.end();
+}
+
+void Model::mergeShapePreview(){
+    QPainter painter(image);
+    painter.drawImage(0, 0, *shapePreview);
+    painter.end();
 }
 
 void Model::erasePixel(int x, int y)

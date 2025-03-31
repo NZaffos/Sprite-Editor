@@ -99,6 +99,17 @@ public:
      */
     QColor getColorFromPalette(unsigned int index);
 
+    // Rect/Ellipse
+    void shapeStart(int x, int y);
+
+    void rectangleShape(int x, int y, QColor usercolor);
+
+    void ellipseShape(int x, int y, QColor usercolor);
+
+    QImage *getShapePreview();
+
+    void mergeShapePreview();
+
 signals:
     void canvasUpdated();
     void frameModified(unsigned int index);
@@ -112,7 +123,7 @@ signals:
 public slots:
     void sliderValueChanged(int value);
     void clearCanvas();
-    void clearTracker();
+    void clearNonCanvas();
     void toggleAnimation();
     void saveProject();
     void loadProject();
@@ -148,6 +159,9 @@ private:
     QColor blendAdditive(QColor dest, QColor src);
 
     QImage *tracker;
+    QImage *shapePreview;
+    int shapeStartX;
+    int shapeStartY;
 
     /**
      * @brief palette
