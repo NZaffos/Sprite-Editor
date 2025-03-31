@@ -39,6 +39,13 @@ void Displays::initializeFrameSelector()
     ui->frameSelector->setWidget(ui->frameSelectorScrollContent);
     ui->frameSelector->setWidgetResizable(true);
 
+    ui->addFrameButton->setStyleSheet(getButtonStyle());
+    ui->dublicateFrameButton->setStyleSheet(getButtonStyle());
+    ui->deleteFrameButton->setStyleSheet(getButtonStyle());
+    ui->shiftUpFrameButton->setStyleSheet(getButtonStyle());
+    ui->shiftDownFrameButton->setStyleSheet(getButtonStyle());
+    ui->clearCanvasButton->setStyleSheet(getButtonStyle());
+
     connect(ui->addFrameButton,
             &QPushButton::clicked,
             this,
@@ -202,7 +209,27 @@ void Displays::initializeAnimationControls()
 {
     ui->animationFpsSlider->setRange(1, 60);
     updateFpsText(1);
-    // For style, you can re‑use palette->getSliderStyleSheet() or do your own.
+    ui->animationFpsSlider->setStyleSheet(QString(
+        "QSlider::groove:horizontal {"
+        "    border: 1px solid #999;"
+        "    height: 8px;"
+        "    background: #333;"
+        "    margin: 2px 0;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal {"
+        "    background: rgba(0, 0, 0, 0);"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "    background: white;"
+        "    border: 1px solid black;"
+        "    width: 16px;"
+        "    margin: -6px 0;"
+        "    border-radius: 8px;"
+        "}"));
+    ui->animationFpsSliderIO->setStyleSheet(getButtonStyle());
+    ui->animationPlayPauseButton->setStyleSheet(getButtonStyle());
 
     connect(ui->animationFpsSlider,
             &QSlider::valueChanged,
@@ -231,4 +258,14 @@ void Displays::drawAnimationIcon(int index)
 {
     QPixmap newImage = model->getFrameThumbnail(index, 220, 220);
     ui->animationDisplayLabel->setPixmap(newImage);
+}
+
+QString Displays::getButtonStyle()
+{
+    return QString(
+        "    background-color: rgb(0, 0, 0);"
+        "    color: white;"
+        "    border: 1px solid #555;"
+        "    border-radius: 4px;"
+        "    padding: 2px 4px;");
 }

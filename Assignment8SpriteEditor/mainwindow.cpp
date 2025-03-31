@@ -32,7 +32,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->viewport()->installEventFilter(this);
 
     // Set palette sliders
-    palette->updateSlidersToColor(QColor(255, 0, 0, 255));
+    palette->updateSlidersToColor(QColor(0, 0, 0, 255));
     currTool = Tool::BRUSH;
 
     // Enable mouse tracking

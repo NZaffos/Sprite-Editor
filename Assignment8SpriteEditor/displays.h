@@ -40,6 +40,8 @@ private:
     Ui::MainWindow *ui;
     Model *model;
 
+    QString getButtonStyle();
+
     // Frame selector
     QVBoxLayout *framesLayout = nullptr;
     QVector<QPushButton *> frameButtons;

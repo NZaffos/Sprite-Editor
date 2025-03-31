@@ -71,12 +71,12 @@ void Palette::removeColorFromPalette()
 
 void Palette::colorButtonPress(int index)
 {
-    qDebug() << "Button at index" << index << "was pressed!";
-
     deleteButtonActive = true;
     currentColorButtonIndex = index;
 
     QColor color = model->getColorFromPalette(index);
+    updateSlidersToColor(color);
+
     userColor = color;
 }
 
@@ -115,6 +115,11 @@ void Palette::updateSlider(int value)
 }
 
 void Palette::updateSlidersToColor(QColor color){
+    ui->redSlider->setValue(color.red());
+    ui->greenSlider->setValue(color.green());
+    ui->blueSlider->setValue(color.blue());
+    ui->alphaSlider->setValue(color.alpha());
+
     updateSliderStyle(ui->redSlider, color.red(), "red");
     updateSliderStyle(ui->greenSlider, color.green(), "green");
     updateSliderStyle(ui->blueSlider, color.blue(), "blue");
@@ -160,30 +165,6 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
 
     QString style = getSliderStyleSheet(color);
     slider->setStyleSheet(style);
-}
-
-QString Palette::getSliderStyleSheet(QString color)
-{
-    return QString(
-               "QSlider::groove:horizontal {"
-               "    border: 1px solid #999;"
-               "    height: 8px;"
-               "    background: #333;"
-               "    margin: 2px 0;"
-               "    border-radius: 4px;"
-               "}"
-               "QSlider::sub-page:horizontal {"
-               "    background: %1;"
-               "    border-radius: 4px;"
-               "}"
-               "QSlider::handle:horizontal {"
-               "    background: white;"
-               "    border: 1px solid black;"
-               "    width: 16px;"
-               "    margin: -6px 0;"
-               "    border-radius: 8px;"
-               "}")
-        .arg(color);
 }
 
 void Palette::setSliderTextEdits()
@@ -243,6 +224,30 @@ void Palette::sliderIOValue()
     {
         ui->alphaSlider->setValue(value);
     }
+}
+
+QString Palette::getSliderStyleSheet(QString color)
+{
+    return QString(
+               "QSlider::groove:horizontal {"
+               "    border: 1px solid #999;"
+               "    height: 8px;"
+               "    background: #333;"
+               "    margin: 2px 0;"
+               "    border-radius: 4px;"
+               "}"
+               "QSlider::sub-page:horizontal {"
+               "    background: %1;"
+               "    border-radius: 4px;"
+               "}"
+               "QSlider::handle:horizontal {"
+               "    background: white;"
+               "    border: 1px solid black;"
+               "    width: 16px;"
+               "    margin: -6px 0;"
+               "    border-radius: 8px;"
+               "}")
+        .arg(color);
 }
 
 Palette::~Palette()
