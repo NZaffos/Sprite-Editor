@@ -83,7 +83,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QToolButton::clicked,
             palette,
             &Palette::removeColorFromPalette);
-      
+
     // New/Save/Load connections
     connect(ui->saveButton,
             &QPushButton::clicked,
@@ -216,61 +216,70 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->graphicsView->viewport())
-    {
-        if (event->type() == QEvent::MouseMove)
-        {
+    if (obj == ui->graphicsView->viewport()) {
+        if (event->type() == QEvent::Enter) {
+            QPixmap toolPixmap;
+            // Select the appropriate icon based on the current tool.
+            if (currTool == Tool::BRUSH) {
+                toolPixmap.load(":/icons/icons/brush.png");
+            } else if (currTool == Tool::ERASER) {
+                toolPixmap.load(":/icons/icons/eraser.png");
+            } else if (currTool == Tool::EYE) {
+                toolPixmap.load(":/icons/icons/eyedropper.png");
+            } else if (currTool == Tool::PAINT) {
+                toolPixmap.load(":/icons/icons/bucket.png");
+            } else {
+                // Fallback icon if needed.
+                toolPixmap.load(":/icons/icons/brush.png");
+            }
+
+            // Scale the pixmap to 32x32 while keeping the aspect ratio.
+            QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            // Set the hotspot to the center of the pixmap.
+            QCursor toolCursor(scaledPixmap, scaledPixmap.width() / 2, scaledPixmap.height() / 2);
+            ui->graphicsView->viewport()->setCursor(toolCursor);
+        }
+        // When the mouse leaves the canvas, revert to the default cursor.
+        else if (event->type() == QEvent::Leave) {
+            ui->graphicsView->viewport()->unsetCursor();
+        }
+        // Existing handling for MouseMove events.
+        else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             QPoint localPos = mouseEvent->pos();
             QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
             QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
             QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-            // Get pixel position
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            QMouseEvent *me = static_cast<QMouseEvent *>(event);
-
-            if (me->buttons() & (Qt::LeftButton))
+            if (mouseEvent->buttons() & Qt::LeftButton)
             {
                 // Check if moving from current pixel position
                 if (x != currPixel.x() || y != currPixel.y())
                 {
-                    // Check if in image bounds
                     if (x >= 0 && x < model->getImage()->width() &&
                         y >= 0 && y < model->getImage()->height())
                     {
-
-                        // Update pixel
-                        // qDebug() << "alpha color is: " << userColor.alpha();
-
                         switch (currTool)
                         {
                         case Tool::BRUSH:
-                            //qDebug() << "using brush";
                             model->setPixelTracker(x, y, userColor);
-                            break; // <--- Add this
+                            break;
                         case Tool::ERASER:
-                            //qDebug() << "using eraser";
                             model->erasePixel(x, y);
-                            break; // <--- Add this
+                            break;
                         case Tool::RECTANGLE:
-                            //qDebug() << "using rectangle";
                             model->rectangleShape(x, y, userColor);
                             break;
                         case Tool::ELLIPSE:
-                            //qDebug() << "using ellipse";
                             model->ellipseShape(x, y, userColor);
                             break;
                         default:
                             break;
                         }
-
-                        // model->setPixel(x, y, userColor.rgba());
-
-                        // update current pixel
                         currPixel = scenePos;
                         updateView();
                     }
@@ -286,11 +295,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
                 QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-                // Get pixel position
                 int x = static_cast<int>(scenePos.x());
                 int y = static_cast<int>(scenePos.y());
                 if(x >= 0 && x < model->getImage()->width() &&
-                        y >= 0 && y < model->getImage()->height() &&(currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
+                    y >= 0 && y < model->getImage()->height() &&
+                    (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
                     qDebug() << "ready to merge!";
                     model->mergeShapePreview();
                 }
@@ -301,6 +310,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     }
     return QObject::eventFilter(obj, event);
 }
+
 
 void MainWindow::updateView()
 {

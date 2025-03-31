@@ -27,6 +27,10 @@ using std::string;
 #include <QInputDialog>
 #include <QMessageBox>
 
+// For Cursor
+#include <QCursor>
+#include<QStyle>
+
 // Includes for files
 #include "models.h"
 #include "displays.h"
