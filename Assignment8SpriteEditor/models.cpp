@@ -291,10 +291,15 @@ void Model::ellipseShape(int x, int y, QColor userColor){
 void Model::paintBucket(int x, int y, QColor userColor) {
     getPixel(x, y); // Get the color at the pixel the user selected
     QColor colorToReplace = selectColor;
+    if (colorToReplace == userColor)
+    {
+        return;
+    }
     paintBucketRecursive(x, y, userColor, colorToReplace);
 }
 
 void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace) {
+    try {
     if (x >= size || x < 0 || y >= size || y < 0) {
         return;
     }
@@ -302,7 +307,8 @@ void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToR
     if (selectColor != colorToReplace) {
         return;
     }
-    setPixel(x, y, userColor);
+    image->setPixelColor(x, y, userColor);
+    emit canvasUpdated();
     // X
     paintBucketRecursive(x + 1, y, userColor, colorToReplace);
     paintBucketRecursive(x - 1, y, userColor, colorToReplace);
@@ -318,6 +324,14 @@ void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToR
     // Y Diagnal
     paintBucketRecursive(x - 1, y + 1, userColor, colorToReplace);
     paintBucketRecursive(x + 1, y - 1, userColor, colorToReplace);
+
+
+        // Your code that might throw an exception
+    } catch (const std::exception& e) {
+        qDebug() << "Exception caught:" << e.what();
+    } catch (...) {
+        qDebug() << "Unknown exception caught!";
+    }
 }
 
 void Model::mergeShapePreview(){
