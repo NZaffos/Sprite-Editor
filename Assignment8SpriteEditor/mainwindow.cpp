@@ -237,8 +237,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
             // Scale the pixmap to 32x32 while keeping the aspect ratio.
             QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
             // Set the hotspot to the center of the pixmap.
-            QCursor toolCursor(scaledPixmap, scaledPixmap.width() / 2, scaledPixmap.height() / 2);
+            QCursor toolCursor(scaledPixmap, 0, scaledPixmap.height() / 2);
             ui->graphicsView->viewport()->setCursor(toolCursor);
         }
         // When the mouse leaves the canvas, revert to the default cursor.
