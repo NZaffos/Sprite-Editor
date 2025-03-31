@@ -90,6 +90,7 @@ void Model::selectFrame(unsigned int index)
         *image = frames[index];
         currentFrameIndex = index;
         emit frameModified(index);
+        emit requestNewSelectedFrameIndex(index);
         emit canvasUpdated();
     }
 }
@@ -388,9 +389,14 @@ void Model::loadProject()
         file.close();
 
         // File has been choosen so now we clear.
-        frames.clear();
-        clearCanvas();
+        unsigned int frameSize = frames.size();
+        for (unsigned int i = 0; i < frameSize; i++) {
+            selectFrame(0);
+            emit requestDeleteFrame(0);
+        }
+
         palette.clear();
+
 
         QJsonDocument doc = QJsonDocument::fromJson(fileData);
         if (doc.isObject())
@@ -398,15 +404,16 @@ void Model::loadProject()
             // Extract the width and frameCount from the doc
             QJsonObject jsonObject = doc.object();
             int width = jsonObject["width"].toInt();
+            size = width;
             int frameCount = jsonObject["frameCount"].toInt();
 
             qDebug() << "Width:" << width << "Frame Count:" << frameCount;
             QJsonArray jsonFrames = jsonObject["frames"].toArray();
 
             // SET SIZE OF CANVAS HERE
-            for (int i = 0; i < frameCount; i++)
+            for (int i = 0; i < frameCount - 1; i++)
             {
-                addFrame();
+                emit requestNewFrame();
             }
 
             int frameIndex = 0;
@@ -416,7 +423,7 @@ void Model::loadProject()
                 QJsonArray frameArray = frameValue.toArray();
 
                 // Loop through the RGBA values for the frame
-                for (int i = 0; i < frameArray.size() / 4; i += 4)
+                for (int i = 0; i < frameArray.size() / 4; i++)
                 {
                     int red = frameArray[4 * i].toInt();
                     int green = frameArray[4 * i + 1].toInt();
@@ -428,6 +435,7 @@ void Model::loadProject()
                 }
                 frameIndex++;
             }
+            selectFrame(0);
         }
         else
         {

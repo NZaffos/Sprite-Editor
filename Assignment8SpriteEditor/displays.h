@@ -18,11 +18,12 @@ class Displays : public QWidget
 
 public:
     explicit Displays(Ui::MainWindow *ui, Model *model, QWidget *parent = nullptr);
-
+public slots:
+    void addFrameButtonClicked(); // Moved to public for model to request a new frame
+    void setSelectedFrameIndex(unsigned int index);
 private slots:
     // Frame selector
     void frameButtonClicked();
-    void addFrameButtonClicked();
     void deleteFrameButtonClicked();
     void duplicateFrameButtonClicked();
     void shiftFrameUpClicked();

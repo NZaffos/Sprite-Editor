@@ -113,7 +113,6 @@ void Displays::frameButtonClicked()
 
     int index = button->property("frameIndex").toInt();
     model->selectFrame(index);
-    selectedFrameIndex = index;
     updateFrameButtonStyle();
 
     updateFrameButtonIcon(button);
@@ -268,4 +267,8 @@ QString Displays::getButtonStyle()
         "    border: 1px solid #555;"
         "    border-radius: 4px;"
         "    padding: 2px 4px;");
+}
+
+void Displays::setSelectedFrameIndex(unsigned int index) {
+    selectedFrameIndex = index;
 }

@@ -101,6 +101,18 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QPushButton::clicked,
             model,
             &Model::loadProject);
+    connect(model,
+            &Model::requestNewFrame,
+            displays,
+            &Displays::addFrameButtonClicked);
+    connect(model,
+            &Model::requestNewSelectedFrameIndex,
+            displays,
+            &Displays::setSelectedFrameIndex);
+    connect(model,
+            &Model::requestDeleteFrame,
+            displays,
+            &Displays::setSelectedFrameIndex);
 
     // Mirror/Rotate connections
     connect(ui->mirrorBttn,

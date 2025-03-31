@@ -105,6 +105,9 @@ signals:
     int updateAnimationIcon(int index);
     int updateFpsSliderIO(int value);
     bool togglePlayPauseButtonIcon(bool enabled);
+    void requestNewFrame();
+    void requestDeleteFrame(unsigned int index);
+    void requestNewSelectedFrameIndex(unsigned int index);
 
 public slots:
     void sliderValueChanged(int value);
