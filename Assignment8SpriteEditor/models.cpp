@@ -222,7 +222,6 @@ void Model::setPixel(int x, int y, QColor userColor)
     // if the pixel selected is empty
     if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 255)
     {
-        // qDebug() << "Pixel is empty";
         image->setPixelColor(x, y, userColor);
     }
     else
@@ -315,8 +314,6 @@ void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToR
     // Y Diagnal
     paintBucketRecursive(x - 1, y + 1, userColor, colorToReplace);
     paintBucketRecursive(x + 1, y - 1, userColor, colorToReplace);
-
-
 }
 
 void Model::mergeShapePreview(){
@@ -342,8 +339,6 @@ void Model::erasePixel(int x, int y)
 void Model::getPixel(int x, int y)
 {
     selectColor = image->pixelColor(x, y);
-
-    // qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 
 int Model::getCanvasSize()
