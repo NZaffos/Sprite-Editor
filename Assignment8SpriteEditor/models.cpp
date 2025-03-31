@@ -213,20 +213,6 @@ void Model::updateAnimationFrame()
                        { updateAnimationFrame(); });
 }
 
-// #include "tools.h"
-
-// void Tools::paintBucket(QImage& image, int x, int y, QColor newColor) {
-//     // Implement paint bucket logic
-// }
-
-// void Tools::drawRectangle(QImage& image, QRect rect, QColor color) {
-//     // Implement drawing rectangle logic
-// }
-
-// void Tools::rotateImage(QImage& image, int angle) {
-//     // Implement image rotation logic
-// }
-
 void Model::setPixel(int x, int y, QColor userColor)
 {
     getPixel(x, y);
@@ -297,6 +283,40 @@ void Model::ellipseShape(int x, int y, QColor userColor){
                      qAbs(shapeStartX - x),
                      qAbs(shapeStartY - y));
     painter.end();
+}
+
+void Model::paintBucket(int x, int y, QColor userColor) {
+    getPixel(x, y); // Get the color at the pixel the user selected
+    QColor colorToReplace = selectColor;
+    paintBucketRecursive(x, y, userColor, colorToReplace);
+}
+
+void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace) {
+    if (x >= size || x < 0 || y >= size || y < 0) {
+        return;
+    }
+    getPixel(x, y);
+    if (selectColor != colorToReplace) {
+        return;
+    }
+    setPixel(x, y, userColor);
+    // X
+    paintBucketRecursive(x + 1, y, userColor, colorToReplace);
+    paintBucketRecursive(x - 1, y, userColor, colorToReplace);
+
+    // Y
+    paintBucketRecursive(x, y + 1, userColor, colorToReplace);
+    paintBucketRecursive(x, y - 1, userColor, colorToReplace);
+
+    // X Diagnal
+    paintBucketRecursive(x + 1, y + 1, userColor, colorToReplace);
+    paintBucketRecursive(x - 1, y - 1, userColor, colorToReplace);
+
+    // Y Diagnal
+    paintBucketRecursive(x - 1, y + 1, userColor, colorToReplace);
+    paintBucketRecursive(x + 1, y - 1, userColor, colorToReplace);
+
+
 }
 
 void Model::mergeShapePreview(){

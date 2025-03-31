@@ -102,13 +102,15 @@ public:
     // Rect/Ellipse
     void shapeStart(int x, int y);
 
-    void rectangleShape(int x, int y, QColor usercolor);
+    void rectangleShape(int x, int y, QColor userColor);
 
-    void ellipseShape(int x, int y, QColor usercolor);
+    void ellipseShape(int x, int y, QColor userColor);
 
     QImage *getShapePreview();
 
     void mergeShapePreview();
+
+    void paintBucket(int x, int y, QColor userColor);
 
 signals:
     void canvasUpdated();
@@ -167,6 +169,8 @@ private:
      * @brief palette
      */
     QVector<QColor> palette;
+
+    void paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace);
 
 private slots:
     void updateAnimationFrame();

@@ -239,6 +239,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 case Tool::ELLIPSE:
                     model->shapeStart(x,y);
                     break;
+                case Tool::PAINT:
+                    model->paintBucket(x, y, userColor);
                 default:
                     break;
                 }
@@ -370,6 +372,11 @@ void MainWindow::on_rectangleBttn_clicked()
 void MainWindow::on_ellipseBttn_clicked()
 {
     currTool = Tool::ELLIPSE;
+}
+
+void MainWindow::on_paintBttn_clicked()
+{
+    currTool = Tool::PAINT;
 }
 
 void MainWindow::on_newButton_clicked()
