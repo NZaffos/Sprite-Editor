@@ -87,13 +87,11 @@ private:
      * Initialize the buttons with the proper style
      */
     void initializeButtons();
-    void createCanvas();
 
 
 private slots:
     // Canvas
     void updateView();
-    void createBg();
 
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();

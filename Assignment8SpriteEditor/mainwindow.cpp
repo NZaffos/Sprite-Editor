@@ -16,7 +16,21 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    createCanvas();
+    // Add the pixmap to the scene
+    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
+
+    // Ensure the scenes area matches the pixmap
+    scene->setSceneRect(scene->itemsBoundingRect());
+
+    // Get user canvas size
+    int canvasSize = 725 / model->getCanvasSize();
+
+    // Configure the view
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
+    ui->graphicsView->scale(canvasSize, canvasSize);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->viewport()->installEventFilter(this);
 
     // Set palette sliders
     palette->updateSlidersToColor(QColor(0, 0, 0, 255));
@@ -28,7 +42,28 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
     ui->graphicsView->viewport()->setMouseTracking(true);
 
     // Background
-    createBg();
+    int width = model->getCanvasSize();
+    QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
+    bgImage.fill(QColor(150, 150, 150, 100));
+    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width))/8);
+    QPainter painter(&bgImage);
+    QPen pen;
+    pen.setColor(QColor(150, 150, 150, 255));
+    painter.setPen(pen);
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(QColor(150, 150, 150, 255));
+    painter.setBrush(brush);
+    int boxCount = width / checkerboardWidth;
+    for(int i = 0; i < boxCount; i++){
+        for(int j = 0; j < boxCount; j++){
+            if((i + j) % 2 == 1){
+                continue;
+            }
+            painter.drawRect(i * checkerboardWidth, j * checkerboardWidth, checkerboardWidth - 1, checkerboardWidth - 1);
+        }
+    }
+    background = QPixmap::fromImage(bgImage);
 
     updateView();
 
@@ -163,6 +198,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         // map global coordinates to the graphicView's local coordinates
         QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
 
+        qDebug() << "select pixel at scene Position: " << viewPos.x() / 10 << ", " << viewPos.y() / 10;
+
         if (ui->graphicsView->rect().contains(viewPos))
         {
             // Map to scene coordinates
@@ -247,19 +284,19 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         switch (currTool)
                         {
                         case Tool::BRUSH:
-                            //qDebug() << "using brush";
+                            qDebug() << "using brush";
                             model->setPixelTracker(x, y, userColor);
                             break; // <--- Add this
                         case Tool::ERASER:
-                            //qDebug() << "using eraser";
+                            qDebug() << "using eraser";
                             model->erasePixel(x, y);
                             break; // <--- Add this
                         case Tool::RECTANGLE:
-                            //qDebug() << "using rectangle";
+                            qDebug() << "using rectangle";
                             model->rectangleShape(x, y, userColor);
                             break;
                         case Tool::ELLIPSE:
-                            //qDebug() << "using ellipse";
+                            qDebug() << "using ellipse";
                             model->ellipseShape(x, y, userColor);
                             break;
                         default:
@@ -349,64 +386,4 @@ void MainWindow::on_newButton_clicked()
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
     }
-
-    model->createImage(rows);
-    createCanvas();
-    createBg();
-
-    updateView();
-}
-
-void MainWindow::createCanvas(){
-    // Add the pixmap to the scene
-    scene->addPixmap(QPixmap::fromImage(*model->getImage()));
-
-    // Ensure the scenes area matches the pixmap
-    scene->setSceneRect(scene->itemsBoundingRect());
-
-    // Get user canvas size
-    int canvasSize = 725 / model->getCanvasSize();
-
-    qDebug() << "Canvas Size: " << canvasSize;
-
-    // Configure the view
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    ui->graphicsView->resetTransform();
-    ui->graphicsView->scale(canvasSize, canvasSize);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->viewport()->installEventFilter(this);
-}
-
-void MainWindow::createBg(){
-    // Background
-    int width = model->getCanvasSize();
-
-    qDebug() << "Checker Size: " << width;
-
-    QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
-    bgImage.fill(QColor(150, 150, 150, 100));
-
-    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width))/8);
-
-    QPainter painter(&bgImage);
-    QPen pen;
-    pen.setColor(QColor(150, 150, 150, 255));
-    painter.setPen(pen);
-
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(QColor(150, 150, 150, 255));
-    painter.setBrush(brush);
-
-    int boxCount = width / checkerboardWidth;
-    for(int i = 0; i < boxCount; i++){
-        for(int j = 0; j < boxCount; j++){
-            if((i + j) % 2 == 1){
-                continue;
-            }
-            painter.drawRect(i * checkerboardWidth, j * checkerboardWidth, checkerboardWidth - 1, checkerboardWidth - 1);
-        }
-    }
-    background = QPixmap::fromImage(bgImage);
 }

@@ -10,25 +10,8 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    createImage(32);
-}
-
-Model::~Model()
-{
-    delete image;
-    delete shapePreview;
-    delete tracker;
-}
-
-void Model::createImage(int inputSize){
-    size = inputSize;
-
     image = new QImage(size, size, QImage::Format_ARGB32);
     clearCanvas();
-
-    for (size_t i = 0; i < frames.size(); i++){
-        removeFrame(i);
-    }
 
     frames.push_back(*image);
     updateAnimationFrame();
@@ -36,6 +19,13 @@ void Model::createImage(int inputSize){
     tracker = new QImage(size, size, QImage::Format_ARGB32);
     shapePreview = new QImage(size, size, QImage::Format_ARGB32);
     clearNonCanvas();
+}
+
+Model::~Model()
+{
+    delete image;
+    delete shapePreview;
+    delete tracker;
 }
 
 QImage *Model::getImage()
@@ -223,12 +213,30 @@ void Model::updateAnimationFrame()
                        { updateAnimationFrame(); });
 }
 
+// #include "tools.h"
+
+// void Tools::paintBucket(QImage& image, int x, int y, QColor newColor) {
+//     // Implement paint bucket logic
+// }
+
+// void Tools::drawRectangle(QImage& image, QRect rect, QColor color) {
+//     // Implement drawing rectangle logic
+// }
+
+// void Tools::rotateImage(QImage& image, int angle) {
+//     // Implement image rotation logic
+// }
+
 void Model::setPixel(int x, int y, QColor userColor)
 {
     getPixel(x, y);
 
+    // image->setPixelColor(x, y, userColor);
+
+    // if the pixel selected is empty
     if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 255)
     {
+        // qDebug() << "Pixel is empty";
         image->setPixelColor(x, y, userColor);
     }
     else
@@ -237,11 +245,14 @@ void Model::setPixel(int x, int y, QColor userColor)
         image->setPixelColor(x, y, blendedColor); // Apply blended color
     }
 
+    // qDebug() << (selectColor == QColor(0, 0, 0, 255));
+
+    // qDebug() << "color is: " << "red: " << userColor.red() << "green: " << userColor.green() << "blue: " << userColor.blue() << "alpha: " << userColor.alpha();
+
     if (currentFrameIndex < frames.size())
     {
         frames[currentFrameIndex] = *image;
     }
-
     emit canvasUpdated();
     tracker->setPixelColor(x, y, userColor);
 }
@@ -311,6 +322,8 @@ void Model::erasePixel(int x, int y)
 void Model::getPixel(int x, int y)
 {
     selectColor = image->pixelColor(x, y);
+
+    // qDebug() << "Color at coords: " << selectColor.red() << ", " << selectColor.blue() << ", " << selectColor.green() << ", " << selectColor.alpha();
 }
 
 int Model::getCanvasSize()
@@ -337,6 +350,8 @@ QColor Model::blendAdditive(QColor src, QColor dest)
     int redOverride = (redSrc * alphaSrc + redDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
     int greenOverride = (greenSrc * alphaSrc + greenDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
     int blueOverride = (blueSrc * alphaSrc + blueDest * alphaDest * (255 - alphaSrc) / 255) / alphaOverride;
+
+    // qDebug() << "Blended color is: " << "red: " << redOverride << "green: " << greenOverride << "blue: " << blueOverride << "alpha: " << alphaOverride;
 
     return QColor(redOverride, greenOverride, blueOverride, alphaOverride);
 }
