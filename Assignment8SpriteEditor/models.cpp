@@ -288,38 +288,6 @@ void Model::ellipseShape(int x, int y, QColor userColor){
     painter.end();
 }
 
-void Model::paintBucket(int x, int y, QColor userColor) {
-    getPixel(x, y); // Get the color at the pixel the user selected
-    QColor colorToReplace = selectColor;
-    paintBucketRecursive(x, y, userColor, colorToReplace);
-}
-
-void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace) {
-    if (x >= size || x < 0 || y >= size || y < 0) {
-        return;
-    }
-    getPixel(x, y);
-    if (selectColor != colorToReplace) {
-        return;
-    }
-    setPixel(x, y, userColor);
-    // X
-    paintBucketRecursive(x + 1, y, userColor, colorToReplace);
-    paintBucketRecursive(x - 1, y, userColor, colorToReplace);
-
-    // Y
-    paintBucketRecursive(x, y + 1, userColor, colorToReplace);
-    paintBucketRecursive(x, y - 1, userColor, colorToReplace);
-
-    // X Diagnal
-    paintBucketRecursive(x + 1, y + 1, userColor, colorToReplace);
-    paintBucketRecursive(x - 1, y - 1, userColor, colorToReplace);
-
-    // Y Diagnal
-    paintBucketRecursive(x - 1, y + 1, userColor, colorToReplace);
-    paintBucketRecursive(x + 1, y - 1, userColor, colorToReplace);
-}
-
 void Model::mergeShapePreview(){
     QPainter painter(image);
     painter.drawImage(0, 0, *shapePreview);
