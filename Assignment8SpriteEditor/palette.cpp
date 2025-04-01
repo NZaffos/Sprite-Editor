@@ -31,8 +31,11 @@ void Palette::addColorToPalette()
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
 
-    // Sets this new button to look deative
-    setButtonStyleSheetDeactive(colorButton, userColor);
+    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
+                                   .arg(userColor.red())
+                                   .arg(userColor.green())
+                                   .arg(userColor.blue())
+                                   .arg(userColor.alpha()));
 
     int index = colorButtons.size();
     int row = index / paletteCols;
@@ -42,11 +45,9 @@ void Palette::addColorToPalette()
     colorButtons.append(colorButton);
     model->addToPalette(userColor);
 
-    connect(colorButton,
-            &QPushButton::pressed,
-            this,
-            [=]() {colorButtonPress(colorButton);
-            });
+    connect(colorButton, &QPushButton::pressed, this, [=]() {
+        colorButtonPress(colorButton);
+    });
 }
 
 void Palette::removeColorFromPalette()
@@ -101,39 +102,15 @@ void Palette::colorButtonPress(QPushButton* button)
 {
     deleteButtonActive = true;
 
-    QPushButton* oldActiveButton = colorButtons.at(currentColorButtonIndex);
-    QColor oldColor = model->getColorFromPalette(currentColorButtonIndex);
-    setButtonStyleSheetDeactive(oldActiveButton, oldColor);
-
     // Ge the index of the pressed button
     int index = colorButtons.indexOf(button);
 
     currentColorButtonIndex = index;
 
     QColor color = model->getColorFromPalette(index);
-    setButtonStyleSheetActive(button, color);
     updateSlidersToColor(color);
 
     userColor = color;
-}
-
-void Palette::setButtonStyleSheetActive(QPushButton* button, QColor originalColor)
-{
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);"
-                                  "border: 1px solid blue;")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
-}
-
-void Palette::setButtonStyleSheetDeactive(QPushButton* button, QColor originalColor)
-{
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
 }
 
 void Palette::setSliders()

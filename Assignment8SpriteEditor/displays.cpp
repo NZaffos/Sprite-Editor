@@ -1,11 +1,5 @@
-/**
- * Implementation of display class. Handles displaying the frame selector and animation preview
- *
- * @authors Noah Zaffos, Nash Hawkins
- * @date 3/28/2025
- */
-
 #include "displays.h"
+#include <QPainter>
 
 Displays::Displays(Ui::MainWindow *ui, Model *model, QWidget *parent)
     : QWidget(parent), ui(ui), model(model)
@@ -106,7 +100,7 @@ void Displays::updateFrameButtonStyle()
     for (int i = 0; i < frameButtons.size(); i++)
     {
         if (i == selectedFrameIndex)
-            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; border-radius: 4px}");
+            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
         else
             frameButtons[i]->setStyleSheet("");
     }
@@ -223,7 +217,7 @@ void Displays::initializeAnimationControls()
         "    border-radius: 4px;"
         "}"
         "QSlider::sub-page:horizontal {"
-        "    background: black;"
+        "    background: rgba(0, 0, 0, 0);"
         "    border-radius: 4px;"
         "}"
         "QSlider::handle:horizontal {"
@@ -235,10 +229,6 @@ void Displays::initializeAnimationControls()
         "}"));
     ui->animationFpsSliderIO->setStyleSheet(getButtonStyle());
     ui->animationPlayPauseButton->setStyleSheet(getButtonStyle());
-
-    ui->animationDisplayLabel->setStyleSheet(QString(
-        "border: 2px solid #555;"
-        "border-radius: 4px"));
 
     connect(ui->animationFpsSlider,
             &QSlider::valueChanged,
