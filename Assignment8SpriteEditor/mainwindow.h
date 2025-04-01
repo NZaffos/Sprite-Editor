@@ -59,7 +59,7 @@ public:
     {
         BRUSH,
         ERASER,
-        PAINTBUCKET,
+        PAINT,
         EYE,
         RECTANGLE,
         ELLIPSE
