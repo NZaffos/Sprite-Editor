@@ -198,6 +198,12 @@ public:
      */
     void mergeShapePreview();
 
+    /**
+     * @brief paintBucket The paint bucket tool
+     * @param x X cordinate
+     * @param y Y cordiante
+     * @param userColor The users color
+     */
     void paintBucket(int x, int y, QColor userColor);
 
 signals:
@@ -339,6 +345,13 @@ private:
      */
     QVector<QColor> palette;
 
+    /**
+     * @brief paintBucketRecursive Recursive method for paint bucket
+     * @param x X cordinate
+     * @param y Y cordinate
+     * @param userColor The users color
+     * @param colorToReplace The color to replace
+     */
     void paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace);
 
 private slots:
