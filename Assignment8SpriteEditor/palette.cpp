@@ -74,7 +74,7 @@ void Palette::removeColorFromPalette()
     model->removeFromPalette(currentColorButtonIndex);
 
     // Remove button from layout and delete it
-    QPushButton* buttonToRemove = colorButtons.at(currentColorButtonIndex);
+    QPushButton *buttonToRemove = colorButtons.at(currentColorButtonIndex);
     paletteLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
 
@@ -82,20 +82,23 @@ void Palette::removeColorFromPalette()
     colorButtons.removeAt(currentColorButtonIndex);
 
     // Need to clear the layout and rebuild it so the buttons "slide down"
-    while (QLayoutItem* item = paletteLayout->takeAt(0)) {
+    while (QLayoutItem *item = paletteLayout->takeAt(0))
+    {
         delete item;
     }
 
     // Rebuild the layout with updated positions
-    for (int i = 0; i < colorButtons.size(); i++) {
+    for (int i = 0; i < colorButtons.size(); i++)
+    {
         int row = i / paletteCols;
         int col = i % paletteCols;
         paletteLayout->addWidget(colorButtons[i], row, col);
     }
 
     // Update button connections
-    for (int i = 0; i < colorButtons.size(); i++) {
-        QPushButton* button = colorButtons[i];
+    for (int i = 0; i < colorButtons.size(); i++)
+    {
+        QPushButton *button = colorButtons[i];
         // We first should make sure the button is disconnected
         disconnect(button,
                    &QPushButton::pressed,
@@ -105,14 +108,16 @@ void Palette::removeColorFromPalette()
         connect(button,
                 &QPushButton::pressed,
                 this,
-                [=]() {colorButtonPress(button);
+                [=]()
+                {
+                    colorButtonPress(button);
                 });
     }
 
     deleteButtonActive = false;
 }
 
-void Palette::colorButtonPress(QPushButton* button)
+void Palette::colorButtonPress(QPushButton *button)
 {
     deleteButtonActive = true;
 

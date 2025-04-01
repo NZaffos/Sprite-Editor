@@ -250,7 +250,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             {
                 // Check if moving from current pixel position & if in image bounds
                 if ((x != currPixel.x() || y != currPixel.y()) && x >= 0 && x < model->getImage()->width() &&
-                        y >= 0 && y < model->getImage()->height())
+                    y >= 0 && y < model->getImage()->height())
                 {
                     // Handle tool-specific actions
                     switch (currTool)
@@ -476,7 +476,8 @@ void MainWindow::updateToolBorderSelection(Tool newTool)
     }
 }
 
-void MainWindow::setCursorIcon(){
+void MainWindow::setCursorIcon()
+{
     QPixmap toolPixmap;
     // Select the appropriate icon based on the current tool.
     if (currTool == Tool::BRUSH)

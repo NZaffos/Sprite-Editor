@@ -13,10 +13,10 @@
 
 int main(int argc, char *argv[])
 {
-    //Qt application instance
+    // Qt application instance
     QApplication a(argc, argv);
 
-    //setting colors
+    // setting colors
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, QColor(60, 60, 60));
     darkPalette.setColor(QPalette::WindowText, Qt::white);

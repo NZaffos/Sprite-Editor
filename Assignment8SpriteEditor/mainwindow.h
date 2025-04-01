@@ -1,4 +1,4 @@
-//Reviewed By Nash Hawkins
+// Reviewed By Nash Hawkins
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -37,7 +37,7 @@ using std::string;
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
-class MainWindow;
+    class MainWindow;
 }
 
 QT_END_NAMESPACE
@@ -73,30 +73,30 @@ public:
     {
         // Brush tool for drawing.
         BRUSH,
-        //Eraser tool for removing parts of the drawing.
+        // Eraser tool for removing parts of the drawing.
         ERASER,
-        //Paint bucket tool for filling areas.
+        // Paint bucket tool for filling areas.
         PAINT,
-        //Eyedropper tool for color selection.
+        // Eyedropper tool for color selection.
         EYE,
-        //Rectangle tool for drawing rectangles.
+        // Rectangle tool for drawing rectangles.
         RECTANGLE,
-        //Ellipse tool for drawing ellipses.
+        // Ellipse tool for drawing ellipses.
         ELLIPSE
     };
     Q_ENUM(Tool)
 
 private:
-    //UI elements of the MainWindow.
+    // UI elements of the MainWindow.
     Ui::MainWindow *ui;
-    //Pointer to the application data model.
+    // Pointer to the application data model.
     Model *model;
 
-    //Displays component handling UI elements.
+    // Displays component handling UI elements.
     Displays *displays;
-    //Color palette component.
+    // Color palette component.
     Palette *palette;
-    //Background image.
+    // Background image.
     QPixmap background;
 
     /**
@@ -120,7 +120,6 @@ private:
     bool drawing = false;
     // Current pixel position for drawing.
     QPointF currPixel;
-
 
     /**
      * @brief Initializes buttons with appropriate styles.

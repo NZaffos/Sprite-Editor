@@ -163,7 +163,7 @@ private:
      * @brief colorButtonPress Called when a color button is pushed to change the style sheet and update userColor
      * @param button The color button pushed
      */
-    void colorButtonPress(QPushButton* button);
+    void colorButtonPress(QPushButton *button);
 
     /**
      * @brief setButtonStyleSheetActive A style sheet to show a color button is active
