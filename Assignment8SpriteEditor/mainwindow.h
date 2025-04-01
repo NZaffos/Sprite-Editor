@@ -1,12 +1,4 @@
 //Reviewed By Nash Hawkins
-/**
- * @file mainwindow.h
- * @brief Defines the MainWindow class, which provides the main interface for the application.
- *
- * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
- *
- */
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -51,8 +43,10 @@ class MainWindow;
 QT_END_NAMESPACE
 
 /**
- * @class MainWindow
- * @brief The main application window handling UI and interactions.
+ * @file mainwindow.h
+ * @brief Defines the MainWindow class, which provides the main interface for the application.
+ *
+ * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
  */
 class MainWindow : public QMainWindow
 {
