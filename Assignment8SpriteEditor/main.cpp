@@ -1,11 +1,22 @@
-#include "mainwindow.h"
+// Reviewedby Nash Hawkins
+/**
+ *
+ * @file main.cpp
+ * @brief Entry point for the application.*
+ * This file contains the main function, which initializes the application,
+ * creates the model, and launches the main window.*
+ * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen*
+ */
 
+#include "mainwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
+    //Qt application instance
     QApplication a(argc, argv);
 
+    //setting colors
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, QColor(60, 60, 60));
     darkPalette.setColor(QPalette::WindowText, Qt::white);
@@ -19,8 +30,15 @@ int main(int argc, char *argv[])
 
     a.setPalette(darkPalette);
 
+    // Application data model
     Model m;
+
+    // Main window with the model passed as a parameter
     MainWindow w(&m);
+
+    // Display the main window
     w.show();
+
+    // Execute the application event loop
     return a.exec();
 }
