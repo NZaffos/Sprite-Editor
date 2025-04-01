@@ -83,7 +83,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QToolButton::clicked,
             palette,
             &Palette::removeColorFromPalette);
-      
+
     // New/Save/Load connections
     connect(ui->saveButton,
             &QPushButton::clicked,
@@ -109,6 +109,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &Model::framesReloaded,
             displays,
             &Displays::rebuildFrameButtonsFromModel);
+    connect(model,
+            &Model::requestWindowResize,
+            this,
+            &MainWindow::resizeWindow);
 
     // Mirror/Rotate connections
     connect(ui->mirrorBttn,
@@ -122,14 +126,14 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
 } // End of constructor
 
-void MainWindow::initializeButtons() {
+void MainWindow::initializeButtons()
+{
     QString style = QString(
-                        "    background-color: rgb(0, 0, 0);"
-                        "    color: white;" // Brighten text
-                        "    border: 1px solid #555;"
-                        "    border-radius: 4px;"
-                        "    padding: 2px 4px;"
-    );
+        "    background-color: rgb(0, 0, 0);"
+        "    color: white;" // Brighten text
+        "    border: 1px solid #555;"
+        "    border-radius: 4px;"
+        "    padding: 2px 4px;");
     ui->toolBox->setStyleSheet(QString("QToolButton {") + style + QString("}"));
     ui->saveButton->setStyleSheet(style);
     ui->newButton->setStyleSheet(style);
@@ -198,7 +202,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 {
                 case Tool::BRUSH:
                     model->setPixelTracker(x, y, userColor); // Add brush logic here
-                    break;                            // <--- Add this
+                    break;                                   // <--- Add this
                 case Tool::ERASER:
                     model->erasePixel(x, y);
                     break; // <--- Add this
@@ -208,7 +212,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                     break;
                 case Tool::RECTANGLE:
                 case Tool::ELLIPSE:
-                    model->shapeStart(x,y);
+                    model->shapeStart(x, y);
                     break;
                 case Tool::PAINT:
                     model->paintBucket(x, y, userColor);
@@ -224,19 +228,30 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->graphicsView->viewport()) {
-        if (event->type() == QEvent::Enter) {
+    if (obj == ui->graphicsView->viewport())
+    {
+        if (event->type() == QEvent::Enter)
+        {
             QPixmap toolPixmap;
             // Select the appropriate icon based on the current tool.
-            if (currTool == Tool::BRUSH) {
+            if (currTool == Tool::BRUSH)
+            {
                 toolPixmap.load(":/icons/icons/brush.png");
-            } else if (currTool == Tool::ERASER) {
+            }
+            else if (currTool == Tool::ERASER)
+            {
                 toolPixmap.load(":/icons/icons/eraser.png");
-            } else if (currTool == Tool::EYE) {
+            }
+            else if (currTool == Tool::EYE)
+            {
                 toolPixmap.load(":/icons/icons/eyedropper.png");
-            } else if (currTool == Tool::PAINT) {
+            }
+            else if (currTool == Tool::PAINT)
+            {
                 toolPixmap.load(":/icons/icons/bucket.png");
-            } else {
+            }
+            else
+            {
                 // Fallback icon if needed.
                 toolPixmap.load(":/icons/icons/brush.png");
             }
@@ -249,11 +264,13 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             ui->graphicsView->viewport()->setCursor(toolCursor);
         }
         // When the mouse leaves the canvas, revert to the default cursor.
-        else if (event->type() == QEvent::Leave) {
+        else if (event->type() == QEvent::Leave)
+        {
             ui->graphicsView->viewport()->unsetCursor();
         }
         // Existing handling for MouseMove events.
-        else if (event->type() == QEvent::MouseMove) {
+        else if (event->type() == QEvent::MouseMove)
+        {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             QPoint localPos = mouseEvent->pos();
             QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
@@ -301,9 +318,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 }
             }
         }
-        else if(event->type() == QEvent::MouseButtonRelease){
+        else if (event->type() == QEvent::MouseButtonRelease)
+        {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            if(mouseEvent->button() == Qt::LeftButton)
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 QPoint localPos = mouseEvent->pos();
                 QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
@@ -312,9 +330,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
                 int x = static_cast<int>(scenePos.x());
                 int y = static_cast<int>(scenePos.y());
-                if(x >= 0 && x < model->getImage()->width() &&
+                if (x >= 0 && x < model->getImage()->width() &&
                     y >= 0 && y < model->getImage()->height() &&
-                    (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
+                    (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE))
+                {
                     model->mergeShapePreview();
                 }
                 model->clearNonCanvas();
@@ -376,24 +395,29 @@ void MainWindow::on_newButton_clicked()
     // Ask for the number of rows
     QString rowText = QInputDialog::getText(this,
                                             tr("Canvas Size"),
-                                            tr("Please enter the size of the canvas:\n(Max size: 1000)\nSizes over 1000 will be capped."),
+                                            tr("Please enter the size of the canvas:\n(Max size: 250)\nSizes over 250 will be capped."),
                                             QLineEdit::Normal,
                                             QString(),
                                             &ok);
     if (!ok || rowText.isEmpty())
     {
-        return;  // User cancelled or left empty
+        return; // User cancelled or left empty
     }
 
     bool conversionOK;
-    int rows = std::min(rowText.toInt(&conversionOK), 1000);
+    int rows = std::min(rowText.toInt(&conversionOK), 250);
     if (!conversionOK)
     {
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
     }
 
-    model->createImage(rows);
+    resizeWindow(rows);
+}
+
+void MainWindow::resizeWindow(unsigned int size)
+{
+    model->createImage(size);
     displays->rebuildFrameButtonsFromModel();
 
     createCanvas();
@@ -402,7 +426,8 @@ void MainWindow::on_newButton_clicked()
     updateView();
 }
 
-void MainWindow::createCanvas(){
+void MainWindow::createCanvas()
+{
     // Add the pixmap to the scene
     scene->addPixmap(QPixmap::fromImage(*model->getImage()));
 
@@ -421,14 +446,15 @@ void MainWindow::createCanvas(){
     ui->graphicsView->viewport()->installEventFilter(this);
 }
 
-void MainWindow::createBg(){
+void MainWindow::createBg()
+{
     // Background
     int width = model->getCanvasSize();
 
     QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
     bgImage.fill(QColor(150, 150, 150, 100));
 
-    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width))/8);
+    int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width)) / 8);
 
     QPainter painter(&bgImage);
     QPen pen;
@@ -441,9 +467,12 @@ void MainWindow::createBg(){
     painter.setBrush(brush);
 
     int boxCount = width / checkerboardWidth + 1;
-    for(int i = 0; i < boxCount; i++){
-        for(int j = 0; j < boxCount; j++){
-            if((i + j) % 2 == 1){
+    for (int i = 0; i < boxCount; i++)
+    {
+        for (int j = 0; j < boxCount; j++)
+        {
+            if ((i + j) % 2 == 1)
+            {
                 continue;
             }
             painter.drawRect(i * checkerboardWidth, j * checkerboardWidth, checkerboardWidth - 1, checkerboardWidth - 1);

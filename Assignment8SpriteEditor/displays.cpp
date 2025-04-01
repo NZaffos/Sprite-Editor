@@ -79,7 +79,7 @@ void Displays::initializeFrameSelector()
 
 void Displays::createFrameButton(int index)
 {
-    QPushButton* frameButton = new QPushButton(ui->frameSelectorScrollContent);
+    QPushButton *frameButton = new QPushButton(ui->frameSelectorScrollContent);
     frameButton->setProperty("frameIndex", index);
 
     updateFrameButtonIcon(frameButton);
@@ -89,7 +89,7 @@ void Displays::createFrameButton(int index)
     frameButtons.insert(index, frameButton);
 }
 
-QPushButton* Displays::updateFrameButtonIcon(QPushButton* button)
+QPushButton *Displays::updateFrameButtonIcon(QPushButton *button)
 {
     int index = button->property("frameIndex").toInt();
     QPixmap thumbnail = model->getFrameThumbnail(index, 110, 110);
@@ -115,7 +115,8 @@ void Displays::updateFrameButtonStyle()
 void Displays::frameButtonClicked()
 {
     QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (!button) return;
+    if (!button)
+        return;
 
     int index = button->property("frameIndex").toInt();
     model->selectFrame(index);
@@ -131,7 +132,8 @@ void Displays::addFrameButtonClicked()
     createFrameButton(newIndex);
 
     // Reassign properties for following frameButtons
-    for (int i = newIndex + 1; i < frameButtons.size(); i++) {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -145,7 +147,8 @@ void Displays::duplicateFrameButtonClicked()
     int newIndex = model->getCurrentFrameIndex();
     createFrameButton(newIndex);
 
-    for (int i = newIndex + 1; i < frameButtons.size(); i++) {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -155,8 +158,9 @@ void Displays::duplicateFrameButtonClicked()
 
 void Displays::deleteFrameButtonClicked()
 {
-    QPushButton* buttonToRemove = frameButtons[selectedFrameIndex];
-    if (model->getFrames().size() <= 1) {
+    QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
+    if (model->getFrames().size() <= 1)
+    {
         model->removeFrame(selectedFrameIndex);
 
         updateFrameButtonIcon(buttonToRemove);
@@ -169,7 +173,8 @@ void Displays::deleteFrameButtonClicked()
     frameButtons.remove(selectedFrameIndex);
 
     // Reassign properties for following frameButtons
-    for (int i = selectedFrameIndex; i < frameButtons.size(); i++) {
+    for (int i = selectedFrameIndex; i < frameButtons.size(); i++)
+    {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -205,7 +210,8 @@ void Displays::shiftFrameDownClicked()
 
 void Displays::onCanvasUpdated()
 {
-    if (selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size()) {
+    if (selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size())
+    {
         updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
     }
 }
@@ -252,7 +258,8 @@ void Displays::initializeAnimationControls()
 
 void Displays::rebuildFrameButtonsFromModel()
 {
-    while (!frameButtons.isEmpty()) {
+    while (!frameButtons.isEmpty())
+    {
         QPushButton *button = frameButtons.takeLast();
         framesLayout->removeWidget(button);
         button->deleteLater();
@@ -295,6 +302,7 @@ QString Displays::getButtonStyle()
         "    padding: 2px 4px;");
 }
 
-void Displays::setSelectedFrameIndex(unsigned int index) {
+void Displays::setSelectedFrameIndex(unsigned int index)
+{
     selectedFrameIndex = index;
 }

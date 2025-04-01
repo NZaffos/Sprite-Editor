@@ -36,7 +36,7 @@ public slots:
      * Adds a new frame right after the currently selected frame
      */
     void addFrameButtonClicked();
-    
+
     void setSelectedFrameIndex(unsigned int index);
 private slots:
     /**

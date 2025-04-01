@@ -128,6 +128,7 @@ signals:
     void requestDeleteFrame(unsigned int index);
     void requestNewSelectedFrameIndex(unsigned int index);
     void framesReloaded();
+    void requestWindowResize(unsigned int size);
 
 public slots:
     void sliderValueChanged(int value);

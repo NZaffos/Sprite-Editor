@@ -29,7 +29,7 @@ using std::string;
 
 // For Cursor
 #include <QCursor>
-#include<QStyle>
+#include <QStyle>
 
 // Includes for files
 #include "models.h"
@@ -110,9 +110,9 @@ private slots:
     void on_rectangleBttn_clicked();
     void on_ellipseBttn_clicked();
     void on_paintBttn_clicked();
-
-    // New Button
     void on_newButton_clicked();
+
+    void resizeWindow(unsigned int size);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
