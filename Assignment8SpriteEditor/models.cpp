@@ -1,11 +1,10 @@
 // Reviewed by John Chen
 /**
-    University of Utah – CS 3505
-    @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
-    @date    03/25/2025
-    @brief   This class is responsible for handling the backend logic of the sprite editor such as painting, erasing, creating new canvas sizes and more
-    Checked by Jas Sandhu - u1430476
-*/
+ *  University of Utah – CS 3505
+ *  @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
+ * @date    03/25/2025
+ * @brief   This class is responsible for handling the backend logic of the sprite editor such as painting, erasing, creating new canvas sizes and more
+ */
 
 #include "models.h"
 #include "qpainter.h"
