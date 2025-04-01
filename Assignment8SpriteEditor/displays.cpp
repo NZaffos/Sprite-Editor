@@ -1,5 +1,4 @@
 // Reviewed by Noah Zaffos
-
 /**
  * University of Utah - CS 3505
  * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
