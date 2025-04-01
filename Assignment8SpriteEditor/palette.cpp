@@ -235,7 +235,6 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
     {
         color = QString("rgb(%1, %1, %1)").arg(value);
         userColor.setAlpha(value);
-        qDebug() << "alpha color is: " << userColor.alpha();
         ui->alphaSliderIO->setText(QString::number(value));
     }
 
