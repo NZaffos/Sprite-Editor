@@ -143,7 +143,7 @@ private:
      * Determines the dimensions of our square canvas
      * @brief size
      */
-    int size;
+    double size;
 
     /**
      * The main canvas displayed on the users screen

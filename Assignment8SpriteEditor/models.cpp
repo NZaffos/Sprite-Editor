@@ -509,7 +509,7 @@ void Model::loadProject()
                     int alpha = frameArray[4 * i + 3].toInt();
 
                     QColor color(red, green, blue, alpha);
-                    setPixel(i % size, i / size, color);
+                    setPixel(i % (int)size, i / size, color);
                 }
                 frameIndex++;
             }

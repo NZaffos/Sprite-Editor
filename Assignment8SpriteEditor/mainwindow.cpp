@@ -370,13 +370,21 @@ void MainWindow::on_newButton_clicked()
 {
     bool ok;
     // Ask for the number of rows
-    QString rowText = QInputDialog::getText(this, tr("Canvas Size"), tr("Please enter the size of the canvas:"), QLineEdit::Normal, QString(), &ok);
+    QString rowText = QInputDialog::getText(this,
+                                            tr("Canvas Size"),
+                                            tr("Please enter the size of the canvas:\n(Max size: 1000)\nSizes over 1000 will be capped."),
+                                            QLineEdit::Normal,
+                                            QString(),
+                                            &ok);
     if (!ok || rowText.isEmpty())
+    {
         return;  // User cancelled or left empty
+    }
 
     bool conversionOK;
-    int rows = rowText.toInt(&conversionOK);
-    if (!conversionOK) {
+    int rows = std::min(rowText.toInt(&conversionOK), 1000);
+    if (!conversionOK)
+    {
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
         return;
     }
@@ -398,9 +406,7 @@ void MainWindow::createCanvas(){
     scene->setSceneRect(scene->itemsBoundingRect());
 
     // Get user canvas size
-    int canvasSize = 725 / model->getCanvasSize();
-
-    qDebug() << "Canvas Size: " << canvasSize;
+    double canvasSize = 725.0 / model->getCanvasSize();
 
     // Configure the view
     ui->graphicsView->setRenderHint(QPainter::Antialiasing, false);
