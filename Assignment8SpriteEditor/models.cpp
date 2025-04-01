@@ -466,15 +466,11 @@ void Model::loadProject()
         QByteArray fileData = file.readAll();
         file.close();
 
-        // File has been choosen so now we clear.
-        unsigned int frameSize = frames.size();
-        for (unsigned int i = 0; i < frameSize; i++) {
-            selectFrame(0);
-            emit requestDeleteFrame(0);
-        }
+        frames.clear();
+        frames.push_back(*image);
+        currentFrameIndex = 0;
 
         palette.clear();
-
 
         QJsonDocument doc = QJsonDocument::fromJson(fileData);
         if (doc.isObject())
@@ -514,6 +510,7 @@ void Model::loadProject()
                 frameIndex++;
             }
             selectFrame(0);
+            emit framesReloaded();
         }
         else
         {

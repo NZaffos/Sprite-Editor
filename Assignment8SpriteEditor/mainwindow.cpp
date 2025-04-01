@@ -105,6 +105,10 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &Model::requestDeleteFrame,
             displays,
             &Displays::setSelectedFrameIndex);
+    connect(model,
+            &Model::framesReloaded,
+            displays,
+            &Displays::rebuildFrameButtonsFromModel);
 
     // Mirror/Rotate connections
     connect(ui->mirrorBttn,
