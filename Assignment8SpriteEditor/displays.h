@@ -1,3 +1,5 @@
+// Reviewed by Noah Zaffos
+
 #ifndef DISPLAYS_H
 #define DISPLAYS_H
 
@@ -11,7 +13,7 @@
 
 /**
  * University of Utah - CS 3505
- * @authors Noah Zaffos, Nash Hawkins
+ * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
  * @date 3/28/2025
  * @brief This class handles displaying the frame selector and animation preview
  */

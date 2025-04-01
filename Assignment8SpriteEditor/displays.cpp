@@ -1,6 +1,8 @@
+// Reviewed by Noah Zaffos
+
 /**
  * University of Utah - CS 3505
- * @authors Noah Zaffos, Nash Hawkins
+ * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
  * @date 3/28/2025
  * @brief Implementation of display class. Handles displaying the frame selector and animation preview
  */
