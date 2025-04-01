@@ -306,6 +306,40 @@ void Model::mergeShapePreview(){
     emit canvasUpdated();
 }
 
+void Model::paintBucket(int x, int y, QColor userColor) {
+    getPixel(x, y); // Get the color at the pixel the user selected
+    QColor colorToReplace = selectColor;
+    if (colorToReplace == userColor)
+    {
+        return;
+    }
+    paintBucketRecursive(x, y, userColor, colorToReplace);
+    if (currentFrameIndex < frames.size()) {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
+}
+
+void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace)
+{
+    if (x >= size || x < 0 || y >= size || y < 0) {
+        return;
+    }
+    getPixel(x, y);
+    if (selectColor != colorToReplace) {
+        return;
+    }
+    image->setPixelColor(x, y, userColor);
+    emit canvasUpdated();
+    // X
+    paintBucketRecursive(x + 1, y, userColor, colorToReplace);
+    paintBucketRecursive(x - 1, y, userColor, colorToReplace);
+
+    // Y
+    paintBucketRecursive(x, y + 1, userColor, colorToReplace);
+    paintBucketRecursive(x, y - 1, userColor, colorToReplace);
+}
+
 void Model::erasePixel(int x, int y)
 {
     image->setPixelColor(x, y, QColor(0,0,0,0));

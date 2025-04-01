@@ -200,8 +200,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                     break;
                 case Tool::RECTANGLE:
                 case Tool::ELLIPSE:
-                    model->shapeStart(x,y);
+                    model->shapeStart(x, y);
                     break;
+                case Tool::PAINTBUCKET:
+                    model->paintBucket(x, y, userColor);
                 default:
                     break;
                 }
@@ -242,32 +244,24 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                     {
 
                         // Update pixel
-                        // qDebug() << "alpha color is: " << userColor.alpha();
 
                         switch (currTool)
                         {
                         case Tool::BRUSH:
-                            //qDebug() << "using brush";
                             model->setPixelTracker(x, y, userColor);
                             break; // <--- Add this
                         case Tool::ERASER:
-                            //qDebug() << "using eraser";
                             model->erasePixel(x, y);
                             break; // <--- Add this
                         case Tool::RECTANGLE:
-                            //qDebug() << "using rectangle";
                             model->rectangleShape(x, y, userColor);
                             break;
                         case Tool::ELLIPSE:
-                            //qDebug() << "using ellipse";
                             model->ellipseShape(x, y, userColor);
                             break;
                         default:
                             break;
                         }
-
-                        // model->setPixel(x, y, userColor.rgba());
-
                         // update current pixel
                         currPixel = scenePos;
                         updateView();
@@ -335,6 +329,11 @@ void MainWindow::on_ellipseBttn_clicked()
     currTool = Tool::ELLIPSE;
 }
 
+void MainWindow::on_paintBttn_clicked()
+{
+    currTool = Tool::PAINTBUCKET;
+}
+
 void MainWindow::on_newButton_clicked()
 {
     bool ok;
@@ -384,8 +383,6 @@ void MainWindow::createBg(){
     // Background
     int width = model->getCanvasSize();
 
-    qDebug() << "Checker Size: " << width;
-
     QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
     bgImage.fill(QColor(150, 150, 150, 100));
 
@@ -401,7 +398,7 @@ void MainWindow::createBg(){
     brush.setColor(QColor(150, 150, 150, 255));
     painter.setBrush(brush);
 
-    int boxCount = width / checkerboardWidth;
+    int boxCount = width / checkerboardWidth + 1;
     for(int i = 0; i < boxCount; i++){
         for(int j = 0; j < boxCount; j++){
             if((i + j) % 2 == 1){

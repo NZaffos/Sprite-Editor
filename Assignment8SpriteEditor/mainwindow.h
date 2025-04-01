@@ -59,7 +59,7 @@ public:
     {
         BRUSH,
         ERASER,
-        PAINT,
+        PAINTBUCKET,
         EYE,
         RECTANGLE,
         ELLIPSE
@@ -109,6 +109,7 @@ private slots:
     void on_eyeBttn_clicked();
     void on_rectangleBttn_clicked();
     void on_ellipseBttn_clicked();
+    void on_paintBttn_clicked();
 
     // New Button
     void on_newButton_clicked();
