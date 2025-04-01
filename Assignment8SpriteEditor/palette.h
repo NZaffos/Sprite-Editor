@@ -69,6 +69,9 @@ private:
     int paletteCols = 6;
 
     void colorButtonPress(QPushButton* button);
+
+    void setButtonStyleSheetActive(QPushButton *button, QColor originalColor);
+    void setButtonStyleSheetDeactive(QPushButton *button, QColor originalColor);
 };
 
 #endif // PALETTE_H
