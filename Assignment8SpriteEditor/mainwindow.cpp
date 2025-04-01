@@ -20,8 +20,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
 
     // Set palette sliders
     palette->updateSlidersToColor(QColor(0, 0, 0, 255));
-    initializeButtons();
     currTool = Tool::BRUSH;
+    initializeButtons();
 
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
@@ -130,6 +130,10 @@ void MainWindow::initializeButtons() {
     ui->saveButton->setStyleSheet(style);
     ui->newButton->setStyleSheet(style);
     ui->loadButton->setStyleSheet(style);
+    ui->mirrorBttn->setStyleSheet(style);
+    ui->rotateBttn->setStyleSheet(style);
+
+    updateToolBorderSelection(currTool);
 }
 
 MainWindow::~MainWindow()
@@ -200,10 +204,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                     break;
                 case Tool::RECTANGLE:
                 case Tool::ELLIPSE:
-                    model->shapeStart(x, y);
+                    model->shapeStart(x,y);
                     break;
-                case Tool::PAINTBUCKET:
-                    model->paintBucket(x, y, userColor);
                 default:
                     break;
                 }
@@ -216,10 +218,36 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->graphicsView->viewport())
-    {
-        if (event->type() == QEvent::MouseMove)
-        {
+    if (obj == ui->graphicsView->viewport()) {
+        if (event->type() == QEvent::Enter) {
+            QPixmap toolPixmap;
+            // Select the appropriate icon based on the current tool.
+            if (currTool == Tool::BRUSH) {
+                toolPixmap.load(":/icons/icons/brush.png");
+            } else if (currTool == Tool::ERASER) {
+                toolPixmap.load(":/icons/icons/eraser.png");
+            } else if (currTool == Tool::EYE) {
+                toolPixmap.load(":/icons/icons/eyedropper.png");
+            } else if (currTool == Tool::PAINT) {
+                toolPixmap.load(":/icons/icons/bucket.png");
+            } else {
+                // Fallback icon if needed.
+                toolPixmap.load(":/icons/icons/brush.png");
+            }
+
+            // Scale the pixmap to 32x32 while keeping the aspect ratio.
+            QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Set the hotspot to the center of the pixmap.
+            QCursor toolCursor(scaledPixmap, 0, scaledPixmap.height() / 2);
+            ui->graphicsView->viewport()->setCursor(toolCursor);
+        }
+        // When the mouse leaves the canvas, revert to the default cursor.
+        else if (event->type() == QEvent::Leave) {
+            ui->graphicsView->viewport()->unsetCursor();
+        }
+        // Existing handling for MouseMove events.
+        else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             QPoint localPos = mouseEvent->pos();
             QPoint globalPos = ui->graphicsView->viewport()->mapToGlobal(localPos);
@@ -231,9 +259,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             int y = static_cast<int>(scenePos.y());
             ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
 
-            QMouseEvent *me = static_cast<QMouseEvent *>(event);
-
-            if (me->buttons() & (Qt::LeftButton))
+            if (mouseEvent->buttons() & Qt::LeftButton)
             {
                 // Check if moving from current pixel position
                 if (x != currPixel.x() || y != currPixel.y())
@@ -249,10 +275,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         {
                         case Tool::BRUSH:
                             model->setPixelTracker(x, y, userColor);
-                            break; // <--- Add this
+                            break;
                         case Tool::ERASER:
                             model->erasePixel(x, y);
-                            break; // <--- Add this
+                            break;
                         case Tool::RECTANGLE:
                             model->rectangleShape(x, y, userColor);
                             break;
@@ -278,15 +304,13 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
                 QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
-                // Get pixel position
                 int x = static_cast<int>(scenePos.x());
                 int y = static_cast<int>(scenePos.y());
                 if(x >= 0 && x < model->getImage()->width() &&
-                        y >= 0 && y < model->getImage()->height() &&(currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
-                    qDebug() << "ready to merge!";
+                    y >= 0 && y < model->getImage()->height() &&
+                    (currTool == Tool::RECTANGLE || currTool == Tool::ELLIPSE)){
                     model->mergeShapePreview();
                 }
-                qDebug() << "clearing tracker and shapePreview";
                 model->clearNonCanvas();
             }
         }
@@ -304,28 +328,33 @@ void MainWindow::updateView()
 
 void MainWindow::on_brushBttn_clicked()
 {
+    updateToolBorderSelection(Tool::BRUSH);
     currTool = Tool::BRUSH;
     model->setSelectColor(QColor(0, 0, 0, 255)); // Black (to trigger blending)
 }
 
 void MainWindow::on_eraseBttn_clicked()
 {
+    updateToolBorderSelection(Tool::ERASER);
     currTool = Tool::ERASER;
     model->setSelectColor(QColor(255, 255, 255, 255)); // Non-black (to bypass blending)
 }
 
 void MainWindow::on_eyeBttn_clicked()
 {
+    updateToolBorderSelection(Tool::EYE);
     currTool = Tool::EYE;
 }
 
 void MainWindow::on_rectangleBttn_clicked()
 {
+    updateToolBorderSelection(Tool::RECTANGLE);
     currTool = Tool::RECTANGLE;
 }
 
 void MainWindow::on_ellipseBttn_clicked()
 {
+    updateToolBorderSelection(Tool::ELLIPSE);
     currTool = Tool::ELLIPSE;
 }
 
@@ -408,4 +437,36 @@ void MainWindow::createBg(){
         }
     }
     background = QPixmap::fromImage(bgImage);
+}
+
+void MainWindow::updateToolBorderSelection(Tool newTool)
+{
+    ui->brushBttn->setStyleSheet("");
+    ui->eraseBttn->setStyleSheet("");
+    ui->eyeBttn->setStyleSheet("");
+    ui->paintBttn->setStyleSheet("");
+    ui->rectangleBttn->setStyleSheet("");
+    ui->ellipseBttn->setStyleSheet("");
+
+    switch (newTool)
+    {
+    case Tool::BRUSH:
+        ui->brushBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::ERASER:
+        ui->eraseBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::ELLIPSE:
+        ui->ellipseBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::EYE:
+        ui->eyeBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::PAINT:
+        ui->paintBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    case Tool::RECTANGLE:
+        ui->rectangleBttn->setStyleSheet("border: 2px solid blue");
+        break;
+    }
 }
