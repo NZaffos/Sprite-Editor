@@ -1,16 +1,8 @@
-// Reviewed by Caleb Standfield
-/**
- * University of Utah - CS 3505
- * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
- * @date 3/28/2025
- * @brief Implementation of the palette class. Handels displaying the palette in the view and comunicating with the model.
- */
 #include "palette.h"
 
 Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *parent)
     : QObject(parent), ui(ui), userColor(userColor), model(model)
 {
-    // Inital function calls to set up the palette
     setColorPalette();
     setSliderTextEdits();
     setSliders();
@@ -19,11 +11,9 @@ Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *p
 
 void Palette::setColorPalette()
 {
-    // Set all of the instance vars to their correspoinding UI elemetns
     paletteScrollArea = ui->colorPalette;
     paletteContainer = ui->colorPaletteScrollContents;
 
-    // Set the QGridLayout to the proper margins
     paletteLayout = new QGridLayout();
     paletteLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     paletteLayout->setHorizontalSpacing(2);
@@ -41,27 +31,23 @@ void Palette::addColorToPalette()
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
 
-    // Sets this new button to look deative
-    setButtonStyleSheetDeactive(colorButton, userColor);
+    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
+                                   .arg(userColor.red())
+                                   .arg(userColor.green())
+                                   .arg(userColor.blue())
+                                   .arg(userColor.alpha()));
 
-    // Calculating the index to put the botton into
     int index = colorButtons.size();
     int row = index / paletteCols;
     int col = index % paletteCols;
 
-    // Add to the layout and model representations
     paletteLayout->addWidget(colorButton, row, col);
     colorButtons.append(colorButton);
     model->addToPalette(userColor);
 
-    // Connect each button
-    connect(colorButton,
-            &QPushButton::pressed,
-            this,
-            [=]()
-            {
-                colorButtonPress(colorButton);
-            });
+    connect(colorButton, &QPushButton::pressed, this, [=]() {
+        colorButtonPress(colorButton);
+    });
 }
 
 void Palette::removeColorFromPalette()
@@ -116,51 +102,19 @@ void Palette::colorButtonPress(QPushButton* button)
 {
     deleteButtonActive = true;
 
-    // Ensure that if a button was deleted we dont try to access that old buttons index and go out of bounds
-    if (currentColorButtonIndex < colorButtons.size())
-    {
-        QPushButton *oldActiveButton = colorButtons.at(currentColorButtonIndex);
-        QColor oldColor = model->getColorFromPalette(currentColorButtonIndex);
-        setButtonStyleSheetDeactive(oldActiveButton, oldColor);
-    }
-
-    // Get the index of the pressed button
+    // Ge the index of the pressed button
     int index = colorButtons.indexOf(button);
 
     currentColorButtonIndex = index;
 
-    // Set this new button to look active
     QColor color = model->getColorFromPalette(index);
-    setButtonStyleSheetActive(button, color);
     updateSlidersToColor(color);
 
     userColor = color;
 }
 
-void Palette::setButtonStyleSheetActive(QPushButton *button, QColor originalColor)
-{
-    // Style sheet for an active button
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);"
-                                  "border: 1px solid blue;")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
-}
-
-void Palette::setButtonStyleSheetDeactive(QPushButton *button, QColor originalColor)
-{
-    // Style sheet for a deactive button
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
-}
-
 void Palette::setSliders()
 {
-    // Set the sliders for start
     QString sliderStyle = getSliderStyleSheet();
     ui->redSlider->setStyleSheet(sliderStyle);
     ui->greenSlider->setStyleSheet(sliderStyle);
@@ -170,8 +124,7 @@ void Palette::setSliders()
 
 void Palette::updateSlider(int value)
 {
-    // Get the slider that sent the signal
-    QSlider *slider = qobject_cast<QSlider *>(sender());
+    QSlider *slider = qobject_cast<QSlider *>(sender()); // Get the slider that sent the signal
 
     QString colorComponent;
     if (slider == ui->redSlider)
@@ -191,13 +144,10 @@ void Palette::updateSlider(int value)
         colorComponent = "alpha";
     }
 
-    // Update the style for the corresponding slider
-    updateSliderStyle(slider, value, colorComponent);
+    updateSliderStyle(slider, value, colorComponent); // Update the style for the corresponding slider
 }
 
-void Palette::updateSlidersToColor(QColor color)
-{
-    // Update each slider with the corresponding rgba value
+void Palette::updateSlidersToColor(QColor color){
     ui->redSlider->setValue(color.red());
     ui->greenSlider->setValue(color.green());
     ui->blueSlider->setValue(color.blue());
@@ -211,7 +161,6 @@ void Palette::updateSlidersToColor(QColor color)
 
 void Palette::updateSliderStyle(QSlider *slider, int value, const QString &colorComponent)
 {
-    // Choose which slider and text edit for the passed in color
     QString color;
     if (colorComponent == "red")
     {
@@ -253,7 +202,6 @@ void Palette::updateSliderStyle(QSlider *slider, int value, const QString &color
 
 void Palette::setSliderTextEdits()
 {
-    // Inital style edits for text edits
     updateTextEditStyle(ui->redSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->greenSliderIO, "rgb(0, 0, 0)");
     updateTextEditStyle(ui->blueSliderIO, "rgb(0, 0, 0)");
@@ -262,11 +210,10 @@ void Palette::setSliderTextEdits()
 
 void Palette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color)
 {
-    // The style for the text edits
     QString style = QString(
                         "QLineEdit {"
                         "    background-color: %1;"
-                        "    color: white;"
+                        "    color: white;" // Brighten text
                         "    border: 1px solid #555;"
                         "    border-radius: 4px;"
                         "    padding: 2px 4px;"
@@ -278,11 +225,8 @@ void Palette::updateTextEditStyle(QLineEdit *textEdit, const QString &Color)
 
 void Palette::sliderIOValue()
 {
-    // Get the sender
     QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
     bool ok;
-
-    // Convert the value into an int then check if it is valid
     int value = lineEdit->text().toInt(&ok);
 
     if (!ok || value < 0)
@@ -291,7 +235,6 @@ void Palette::sliderIOValue()
     }
     else if (value > 255)
     {
-        // Ensure number wont be above 255
         value = 255;
     }
 
@@ -316,15 +259,14 @@ void Palette::sliderIOValue()
     }
 }
 
-void Palette::setButtons()
-{
-    // Button style
+void Palette::setButtons() {
     QString style = QString(
         "    background-color: rgb(0, 0, 0);"
-        "    color: white;"
+        "    color: white;" // Brighten text
         "    border: 1px solid #555;"
         "    border-radius: 4px;"
-        "    padding: 2px 4px;");
+        "    padding: 2px 4px;"
+        );
     ui->addToPaletteButton->setStyleSheet(style);
     ui->deleteFromColoPalette->setStyleSheet(style);
 }
@@ -358,7 +300,6 @@ Palette::~Palette()
     delete paletteScrollArea;
     delete paletteContainer;
     delete paletteLayout;
-    // Deletes all elements inside the QVector
-    qDeleteAll(colorButtons);
+    qDeleteAll(colorButtons); // Deletes all elements inside the QVector
     colorButtons.clear();
 }
