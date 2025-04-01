@@ -213,17 +213,53 @@ signals:
     void canvasUpdated();
 
     /**
-     * @brief frameModified
-     * @param index
+     * Emitted when a frame's content is modified.
+     * @param index The index of the modified frame.
      */
     void frameModified(unsigned int index);
-    int updateAnimationIcon(int index);
-    int updateFpsSliderIO(int value);
-    bool togglePlayPauseButtonIcon(bool enabled);
+
+    /**
+     * Emitted to update animation preview with current frame.
+     * @param index The frame index to display.
+     */
+    void updateAnimationIcon(int index);
+
+    /**
+     * Emitted when FPS slider value changes.
+     * @param value The new FPS value.
+     */
+    void updateFpsSliderIO(int value);
+
+    /**
+     * Emitted to toggle play/pause button icon.
+     * @param enabled True for play state, false for pause.
+     */
+    void togglePlayPauseButtonIcon(bool enabled);
+
+    /**
+     *  Emitted when a new frame needs to be created.
+     */
     void requestNewFrame();
+
+    /**
+     * Emitted when a frame needs deletion.
+     * @param index The frame index to delete.
+     */
     void requestDeleteFrame(unsigned int index);
+
+    /**
+     * Emitted to update selected frame in UI.
+     * @param index The new selected frame index.
+     */
     void requestNewSelectedFrameIndex(unsigned int index);
+
+    /// Emitted after all frames are reloaded from file.
     void framesReloaded();
+
+    /**
+     * Emitted when canvas size changes.
+     * @param size The new canvas dimension.
+     */
     void requestWindowResize(unsigned int size);
 
 public slots:
@@ -282,11 +318,41 @@ private:
      */
     QImage *image;
 
+    /**
+     * Stores all animation frames as QImage objects.
+     * Each frame represents one image in the animation sequence.
+     */
     std::vector<QImage> frames;
+
+    /**
+     * The index of the currently selected frame being edited.
+     * Ranges from 0 to frames.size()-1.
+     */
     unsigned int currentFrameIndex = 0;
+
+    /**
+     * Animation playback speed in frames per second.
+     * Valid range: 1-60 FPS.
+     */
     int animationFps = 1;
+
+    /**
+     * Current frame index being displayed during animation preview.
+     * Automatically wraps around when reaching the end of frames.
+     */
     int animationIndex = 0;
+
+    /**
+     * Animation playback state flag.
+     * @value true Animation is currently playing
+     * @value false Animation is paused
+     */
     bool animationPlaying = true;
+
+    /**
+     * Timer object that controls animation playback timing.
+     * Fires at intervals based on animationFps to advance frames.
+     */
     QTimer *animationTimer = nullptr;
 
     /**
