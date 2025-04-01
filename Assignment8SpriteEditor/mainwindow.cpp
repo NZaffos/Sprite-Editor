@@ -1,9 +1,15 @@
+// Reviewed by Ethan Perkins
+/**
+ * University of Utah - CS 3505
+ * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
+ * @date 3/28/2025
+ * @brief Implementation of the View portion of MVC. Displays the canvas and holds elements for the Display and Palette.
+ */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtMath>
 
-// This is the view class IMPORTANT:
-// Delete this comment before submission!!!
 MainWindow::MainWindow(Model *model, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), model(model)
 {
@@ -123,7 +129,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent)
             &QPushButton::clicked,
             model,
             &Model::rotateFrame);
-
 } // End of constructor
 
 void MainWindow::initializeButtons()
@@ -135,6 +140,7 @@ void MainWindow::initializeButtons()
         "    border-radius: 4px;"
         "    padding: 2px 4px;");
     ui->toolBox->setStyleSheet(QString("QToolButton {") + style + QString("}"));
+
     ui->saveButton->setStyleSheet(style);
     ui->newButton->setStyleSheet(style);
     ui->loadButton->setStyleSheet(style);
@@ -155,16 +161,6 @@ MainWindow::~MainWindow()
     delete palette;
 }
 
-// void drawLineTo(const QPoint &endPoint){
-//     QPainter painter(&image);
-//     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-//     pointer.drawLine(lastPoint, endPoint);
-//     modified = true;
-//     int rad = (myPenWidth / 2) + 2;
-
-//     update(QRect(lastPoint, endPoint).normal)
-// }
-
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
@@ -184,31 +180,27 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             int x = static_cast<int>(scenePos.x());
             int y = static_cast<int>(scenePos.y());
 
-            // ui->coordinate->setText(QString("(x: %1, y: %2)").arg(x).arg(y));
-
-            // qDebug() << "select pixel at scene Position: " << scenePos.x() << ", " << scenePos.y();
-
             // Check if in image bounds
             if (x >= 0 && x < model->getImage()->width() &&
                 y >= 0 && y < model->getImage()->height())
             {
-
                 drawing = true;
                 currPixel = scenePos;
 
-                // Update pixel
                 // Handle tool-specific actions
                 switch (currTool)
                 {
                 case Tool::BRUSH:
-                    model->setPixelTracker(x, y, userColor); // Add brush logic here
-                    break;                                   // <--- Add this
+                    model->setPixelTracker(x, y, userColor);
+                    break;
                 case Tool::ERASER:
                     model->erasePixel(x, y);
-                    break; // <--- Add this
+                    break;
                 case Tool::EYE:
                     palette->updateSlidersToColor(model->getImage()->pixelColor(x, y));
                     currTool = Tool::BRUSH;
+                    setCursorIcon();
+                    updateToolBorderSelection(Tool::BRUSH);
                     break;
                 case Tool::RECTANGLE:
                 case Tool::ELLIPSE:
@@ -219,7 +211,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 default:
                     break;
                 }
-
                 updateView();
             }
         }
@@ -232,42 +223,15 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::Enter)
         {
-            QPixmap toolPixmap;
-            // Select the appropriate icon based on the current tool.
-            if (currTool == Tool::BRUSH)
-            {
-                toolPixmap.load(":/icons/icons/brush.png");
-            }
-            else if (currTool == Tool::ERASER)
-            {
-                toolPixmap.load(":/icons/icons/eraser.png");
-            }
-            else if (currTool == Tool::EYE)
-            {
-                toolPixmap.load(":/icons/icons/eyedropper.png");
-            }
-            else if (currTool == Tool::PAINT)
-            {
-                toolPixmap.load(":/icons/icons/bucket.png");
-            }
-            else
-            {
-                // Fallback icon if needed.
-                toolPixmap.load(":/icons/icons/brush.png");
-            }
-
-            // Scale the pixmap to 32x32 while keeping the aspect ratio.
-            QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-            // Set the hotspot to the center of the pixmap.
-            QCursor toolCursor(scaledPixmap, 0, scaledPixmap.height() / 2);
-            ui->graphicsView->viewport()->setCursor(toolCursor);
+            setCursorIcon();
         }
+
         // When the mouse leaves the canvas, revert to the default cursor.
         else if (event->type() == QEvent::Leave)
         {
             ui->graphicsView->viewport()->unsetCursor();
         }
+
         // Existing handling for MouseMove events.
         else if (event->type() == QEvent::MouseMove)
         {
@@ -284,36 +248,31 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
             if (mouseEvent->buttons() & Qt::LeftButton)
             {
-                // Check if moving from current pixel position
-                if (x != currPixel.x() || y != currPixel.y())
-                {
-                    // Check if in image bounds
-                    if (x >= 0 && x < model->getImage()->width() &&
+                // Check if moving from current pixel position & if in image bounds
+                if ((x != currPixel.x() || y != currPixel.y()) && x >= 0 && x < model->getImage()->width() &&
                         y >= 0 && y < model->getImage()->height())
+                {
+                    // Handle tool-specific actions
+                    switch (currTool)
                     {
-
-                        // Update pixel
-                        switch (currTool)
-                        {
-                        case Tool::BRUSH:
-                            model->setPixelTracker(x, y, userColor);
-                            break;
-                        case Tool::ERASER:
-                            model->erasePixel(x, y);
-                            break;
-                        case Tool::RECTANGLE:
-                            model->rectangleShape(x, y, userColor);
-                            break;
-                        case Tool::ELLIPSE:
-                            model->ellipseShape(x, y, userColor);
-                            break;
-                        default:
-                            break;
-                        }
-                        // update current pixel
-                        currPixel = scenePos;
-                        updateView();
+                    case Tool::BRUSH:
+                        model->setPixelTracker(x, y, userColor);
+                        break;
+                    case Tool::ERASER:
+                        model->erasePixel(x, y);
+                        break;
+                    case Tool::RECTANGLE:
+                        model->rectangleShape(x, y, userColor);
+                        break;
+                    case Tool::ELLIPSE:
+                        model->ellipseShape(x, y, userColor);
+                        break;
+                    default:
+                        break;
                     }
+                    // update current pixel
+                    currPixel = scenePos;
+                    updateView();
                 }
             }
         }
@@ -327,6 +286,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QPoint viewPos = ui->graphicsView->mapFromGlobal(globalPos);
                 QPointF scenePos = ui->graphicsView->mapToScene(viewPos);
 
+                // Check if in bounds, then handle tool-specific actions
                 int x = static_cast<int>(scenePos.x());
                 int y = static_cast<int>(scenePos.y());
                 if (x >= 0 && x < model->getImage()->width() &&
@@ -390,21 +350,21 @@ void MainWindow::on_paintBttn_clicked()
 
 void MainWindow::on_newButton_clicked()
 {
-    bool ok;
+    bool inputReceived;
     // Ask for the number of rows
     QString rowText = QInputDialog::getText(this,
                                             tr("Canvas Size"),
                                             tr("Please enter the size of the canvas:\n(Max size: 250)\nSizes over 250 will be capped."),
                                             QLineEdit::Normal,
                                             QString(),
-                                            &ok);
-    if (!ok || rowText.isEmpty())
+                                            &inputReceived);
+    if (!inputReceived || rowText.isEmpty())
     {
         return; // User cancelled or left empty
     }
 
     bool conversionOK;
-    int rows = std::min(rowText.toInt(&conversionOK), 250);
+    int rows = std::min(rowText.toInt(&conversionOK), 250); // Max canvas size is 250
     if (!conversionOK)
     {
         QMessageBox::warning(this, tr("Invalid Input"), tr("Please enter a valid integer"));
@@ -416,12 +376,13 @@ void MainWindow::on_newButton_clicked()
 
 void MainWindow::resizeWindow(unsigned int size)
 {
+    // Send update to Model, Display
     model->createImage(size);
     displays->rebuildFrameButtonsFromModel();
 
+    // Update Canvas
     createCanvas();
     createBg();
-
     updateView();
 }
 
@@ -447,12 +408,12 @@ void MainWindow::createCanvas()
 
 void MainWindow::createBg()
 {
-    // Background
     int width = model->getCanvasSize();
 
     QImage bgImage = QImage(width, width, QImage::Format_ARGB32);
     bgImage.fill(QColor(150, 150, 150, 100));
 
+    // Scale checkerboard pattern with canvas size
     int checkerboardWidth = std::max(2, int(qNextPowerOfTwo(width)) / 8);
 
     QPainter painter(&bgImage);
@@ -465,6 +426,7 @@ void MainWindow::createBg()
     brush.setColor(QColor(150, 150, 150, 255));
     painter.setBrush(brush);
 
+    // Paint light squares
     int boxCount = width / checkerboardWidth + 1;
     for (int i = 0; i < boxCount; i++)
     {
@@ -482,6 +444,7 @@ void MainWindow::createBg()
 
 void MainWindow::updateToolBorderSelection(Tool newTool)
 {
+    // Deselect Tools
     ui->brushBttn->setStyleSheet("");
     ui->eraseBttn->setStyleSheet("");
     ui->eyeBttn->setStyleSheet("");
@@ -489,6 +452,7 @@ void MainWindow::updateToolBorderSelection(Tool newTool)
     ui->rectangleBttn->setStyleSheet("");
     ui->ellipseBttn->setStyleSheet("");
 
+    // Set border of selected tool
     switch (newTool)
     {
     case Tool::BRUSH:
@@ -510,4 +474,37 @@ void MainWindow::updateToolBorderSelection(Tool newTool)
         ui->rectangleBttn->setStyleSheet("border: 2px solid blue");
         break;
     }
+}
+
+void MainWindow::setCursorIcon(){
+    QPixmap toolPixmap;
+    // Select the appropriate icon based on the current tool.
+    if (currTool == Tool::BRUSH)
+    {
+        toolPixmap.load(":/icons/icons/brush.png");
+    }
+    else if (currTool == Tool::ERASER)
+    {
+        toolPixmap.load(":/icons/icons/eraser.png");
+    }
+    else if (currTool == Tool::EYE)
+    {
+        toolPixmap.load(":/icons/icons/eyedropper.png");
+    }
+    else if (currTool == Tool::PAINT)
+    {
+        toolPixmap.load(":/icons/icons/bucket.png");
+    }
+    else
+    {
+        // Fallback icon if needed.
+        toolPixmap.load(":/icons/icons/brush.png");
+    }
+
+    // Scale the pixmap to 32x32 while keeping the aspect ratio.
+    QPixmap scaledPixmap = toolPixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    // Set the hotspot to the center of the pixmap.
+    QCursor toolCursor(scaledPixmap, 0, scaledPixmap.height() / 2);
+    ui->graphicsView->viewport()->setCursor(toolCursor);
 }

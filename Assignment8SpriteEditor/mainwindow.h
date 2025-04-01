@@ -1,14 +1,4 @@
 /**
- * @reviewedby Nash Hawkins
- * @file mainwindow.h
- * @brief Defines the MainWindow class, which provides the main interface for the application.
- *
- * @author Noah Zaffos
- * @author Ethan Perkins
- * @author Caleb Standfield
- * @author Jas Sandhu
- * @author Nash Hawkins
- * @author John Chen
  *
  */
 #ifndef MAINWINDOW_H
@@ -37,6 +27,10 @@ using std::string;
 #include <QInputDialog>
 #include <QMessageBox>
 
+// For Cursor
+#include <QCursor>
+#include <QStyle>
+
 // Includes for files
 #include "models.h"
 #include "displays.h"
@@ -50,114 +44,79 @@ namespace Ui
 
 QT_END_NAMESPACE
 
-/**
- * @class MainWindow
- * @brief The main application window handling UI and interactions.
- */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    /**
-     * @brief Constructor for MainWindow.
-     * @param model Pointer to the application model.
-     * @param parent Parent widget (default is nullptr).
-     */
     MainWindow(Model *model, QWidget *parent = nullptr);
-
-    /**
-     * @brief Destructor for MainWindow.
-     */
     ~MainWindow();
 
     /**
-     * @enum Tool
-     * @brief Enum class representing available tools in the application.
+     * an enum class to hold all possible tools available to the user
      */
     enum class Tool
     {
-        BRUSH, // Brush tool for drawing.
-        ERASER, //Eraser tool for removing parts of the drawing.
-        PAINT, //Paint bucket tool for filling areas.
-        EYE, //Eyedropper tool for color selection.
-        RECTANGLE, //Rectangle tool for drawing rectangles.
-        ELLIPSE //Ellipse tool for drawing ellipses.
+        BRUSH,
+        ERASER,
+        PAINT,
+        EYE,
+        RECTANGLE,
+        ELLIPSE
     };
     Q_ENUM(Tool)
 
 private:
-    Ui::MainWindow *ui; //UI elements of the MainWindow.
-    Model *model; //Pointer to the application data model.
+    Ui::MainWindow *ui;
+    Model *model;
 
-    Displays *displays; //Displays component handling UI elements.
-    Palette *palette; //Color palette component.
-    QPixmap background; //Background image.
+    Displays *displays;
+    Palette *palette;
+    QPixmap background;
 
     /**
-     * @brief Stores the current active brush color.
+     * Stores the current color active on the users brush
      */
     QColor userColor;
-
-    /**
-     * @brief Stores the currently selected drawing tool.
-     */
     Tool currTool;
 
     // Canvas
-    QImage *qimage; // Image buffer for drawing.
-    QPainter *qpainter; // Painter for rendering graphics.
-    QGraphicsScene *scene; // Scene for handling graphics items.
-    bool drawing = false; // Flag indicating if the user is drawing.
-    QPointF currPixel; // Current pixel position for drawing.
+    QImage *qimage;
+    QPainter *qpainter;
+    QGraphicsScene *scene;
+    bool drawing = false;
+    QPointF currPixel;
 
     /**
-     * @brief Initializes buttons with appropriate styles.
+     * Initialize the buttons with the proper style
      */
     void initializeButtons();
-
-    /**
-     * @brief Creates a new canvas for drawing.
-     */
     void createCanvas();
 
+    /**
+     * Switches the border fo the tool selector to the new tool
+     * @param newTool The new tool to be selected
+     */
+    void updateToolBorderSelection(Tool newTool);
+    void setCursorIcon();
 
 private slots:
-    /**
-     * @brief Updates the view with the latest changes.
-     */
+    // Canvas
     void updateView();
-
-    /**
-     * @brief Creates a background for the canvas.
-     */
     void createBg();
 
-    // Tool button click handlers
     void on_brushBttn_clicked();
     void on_eraseBttn_clicked();
     void on_eyeBttn_clicked();
     void on_rectangleBttn_clicked();
     void on_ellipseBttn_clicked();
-
-    /**
-     * @brief Handles the event when the new file button is clicked.
-     */
+    void on_paintBttn_clicked();
     void on_newButton_clicked();
 
-protected:
-    /**
-     * @brief Handles mouse press events on the canvas.
-     * @param event Mouse event details.
-     */
-    void mousePressEvent(QMouseEvent *event) override;
+    void resizeWindow(unsigned int size);
 
-    /**
-     * @brief Filters events for objects in the UI.
-     * @param obj The object receiving the event.
-     * @param event The event occurring.
-     * @return true if the event is handled, false otherwise.
-     */
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
