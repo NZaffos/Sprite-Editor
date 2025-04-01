@@ -31,8 +31,11 @@ void Palette::addColorToPalette()
     QPushButton *colorButton = new QPushButton();
     colorButton->setFixedSize(25, 25);
 
-    // Sets this new button to look deative
-    setButtonStyleSheetDeactive(colorButton, userColor);
+    colorButton->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
+                                   .arg(userColor.red())
+                                   .arg(userColor.green())
+                                   .arg(userColor.blue())
+                                   .arg(userColor.alpha()));
 
     int index = colorButtons.size();
     int row = index / paletteCols;
@@ -42,13 +45,9 @@ void Palette::addColorToPalette()
     colorButtons.append(colorButton);
     model->addToPalette(userColor);
 
-    connect(colorButton,
-            &QPushButton::pressed,
-            this,
-            [=]()
-            {
-                colorButtonPress(colorButton);
-            });
+    connect(colorButton, &QPushButton::pressed, this, [=]() {
+        colorButtonPress(colorButton);
+    });
 }
 
 void Palette::removeColorFromPalette()
@@ -61,7 +60,7 @@ void Palette::removeColorFromPalette()
     model->removeFromPalette(currentColorButtonIndex);
 
     // Remove button from layout and delete it
-    QPushButton *buttonToRemove = colorButtons.at(currentColorButtonIndex);
+    QPushButton* buttonToRemove = colorButtons.at(currentColorButtonIndex);
     paletteLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
 
@@ -69,23 +68,20 @@ void Palette::removeColorFromPalette()
     colorButtons.removeAt(currentColorButtonIndex);
 
     // Need to clear the layout and rebuild it so the buttons "slide down"
-    while (QLayoutItem *item = paletteLayout->takeAt(0))
-    {
+    while (QLayoutItem* item = paletteLayout->takeAt(0)) {
         delete item;
     }
 
     // Rebuild the layout with updated positions
-    for (int i = 0; i < colorButtons.size(); i++)
-    {
+    for (int i = 0; i < colorButtons.size(); i++) {
         int row = i / paletteCols;
         int col = i % paletteCols;
         paletteLayout->addWidget(colorButtons[i], row, col);
     }
 
     // Update button connections
-    for (int i = 0; i < colorButtons.size(); i++)
-    {
-        QPushButton *button = colorButtons[i];
+    for (int i = 0; i < colorButtons.size(); i++) {
+        QPushButton* button = colorButtons[i];
         // We first should make sure the button is disconnected
         disconnect(button,
                    &QPushButton::pressed,
@@ -95,56 +91,26 @@ void Palette::removeColorFromPalette()
         connect(button,
                 &QPushButton::pressed,
                 this,
-                [=]()
-                {
-                    colorButtonPress(button);
+                [=]() {colorButtonPress(button);
                 });
     }
 
     deleteButtonActive = false;
 }
 
-void Palette::colorButtonPress(QPushButton *button)
+void Palette::colorButtonPress(QPushButton* button)
 {
     deleteButtonActive = true;
 
-    // Ensure that if a button was deleted we dont try to access that old buttons index and go out of bounds
-    if (currentColorButtonIndex < colorButtons.size())
-    {
-        QPushButton *oldActiveButton = colorButtons.at(currentColorButtonIndex);
-        QColor oldColor = model->getColorFromPalette(currentColorButtonIndex);
-        setButtonStyleSheetDeactive(oldActiveButton, oldColor);
-    }
-
-    // Get the index of the pressed button
+    // Ge the index of the pressed button
     int index = colorButtons.indexOf(button);
 
     currentColorButtonIndex = index;
 
     QColor color = model->getColorFromPalette(index);
-    setButtonStyleSheetActive(button, color);
     updateSlidersToColor(color);
 
     userColor = color;
-}
-
-void Palette::setButtonStyleSheetActive(QPushButton *button, QColor originalColor)
-{
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);"
-                                  "border: 1px solid blue;")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
-}
-
-void Palette::setButtonStyleSheetDeactive(QPushButton *button, QColor originalColor)
-{
-    button->setStyleSheet(QString("background-color: rgba(%1, %2, %3, %4);")
-                              .arg(originalColor.red())
-                              .arg(originalColor.green())
-                              .arg(originalColor.blue())
-                              .arg(originalColor.alpha()));
 }
 
 void Palette::setSliders()
@@ -181,8 +147,7 @@ void Palette::updateSlider(int value)
     updateSliderStyle(slider, value, colorComponent); // Update the style for the corresponding slider
 }
 
-void Palette::updateSlidersToColor(QColor color)
-{
+void Palette::updateSlidersToColor(QColor color){
     ui->redSlider->setValue(color.red());
     ui->greenSlider->setValue(color.green());
     ui->blueSlider->setValue(color.blue());
@@ -294,14 +259,14 @@ void Palette::sliderIOValue()
     }
 }
 
-void Palette::setButtons()
-{
+void Palette::setButtons() {
     QString style = QString(
         "    background-color: rgb(0, 0, 0);"
         "    color: white;" // Brighten text
         "    border: 1px solid #555;"
         "    border-radius: 4px;"
-        "    padding: 2px 4px;");
+        "    padding: 2px 4px;"
+        );
     ui->addToPaletteButton->setStyleSheet(style);
     ui->deleteFromColoPalette->setStyleSheet(style);
 }

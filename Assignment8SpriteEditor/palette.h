@@ -31,9 +31,6 @@ public:
     void setColor();
     void setButtons();
 
-    void setButtonStyleSheetActive(QPushButton* button, QColor originalColor);
-    void setButtonStyleSheetDeactive(QPushButton* button, QColor originalColor);
-
 private:
     Ui::MainWindow *ui;
     QColor &userColor;

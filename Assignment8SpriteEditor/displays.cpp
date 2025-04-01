@@ -1,11 +1,5 @@
-/**
- * University of Utah - CS 3505
- * @authors Noah Zaffos, Nash Hawkins
- * @date 3/28/2025
- * @brief Implementation of display class. Handles displaying the frame selector and animation preview
- */
-
 #include "displays.h"
+#include <QPainter>
 
 Displays::Displays(Ui::MainWindow *ui, Model *model, QWidget *parent)
     : QWidget(parent), ui(ui), model(model)
@@ -79,7 +73,7 @@ void Displays::initializeFrameSelector()
 
 void Displays::createFrameButton(int index)
 {
-    QPushButton *frameButton = new QPushButton(ui->frameSelectorScrollContent);
+    QPushButton* frameButton = new QPushButton(ui->frameSelectorScrollContent);
     frameButton->setProperty("frameIndex", index);
 
     updateFrameButtonIcon(frameButton);
@@ -89,7 +83,7 @@ void Displays::createFrameButton(int index)
     frameButtons.insert(index, frameButton);
 }
 
-QPushButton *Displays::updateFrameButtonIcon(QPushButton *button)
+QPushButton* Displays::updateFrameButtonIcon(QPushButton* button)
 {
     int index = button->property("frameIndex").toInt();
     QPixmap thumbnail = model->getFrameThumbnail(index, 110, 110);
@@ -106,7 +100,7 @@ void Displays::updateFrameButtonStyle()
     for (int i = 0; i < frameButtons.size(); i++)
     {
         if (i == selectedFrameIndex)
-            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; border-radius: 4px}");
+            frameButtons[i]->setStyleSheet("QPushButton { border: 2px solid blue; }");
         else
             frameButtons[i]->setStyleSheet("");
     }
@@ -115,8 +109,7 @@ void Displays::updateFrameButtonStyle()
 void Displays::frameButtonClicked()
 {
     QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (!button)
-        return;
+    if (!button) return;
 
     int index = button->property("frameIndex").toInt();
     model->selectFrame(index);
@@ -132,8 +125,7 @@ void Displays::addFrameButtonClicked()
     createFrameButton(newIndex);
 
     // Reassign properties for following frameButtons
-    for (int i = newIndex + 1; i < frameButtons.size(); i++)
-    {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++) {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -147,8 +139,7 @@ void Displays::duplicateFrameButtonClicked()
     int newIndex = model->getCurrentFrameIndex();
     createFrameButton(newIndex);
 
-    for (int i = newIndex + 1; i < frameButtons.size(); i++)
-    {
+    for (int i = newIndex + 1; i < frameButtons.size(); i++) {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -158,9 +149,8 @@ void Displays::duplicateFrameButtonClicked()
 
 void Displays::deleteFrameButtonClicked()
 {
-    QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
-    if (model->getFrames().size() <= 1)
-    {
+    QPushButton* buttonToRemove = frameButtons[selectedFrameIndex];
+    if (model->getFrames().size() <= 1) {
         model->removeFrame(selectedFrameIndex);
 
         updateFrameButtonIcon(buttonToRemove);
@@ -173,8 +163,7 @@ void Displays::deleteFrameButtonClicked()
     frameButtons.remove(selectedFrameIndex);
 
     // Reassign properties for following frameButtons
-    for (int i = selectedFrameIndex; i < frameButtons.size(); i++)
-    {
+    for (int i = selectedFrameIndex; i < frameButtons.size(); i++) {
         frameButtons[i]->setProperty("frameIndex", i);
     }
 
@@ -210,8 +199,7 @@ void Displays::shiftFrameDownClicked()
 
 void Displays::onCanvasUpdated()
 {
-    if (selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size())
-    {
+    if (selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size()) {
         updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
     }
 }
@@ -229,7 +217,7 @@ void Displays::initializeAnimationControls()
         "    border-radius: 4px;"
         "}"
         "QSlider::sub-page:horizontal {"
-        "    background: black;"
+        "    background: rgba(0, 0, 0, 0);"
         "    border-radius: 4px;"
         "}"
         "QSlider::handle:horizontal {"
@@ -242,10 +230,6 @@ void Displays::initializeAnimationControls()
     ui->animationFpsSliderIO->setStyleSheet(getButtonStyle());
     ui->animationPlayPauseButton->setStyleSheet(getButtonStyle());
 
-    ui->animationDisplayLabel->setStyleSheet(QString(
-        "border: 2px solid #555;"
-        "border-radius: 4px"));
-
     connect(ui->animationFpsSlider,
             &QSlider::valueChanged,
             model,
@@ -254,23 +238,6 @@ void Displays::initializeAnimationControls()
             &QPushButton::clicked,
             model,
             &Model::toggleAnimation);
-}
-
-void Displays::rebuildFrameButtonsFromModel()
-{
-    while (!frameButtons.isEmpty())
-    {
-        QPushButton *button = frameButtons.takeLast();
-        framesLayout->removeWidget(button);
-        button->deleteLater();
-    }
-
-    int frameCount = model->getFrames().size();
-    for (int i = 0; i < frameCount; ++i)
-        createFrameButton(i);
-
-    selectedFrameIndex = 0;
-    updateFrameButtonStyle();
 }
 
 void Displays::updateFpsText(int value)
@@ -302,7 +269,6 @@ QString Displays::getButtonStyle()
         "    padding: 2px 4px;");
 }
 
-void Displays::setSelectedFrameIndex(unsigned int index)
-{
+void Displays::setSelectedFrameIndex(unsigned int index) {
     selectedFrameIndex = index;
 }
