@@ -1,5 +1,4 @@
-// Reviewed by Jas Sandhu - u1430476
-
+// Reviewed by Jas Sandhu
 #ifndef MODELS_H
 #define MODELS_H
 

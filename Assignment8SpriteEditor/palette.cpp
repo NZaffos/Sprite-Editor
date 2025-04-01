@@ -5,6 +5,7 @@
  * @date 3/28/2025
  * @brief Implementation of the palette class. Handels displaying the palette in the view and comunicating with the model.
  */
+
 #include "palette.h"
 
 Palette::Palette(Ui::MainWindow *ui, Model *model, QColor &userColor, QObject *parent)

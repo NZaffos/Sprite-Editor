@@ -1,11 +1,10 @@
 // Reviewedby Nash Hawkins
 /**
- *
- * @file main.cpp
- * @brief Entry point for the application.*
- * This file contains the main function, which initializes the application,
- * creates the model, and launches the main window.*
- * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen*
+ * University of Utah - CS 3505
+ * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
+ * @date 3/28/2025
+ * @brief Entry point for the application.
+ * This file contains the main function, which initializes the application, creates the model, and launches the main window.
  */
 
 #include "mainwindow.h"
