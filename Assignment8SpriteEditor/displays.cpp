@@ -141,6 +141,7 @@ void Displays::addFrameButtonClicked()
     for (int i = newIndex + 1; i < frameButtons.size(); i++)
     {
         frameButtons[i]->setProperty("frameIndex", i);
+        updateFrameButtonIcon(frameButtons[i]);
     }
 
     selectedFrameIndex = newIndex;
@@ -156,6 +157,7 @@ void Displays::duplicateFrameButtonClicked()
     for (int i = newIndex + 1; i < frameButtons.size(); i++)
     {
         frameButtons[i]->setProperty("frameIndex", i);
+        updateFrameButtonIcon(frameButtons[i]);
     }
 
     selectedFrameIndex = newIndex;
