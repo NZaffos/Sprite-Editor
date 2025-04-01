@@ -10,7 +10,9 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    createImage(32);
+    animationTimer = new QTimer(this);
+    connect(animationTimer, &QTimer::timeout, this, &Model::updateAnimationFrame);
+    createImage(32);    
 }
 
 Model::~Model()
@@ -26,11 +28,15 @@ void Model::createImage(int inputSize){
     image = new QImage(size, size, QImage::Format_ARGB32);
     clearCanvas();
 
-    for (size_t i = 0; i < frames.size(); i++){
-        removeFrame(i);
-    }
-
+    frames.clear();
     frames.push_back(*image);
+    currentFrameIndex = 0;
+    animationIndex = 0;
+
+    if (animationTimer && animationTimer->isActive())
+        animationTimer->stop();
+    animationPlaying = true;
+    animationTimer->start(1000 / animationFps);
     updateAnimationFrame();
 
     tracker = new QImage(size, size, QImage::Format_ARGB32);
@@ -194,16 +200,20 @@ void Model::sliderValueChanged(int value)
 {
     animationFps = value;
     emit updateFpsSliderIO(value);
+    if (animationTimer->isActive())
+        animationTimer->setInterval(1000 / animationFps);
 }
+
 
 void Model::toggleAnimation(){
     if(animationPlaying) {
         animationPlaying = false;
+        animationTimer->stop();
         emit togglePlayPauseButtonIcon(false);
     }
     else {
         animationPlaying = true;
-        updateAnimationFrame();
+        animationTimer->start(1000 / animationFps);
         emit togglePlayPauseButtonIcon(true);
     }
 }
@@ -219,8 +229,6 @@ void Model::updateAnimationFrame()
         animationIndex = 0;
     else
         animationIndex++;
-    QTimer::singleShot(1000 / animationFps, this, [this]()
-                       { updateAnimationFrame(); });
 }
 
 void Model::setPixel(int x, int y, QColor userColor)

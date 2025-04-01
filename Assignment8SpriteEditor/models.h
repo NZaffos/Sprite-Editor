@@ -157,6 +157,7 @@ private:
     int animationFps = 1;
     int animationIndex = 0;
     bool animationPlaying = true;
+    QTimer *animationTimer = nullptr;
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
