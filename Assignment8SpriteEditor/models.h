@@ -114,6 +114,10 @@ public:
 
     void createImage();
 
+    void paintBucket(int x, int y, QColor userColor);
+
+    void paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace);
+
 signals:
     void canvasUpdated();
     void frameModified(unsigned int index);

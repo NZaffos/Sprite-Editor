@@ -27,6 +27,10 @@ using std::string;
 #include <QInputDialog>
 #include <QMessageBox>
 
+// For Cursor
+#include <QCursor>
+#include <QStyle>
+
 // Includes for files
 #include "models.h"
 #include "displays.h"
@@ -106,9 +110,10 @@ private slots:
     void on_eyeBttn_clicked();
     void on_rectangleBttn_clicked();
     void on_ellipseBttn_clicked();
-
-    // New Button
+    void on_paintBttn_clicked();
     void on_newButton_clicked();
+
+    void resizeWindow(unsigned int size);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
