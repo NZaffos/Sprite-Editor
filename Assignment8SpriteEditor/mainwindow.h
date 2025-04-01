@@ -98,6 +98,7 @@ private:
      * @param newTool The new tool to be selected
      */
     void updateToolBorderSelection(Tool newTool);
+    void setCursorIcon();
 
 private slots:
     // Canvas
