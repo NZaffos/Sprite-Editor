@@ -4,7 +4,7 @@
     @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
     @date    03/25/2025
     @brief   This class is responsible for handling the backend logic of the sprite editor such as painting, erasing, creating new canvas sizes and more
-    Checked by Jas Sandhu - u1430476
+    Checked by John Chen - u1364584
 */
 
 #include "models.h"
