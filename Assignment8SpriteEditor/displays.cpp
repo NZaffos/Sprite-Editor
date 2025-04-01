@@ -172,7 +172,6 @@ void Displays::deleteFrameButtonClicked()
     if (model->getFrames().size() <= 1)
     {
         model->removeFrame(selectedFrameIndex);
-
         updateFrameButtonIcon(buttonToRemove);
         return;
     }
@@ -187,6 +186,7 @@ void Displays::deleteFrameButtonClicked()
     for (int i = selectedFrameIndex; i < frameButtons.size(); i++)
     {
         frameButtons[i]->setProperty("frameIndex", i);
+        updateFrameButtonIcon(frameButtons[i]);
     }
 
     selectedFrameIndex = model->getCurrentFrameIndex();
