@@ -198,6 +198,8 @@ public:
      */
     void mergeShapePreview();
 
+    void paintBucket(int x, int y, QColor userColor);
+
 signals:
     /**
      * @brief canvasUpdated - signal sent to the View to update the canvas preview
@@ -336,6 +338,8 @@ private:
      * @brief palette - the color palette that can be edited by user to store custom colors
      */
     QVector<QColor> palette;
+
+    void paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace);
 
 private slots:
     void updateAnimationFrame();
