@@ -1,8 +1,8 @@
 /**
- * Implementation of display class. Handles displaying the frame selector and animation preview
- *
+ * University of Utah - CS 3505
  * @authors Noah Zaffos, Nash Hawkins
  * @date 3/28/2025
+ * @brief Implementation of display class. Handles displaying the frame selector and animation preview
  */
 
 #include "displays.h"

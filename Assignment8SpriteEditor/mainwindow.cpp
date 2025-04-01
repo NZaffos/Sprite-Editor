@@ -293,7 +293,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                     {
 
                         // Update pixel
-
                         switch (currTool)
                         {
                         case Tool::BRUSH:
