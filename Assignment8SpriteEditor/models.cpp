@@ -10,6 +10,8 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
+    animationTimer = new QTimer(this);
+    connect(animationTimer, &QTimer::timeout, this, &Model::updateAnimationFrame);
     createImage(32);
 }
 
@@ -20,17 +22,22 @@ Model::~Model()
     delete tracker;
 }
 
-void Model::createImage(int inputSize){
+void Model::createImage(int inputSize)
+{
     size = inputSize;
 
     image = new QImage(size, size, QImage::Format_ARGB32);
     clearCanvas();
 
-    for (size_t i = 0; i < frames.size(); i++){
-        removeFrame(i);
-    }
-
+    frames.clear();
     frames.push_back(*image);
+    currentFrameIndex = 0;
+    animationIndex = 0;
+
+    if (animationTimer && animationTimer->isActive())
+        animationTimer->stop();
+    animationPlaying = true;
+    animationTimer->start(1000 / animationFps);
     updateAnimationFrame();
 
     tracker = new QImage(size, size, QImage::Format_ARGB32);
@@ -162,11 +169,14 @@ void Model::swapFrame(bool swapUp)
     emit canvasUpdated();
 }
 
-void Model::mirrorFrame(){
+void Model::mirrorFrame()
+{
     QImage temp = image->copy();
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
-            image->setPixelColor(i,j,temp.pixelColor(size-1-i,j));
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            image->setPixelColor(i, j, temp.pixelColor(size - 1 - i, j));
         }
     }
     if (currentFrameIndex < frames.size())
@@ -176,11 +186,14 @@ void Model::mirrorFrame(){
     emit canvasUpdated();
 }
 
-void Model::rotateFrame(){
+void Model::rotateFrame()
+{
     QImage temp = image->copy();
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
-            image->setPixelColor(i,j,temp.pixelColor(j,size-1-i));
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            image->setPixelColor(i, j, temp.pixelColor(j, size - 1 - i));
         }
     }
     if (currentFrameIndex < frames.size())
@@ -194,23 +207,29 @@ void Model::sliderValueChanged(int value)
 {
     animationFps = value;
     emit updateFpsSliderIO(value);
+    if (animationTimer->isActive())
+        animationTimer->setInterval(1000 / animationFps);
 }
 
-void Model::toggleAnimation(){
-    if(animationPlaying) {
+void Model::toggleAnimation()
+{
+    if (animationPlaying)
+    {
         animationPlaying = false;
+        animationTimer->stop();
         emit togglePlayPauseButtonIcon(false);
     }
-    else {
+    else
+    {
         animationPlaying = true;
-        updateAnimationFrame();
+        animationTimer->start(1000 / animationFps);
         emit togglePlayPauseButtonIcon(true);
     }
 }
 
 void Model::updateAnimationFrame()
 {
-    if(!animationPlaying)
+    if (!animationPlaying)
         return;
 
     emit updateAnimationIcon(animationIndex);
@@ -219,15 +238,13 @@ void Model::updateAnimationFrame()
         animationIndex = 0;
     else
         animationIndex++;
-    QTimer::singleShot(1000 / animationFps, this, [this]()
-                       { updateAnimationFrame(); });
 }
 
 void Model::setPixel(int x, int y, QColor userColor)
 {
     getPixel(x, y);
 
-    if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 255)
+    if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 0)
     {
         image->setPixelColor(x, y, userColor);
     }
@@ -246,24 +263,29 @@ void Model::setPixel(int x, int y, QColor userColor)
     tracker->setPixelColor(x, y, userColor);
 }
 
-void Model::setPixelTracker(int x, int y, QColor userColor){
-    if(tracker->pixelColor(x,y) == userColor){
+void Model::setPixelTracker(int x, int y, QColor userColor)
+{
+    if (tracker->pixelColor(x, y) == userColor)
+    {
         return;
     }
-    setPixel(x,y,userColor);
+    setPixel(x, y, userColor);
 }
 
-QImage *Model::getShapePreview(){
+QImage *Model::getShapePreview()
+{
     return shapePreview;
 }
 
-void Model::shapeStart(int x, int y){
+void Model::shapeStart(int x, int y)
+{
     shapeStartX = x;
     shapeStartY = y;
 }
 
-void Model::rectangleShape(int x, int y, QColor userColor){
-    shapePreview->fill(QColor(0,0,0,0));
+void Model::rectangleShape(int x, int y, QColor userColor)
+{
+    shapePreview->fill(QColor(0, 0, 0, 0));
     QPainter painter(shapePreview);
     QPen pen(userColor);
     pen.setWidth(1);
@@ -275,34 +297,76 @@ void Model::rectangleShape(int x, int y, QColor userColor){
     painter.end();
 }
 
-void Model::ellipseShape(int x, int y, QColor userColor){
-    shapePreview->fill(QColor(0,0,0,0));
+void Model::ellipseShape(int x, int y, QColor userColor)
+{
+    shapePreview->fill(QColor(0, 0, 0, 0));
     QPainter painter(shapePreview);
     QPen pen(userColor);
     pen.setWidth(1);
     painter.setPen(pen);
     painter.drawEllipse(std::min(shapeStartX, x),
-                     std::min(shapeStartY, y),
-                     qAbs(shapeStartX - x),
-                     qAbs(shapeStartY - y));
+                        std::min(shapeStartY, y),
+                        qAbs(shapeStartX - x),
+                        qAbs(shapeStartY - y));
     painter.end();
 }
 
-void Model::mergeShapePreview(){
+void Model::mergeShapePreview()
+{
     QPainter painter(image);
     painter.drawImage(0, 0, *shapePreview);
     painter.end();
-    if (currentFrameIndex < frames.size()) {
+    if (currentFrameIndex < frames.size())
+    {
         frames[currentFrameIndex] = *image;
     }
     emit canvasUpdated();
 }
 
+void Model::paintBucket(int x, int y, QColor userColor)
+{
+    getPixel(x, y); // Get the color at the pixel the user selected
+    QColor colorToReplace = selectColor;
+    if (colorToReplace == userColor)
+    {
+        return;
+    }
+    paintBucketRecursive(x, y, userColor, colorToReplace);
+    if (currentFrameIndex < frames.size())
+    {
+        frames[currentFrameIndex] = *image;
+    }
+    emit canvasUpdated();
+}
+
+void Model::paintBucketRecursive(int x, int y, QColor userColor, QColor colorToReplace)
+{
+    if (x >= size || x < 0 || y >= size || y < 0)
+    {
+        return;
+    }
+    getPixel(x, y);
+    if (selectColor != colorToReplace)
+    {
+        return;
+    }
+    image->setPixelColor(x, y, userColor);
+    emit canvasUpdated();
+    // X
+    paintBucketRecursive(x + 1, y, userColor, colorToReplace);
+    paintBucketRecursive(x - 1, y, userColor, colorToReplace);
+
+    // Y
+    paintBucketRecursive(x, y + 1, userColor, colorToReplace);
+    paintBucketRecursive(x, y - 1, userColor, colorToReplace);
+}
+
 void Model::erasePixel(int x, int y)
 {
-    image->setPixelColor(x, y, QColor(0,0,0,0));
+    image->setPixelColor(x, y, QColor(0, 0, 0, 0));
 
-    if (currentFrameIndex < frames.size()) {
+    if (currentFrameIndex < frames.size())
+    {
         frames[currentFrameIndex] = *image;
     }
     emit canvasUpdated();
@@ -424,15 +488,9 @@ void Model::loadProject()
         QByteArray fileData = file.readAll();
         file.close();
 
-        // File has been choosen so now we clear.
-        unsigned int frameSize = frames.size();
-        for (unsigned int i = 0; i < frameSize; i++) {
-            selectFrame(0);
-            emit requestDeleteFrame(0);
-        }
-
-        palette.clear();
-
+        frames.clear();
+        frames.push_back(*image);
+        currentFrameIndex = 0;
 
         QJsonDocument doc = QJsonDocument::fromJson(fileData);
         if (doc.isObject())
@@ -441,12 +499,11 @@ void Model::loadProject()
             QJsonObject jsonObject = doc.object();
             int width = jsonObject["width"].toInt();
             size = width;
+            emit requestWindowResize(size);
             int frameCount = jsonObject["frameCount"].toInt();
 
-            qDebug() << "Width:" << width << "Frame Count:" << frameCount;
             QJsonArray jsonFrames = jsonObject["frames"].toArray();
 
-            // SET SIZE OF CANVAS HERE
             for (int i = 0; i < frameCount - 1; i++)
             {
                 emit requestNewFrame();
@@ -467,11 +524,12 @@ void Model::loadProject()
                     int alpha = frameArray[4 * i + 3].toInt();
 
                     QColor color(red, green, blue, alpha);
-                    setPixel(i % size, i / size, color);
+                    setPixel(i % (int)size, i / size, color);
                 }
                 frameIndex++;
             }
             selectFrame(0);
+            emit framesReloaded();
         }
         else
         {

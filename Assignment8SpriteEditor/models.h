@@ -123,6 +123,8 @@ signals:
     void requestNewFrame();
     void requestDeleteFrame(unsigned int index);
     void requestNewSelectedFrameIndex(unsigned int index);
+    void framesReloaded();
+    void requestWindowResize(unsigned int size);
 
 public slots:
     void sliderValueChanged(int value);
@@ -139,7 +141,7 @@ private:
      * Determines the dimensions of our square canvas
      * @brief size
      */
-    int size;
+    double size;
 
     /**
      * The main canvas displayed on the users screen
@@ -153,6 +155,7 @@ private:
     int animationFps = 1;
     int animationIndex = 0;
     bool animationPlaying = true;
+    QTimer *animationTimer = nullptr;
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
