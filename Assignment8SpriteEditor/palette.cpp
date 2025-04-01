@@ -108,11 +108,15 @@ void Palette::colorButtonPress(QPushButton *button)
 {
     deleteButtonActive = true;
 
-    QPushButton *oldActiveButton = colorButtons.at(currentColorButtonIndex);
-    QColor oldColor = model->getColorFromPalette(currentColorButtonIndex);
-    setButtonStyleSheetDeactive(oldActiveButton, oldColor);
+    // Ensure that if a button was deleted we dont try to access that old buttons index and go out of bounds
+    if (currentColorButtonIndex < colorButtons.size())
+    {
+        QPushButton *oldActiveButton = colorButtons.at(currentColorButtonIndex);
+        QColor oldColor = model->getColorFromPalette(currentColorButtonIndex);
+        setButtonStyleSheetDeactive(oldActiveButton, oldColor);
+    }
 
-    // Ge the index of the pressed button
+    // Get the index of the pressed button
     int index = colorButtons.indexOf(button);
 
     currentColorButtonIndex = index;

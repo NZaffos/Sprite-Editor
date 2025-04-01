@@ -244,7 +244,7 @@ void Model::setPixel(int x, int y, QColor userColor)
 {
     getPixel(x, y);
 
-    if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 255)
+    if (selectColor.red() == 0 && selectColor.green() == 0 && selectColor.blue() == 0 && selectColor.alpha() == 0)
     {
         image->setPixelColor(x, y, userColor);
     }
@@ -491,8 +491,6 @@ void Model::loadProject()
         frames.clear();
         frames.push_back(*image);
         currentFrameIndex = 0;
-
-        palette.clear();
 
         QJsonDocument doc = QJsonDocument::fromJson(fileData);
         if (doc.isObject())
