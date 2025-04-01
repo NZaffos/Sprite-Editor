@@ -1,10 +1,4 @@
-/**
-* University of Utah – CS 3505
-* @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
-* @date    03/25/2025
-* @brief   This class is responsible for handling the backend logic of the sprite editor such as painting, erasing, creating new canvas sizes and more
-* Checked by Jas Sandhu - u1430476
- */
+// Reviewed by Jas Sandhu - u1430476
 
 #ifndef MODELS_H
 #define MODELS_H
@@ -15,6 +9,12 @@
 #include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
 
+/**
+* University of Utah – CS 3505
+* @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
+* @date 03/25/2025
+* @brief This class is responsible for handling the backend logic of the sprite editor such as painting, erasing, creating new canvas sizes and more
+ */
 class Model : public QObject
 {
     Q_OBJECT

@@ -39,6 +39,7 @@ Displays::Displays(Ui::MainWindow *ui, Model *model, QWidget *parent)
 
 void Displays::initializeFrameSelector()
 {
+    // Set the box to hold all frame buttons
     framesLayout = new QVBoxLayout();
     framesLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     framesLayout->setContentsMargins(0, 20, 0, 20);
@@ -47,6 +48,7 @@ void Displays::initializeFrameSelector()
     ui->frameSelector->setWidget(ui->frameSelectorScrollContent);
     ui->frameSelector->setWidgetResizable(true);
 
+    // Set the style for all frame selector buttons
     ui->addFrameButton->setStyleSheet(getButtonStyle());
     ui->dublicateFrameButton->setStyleSheet(getButtonStyle());
     ui->deleteFrameButton->setStyleSheet(getButtonStyle());
@@ -84,6 +86,7 @@ void Displays::createFrameButton(int index)
     QPushButton *frameButton = new QPushButton(ui->frameSelectorScrollContent);
     frameButton->setProperty("frameIndex", index);
 
+    // Set icon and connection for frame button
     updateFrameButtonIcon(frameButton);
     connect(frameButton, &QPushButton::clicked, this, &Displays::frameButtonClicked);
 
@@ -105,6 +108,7 @@ QPushButton *Displays::updateFrameButtonIcon(QPushButton *button)
 
 void Displays::updateFrameButtonStyle()
 {
+    // Sets the currently selected frame as a blue border, rest back to default
     for (int i = 0; i < frameButtons.size(); i++)
     {
         if (i == selectedFrameIndex)
@@ -121,9 +125,10 @@ void Displays::frameButtonClicked()
         return;
 
     int index = button->property("frameIndex").toInt();
+
+    // Selects the frame that was pressed and updates its border/icon
     model->selectFrame(index);
     updateFrameButtonStyle();
-
     updateFrameButtonIcon(button);
 }
 
@@ -161,6 +166,8 @@ void Displays::duplicateFrameButtonClicked()
 void Displays::deleteFrameButtonClicked()
 {
     QPushButton *buttonToRemove = frameButtons[selectedFrameIndex];
+
+    // If there is only one frame, clear it instead
     if (model->getFrames().size() <= 1)
     {
         model->removeFrame(selectedFrameIndex);
@@ -169,6 +176,7 @@ void Displays::deleteFrameButtonClicked()
         return;
     }
 
+    // Delete the frame from model and display
     model->removeFrame(selectedFrameIndex);
     framesLayout->removeWidget(buttonToRemove);
     buttonToRemove->deleteLater();
@@ -212,6 +220,7 @@ void Displays::shiftFrameDownClicked()
 
 void Displays::onCanvasUpdated()
 {
+    // Updates the icon in the frame selector to match canvas changes
     if (selectedFrameIndex >= 0 && selectedFrameIndex < frameButtons.size())
     {
         updateFrameButtonIcon(frameButtons[selectedFrameIndex]);
@@ -241,6 +250,8 @@ void Displays::initializeAnimationControls()
         "    margin: -6px 0;"
         "    border-radius: 8px;"
         "}"));
+
+    // Set the style for the animation buttons
     ui->animationFpsSliderIO->setStyleSheet(getButtonStyle());
     ui->animationPlayPauseButton->setStyleSheet(getButtonStyle());
 
@@ -260,6 +271,7 @@ void Displays::initializeAnimationControls()
 
 void Displays::rebuildFrameButtonsFromModel()
 {
+    // Deletes every frame from the display
     while (!frameButtons.isEmpty())
     {
         QPushButton *button = frameButtons.takeLast();
@@ -267,6 +279,7 @@ void Displays::rebuildFrameButtonsFromModel()
         button->deleteLater();
     }
 
+    // Adds the frames from the model
     int frameCount = model->getFrames().size();
     for (int i = 0; i < frameCount; ++i)
         createFrameButton(i);
@@ -282,8 +295,10 @@ void Displays::updateFpsText(int value)
 
 void Displays::toggleAnimationPlayPauseIcon(bool enabled)
 {
+    // Playing the animation
     if (enabled)
         ui->animationPlayPauseButton->setText("| |");
+    // Animation is paused
     else
         ui->animationPlayPauseButton->setText(">");
 }
