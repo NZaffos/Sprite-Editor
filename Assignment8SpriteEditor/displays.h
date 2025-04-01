@@ -10,10 +10,10 @@
 #include "ui_mainwindow.h"
 
 /**
- * This class handles displaying the frame selector and animation preview
- *
+ * University of Utah - CS 3505
  * @authors Noah Zaffos, Nash Hawkins
  * @date 3/28/2025
+ * @brief This class handles displaying the frame selector and animation preview
  */
 class Displays : public QWidget
 {
@@ -28,6 +28,9 @@ public:
      */
     explicit Displays(Ui::MainWindow *ui, Model *model, QWidget *parent = nullptr);
 
+    /**
+     * Clears the frames to empty and then adds all of the frames back from the model
+     */
     void rebuildFrameButtonsFromModel();
 
 public slots:
@@ -37,7 +40,12 @@ public slots:
      */
     void addFrameButtonClicked();
 
+    /**
+     * Sets the selected frame index to the passed value
+     * @param index The index to set the selected frame index to
+     */
     void setSelectedFrameIndex(unsigned int index);
+
 private slots:
     /**
      * A handler for when one of the frames is clicked
