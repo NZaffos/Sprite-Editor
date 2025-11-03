@@ -1,7 +1,7 @@
 # Sprite Editor 
 
 A lightweight, feature-rich **sprite creation and animation tool** built in **C++ with Qt**.  
-The editor provides a full suite of drawing utilities, color palette management, and animation controls — designed for artists and developers who want a responsive, pixel-perfect workflow.
+The editor provides a complete set of drawing tools, color palette management, animation controls, and project saving/loading — designed for artists and developers who want a responsive, pixel-perfect workflow.
 
 ---
 
@@ -27,12 +27,16 @@ The editor provides a full suite of drawing utilities, color palette management,
 - View full animation playback in a dedicated **Animation Window**  
 - Adjust **frames per second (FPS)** in real time for smooth previews  
 
+### Save & Load
+- **Save** your entire sprite project (including all frames and palette data) to a file  
+- **Load** previously saved projects to continue editing or animating later
+ 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 - **Language:** C++  
 - **Framework:** Qt 6 (Qt Creator)  
-- **Libraries:** Qt Widgets / GUI, Box2D (for interactive graphics)  
+- **Libraries:** Qt Widgets / GUI
 - **Design:** Object-oriented architecture for tools, palettes, and frame systems  
 - **Version Control:** Git / GitHub
 
