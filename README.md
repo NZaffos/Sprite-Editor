@@ -47,6 +47,8 @@ The editor provides a complete set of drawing tools, color palette management, a
 ### Main Editor
 ![Main Editor](ExampleSprite.png)
 
+---
+
 ## Build & Run
 
 > **Prereqs:** Qt (with qmake or CMake), and a C++17 compiler
