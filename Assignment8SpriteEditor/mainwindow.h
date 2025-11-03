@@ -43,10 +43,9 @@ namespace Ui
 QT_END_NAMESPACE
 
 /**
- * @file mainwindow.h
  * @brief Defines the MainWindow class, which provides the main interface for the application.
  *
- * @author Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
+ * @authors Noah Zaffos, Ethan Perkins, Caleb Standfield, Jas Sandhu, Nash Hawkins, John Chen
  * @date 3/31/2025
  */
 class MainWindow : public QMainWindow
